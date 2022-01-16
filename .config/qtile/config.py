@@ -42,7 +42,7 @@ rofi = config + "rofi/bin/"
 class Commands(object):
     browser = "vivaldi"
     terminal = guess_terminal()
-    lock = "betterlockscreen -l dim"
+    lock = "betterlockscreen -l base --off 30 --span"
     files = "nemo"
     editor = "code"
     launcher = "launcher_misc"
