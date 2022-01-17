@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-compton -b --vsync opengl-swc --backend glx
+compton --vsync opengl-swc --backend glx &
 autorandr --change
 source /etc/profile
 export PATH="$HOME/.local/bin:$PATH"
