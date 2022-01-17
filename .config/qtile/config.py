@@ -166,6 +166,17 @@ keys = [
     # Screen brightness controls with brightnessctl
     Key([], "XF86MonBrightnessUp", lazy.spawn("brightnessctl -q set +5%")),
     Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl -q set 5%-")),
+    # Screen brightness controls with brightnessctl
+    Key(
+        ["shift"],
+        "XF86MonBrightnessUp",
+        lazy.spawn("brightnessctl --device='tpacpi::kbd_backlight' -q set +1"),
+    ),
+    Key(
+        ["shift"],
+        "XF86MonBrightnessDown",
+        lazy.spawn("brightnessctl --device='tpacpi::kbd_backlight' -q set 1-"),
+    ),
 ]
 
 groups = [
