@@ -68,10 +68,21 @@ widget_list = [
     ),
     widget.CurrentLayout(foreground="bb9af7", background="1a1b26"),
     widget.Spacer(),
+    widget.WindowName(foreground="b4f9f8", background="1a1b26", padding=0),
+    widget.Spacer(),
     widget.TextBox(
         text="",
         font="Ubuntu Mono",
         background="1a1b26",
+        foreground="ff9e64",
+        padding=0,
+        fontsize=37,
+    ),
+    widget.Systray(background="ff9e64", padding=5),
+    widget.TextBox(
+        text="",
+        font="Ubuntu Mono",
+        background="ff9e64",
         foreground="f7768e",
         padding=0,
         fontsize=37,
@@ -226,6 +237,10 @@ if mon_num > 1:
                             this_screen_border="2ac3de",
                         ),
                         widget.CurrentLayout(foreground="bb9af7", background="1a1b26"),
+                        widget.Spacer(),
+                        widget.WindowName(
+                            foreground="b4f9f8", background="1a1b26", padding=0
+                        ),
                         widget.Spacer(),
                         widget.TextBox(
                             text="",
