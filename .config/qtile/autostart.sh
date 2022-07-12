@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 autorandr --change
-feh --recursive --randomize --bg-center --image-bg "#24283b" ~/Pictures/backgrounds/desktop/tokyo-night/
+feh --recursive --randomize --bg-center --image-bg "#24283b" ~/Pictures/backgrounds/desktop/tokyo-night/**/1920x1080/
 picom &
 pasystray &
 source /etc/profile
