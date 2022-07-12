@@ -4,4 +4,3 @@ configuration {
   show-icons:         true;
   icon-theme:         "Papirus";
 }
-/*@theme "/usr/share/rofi/themes/nord.rasi"*/

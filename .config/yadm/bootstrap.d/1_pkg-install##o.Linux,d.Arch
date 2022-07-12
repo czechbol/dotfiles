@@ -1,0 +1,38 @@
+echo "Installing yay"
+git clone https://aur.archlinux.org/yay.git
+(cd yay && makepkg -sic)
+
+echo "Installing X, GPU drivers and LightDM"
+yay -S xorg lightdm lightdm-gtk-greeter mesa
+sudo systemctl enable lightdm
+
+echo "Installing python and LaTeX"
+yay -S python python-pip ipython texlive-core biber
+
+echo "Installing fonts"
+yay -S ttf-ms-fonts noto-fonts noto-fonts-emoji noto-fonts-emoji-flags gnu-free-fonts noto-fonts-cjk ttf-ubuntu-font-family ttf-victor-mono ttf-fira-code nerd-fonts-jetbrains-mono
+
+echo "Setting up shell"
+yay -S zsh ripgrep htop neofetch starship
+git clone --depth 1 -- https://github.com/marlonrichert/zsh-snap.git\
+source zsh-snap/install.zsh
+
+echo "Installing DEs/WMs and other relevant tools"
+yay -S qtile bspwm openbox sxhkd awesome
+yay -S autorandr feh picom kitty maim python-xlib rofi viewnior betterlockscreen gnome-keyring nemo
+
+echo "Installing Themes"
+yay -S lxappearance vimix-cursors vimix-gtk-themes vimix-icon-theme
+
+echo "Installing Pulseaudio"
+yay -S alsa-utils alsa-plugins pulseaudio pulseaudio-alsa pulseaudio-bluetooth pulseaudio-jack pasystray pavucontrol
+
+echo "Installing various tools"
+yay -S bolt ffmpeg zerotier-one dnsutils youtube-dl netdiscover cups cups-pdf jpegoptim nmon openssh optipng pkgstats sshfs ufw unrar unzip usbutils wine wine-mono wine-gecko winetricks
+yay -S file-roller firefox vivaldi vivaldi-ffmpeg-codecs thunderbird discord teamviewer steam-native-runtime gimp inkscape krita pdfchain code neovim minecraft-launcher audacity qbittorrent libreoffice-fresh libreoffice-extension-texmaths libreoffice-extension-writer2latex libreoffice-fresh-cs
+
+
+sudo systemctl enable lightdm.service
+sudo systemctl enable zerotier-one.service
+
+sudo reboot
