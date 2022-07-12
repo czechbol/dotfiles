@@ -90,6 +90,8 @@ case $chosen in
 				i3-msg exit
 			elif [[ "$DESKTOP_SESSION" == "qtile" ]]; then
 				qtile cmd-obj -o cmd -f shutdown
+			elif [[ "$DESKTOP_SESSION" == "hyprland" ]]; then
+				pkill Hyprland
 			fi
 		elif [[ $ans == "no" || $ans == "NO" || $ans == "n" || $ans == "N" ]]; then
 			exit 0

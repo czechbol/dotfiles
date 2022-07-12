@@ -25,14 +25,14 @@
 # SOFTWARE.
 
 
-from screens import screens
-from keys import keys, mouse
-from layouts import layouts
-from groups import groups
-from hooks import *
+from screens import screens  # noqa: F401
+from keys import keys, mouse  # noqa: F401
+from layouts import layouts  # noqa: F401
+from groups import groups  # noqa: F401
+from hooks import *  # noqa: F401, F403
+
 
 dgroups_key_binder = None
-dgroups_app_rules = []
 main = None
 follow_mouse_focus = True
 bring_front_click = True

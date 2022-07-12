@@ -5,6 +5,7 @@ from commands import Commands
 
 mod = "mod4"
 
+
 # BSP resizing taken from https://github.com/qtile/qtile/issues/1402
 def resize(qtile, direction):
     layout = qtile.current_layout
@@ -87,11 +88,86 @@ keys = [
     ),
     Key([mod, "shift"], "Down", lazy.layout.shuffle_down(), desc="Move window down"),
     Key([mod, "shift"], "Up", lazy.layout.shuffle_up(), desc="Move window up"),
+    Key(
+        [mod, "shift"],
+        "1",
+        lazy.window.togroup("1"),
+        desc="Move window to group 1",
+    ),
+    Key(
+        [mod, "shift"],
+        "2",
+        lazy.window.togroup("2"),
+        desc="Move window to group 2",
+    ),
+    Key(
+        [mod, "shift"],
+        "3",
+        lazy.window.togroup("3"),
+        desc="Move window to group 3",
+    ),
+    Key(
+        [mod, "shift"],
+        "4",
+        lazy.window.togroup("4"),
+        desc="Move window to group 4",
+    ),
+    Key(
+        [mod, "shift"],
+        "5",
+        lazy.window.togroup("5"),
+        desc="Move window to group 5",
+    ),
+    Key(
+        [mod, "shift"],
+        "6",
+        lazy.window.togroup("6"),
+        desc="Move window to group 6",
+    ),
+    Key(
+        [mod, "shift"],
+        "7",
+        lazy.window.togroup("7"),
+        desc="Move window to group 7",
+    ),
+    Key(
+        [mod, "shift"],
+        "8",
+        lazy.window.togroup("8"),
+        desc="Move window to group 8",
+    ),
+    Key(
+        [mod, "shift"],
+        "9",
+        lazy.window.togroup("9"),
+        desc="Move window to group 9",
+    ),
+    Key(
+        [mod, "shift"],
+        "0",
+        lazy.window.togroup("0"),
+        desc="Move window to group 0",
+    ),
     # Resize window
-    Key([mod, "control"], "Left", resize_down, desc="Resize window downwards"),
-    Key([mod, "control"], "Right", resize_up, desc="Resize window upwards"),
-    Key([mod, "control"], "Down", resize_left, desc="Resize window to the left"),
-    Key([mod, "control"], "Up", resize_right, desc="Resize window to the right"),
+    Key(
+        [mod, "control"],
+        "Left",
+        lazy.layout.grow_left(),
+        desc="Grow window to the left",
+    ),
+    Key(
+        [mod, "control"],
+        "Right",
+        lazy.layout.grow_right(),
+        desc="Grow window to the right",
+    ),
+    Key(
+        [mod, "control"],
+        "Down",
+        lazy.layout.grow_down(),
+        desc="Grow window downwards",
+    ),
+    Key([mod, "control"], "Up", lazy.layout.grow_up(), desc="Grow window upwards"),
     # Reset
     Key([mod], "n", lazy.layout.normalize(), desc="Reset all window sizes"),
     # Toggle split
