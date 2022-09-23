@@ -27,27 +27,24 @@ chosen="$(echo -e "$options" | $rofi_command -p 'maim' -dmenu -selected-row 1)"
 case $chosen in
     $screen)
 		if [[ -f /usr/bin/maim ]]; then
-			filename=$(date +Screenshot_%Y-%m-%d_%H:%M:%S)
-			path="$(xdg-user-dir PICTURES)/screenshots/$filename"
-			maim -d 1 $path.png; viewnior $path.png
+			path="$(xdg-user-dir PICTURES)/screenshots/$(date +Screenshot_%Y-%m-%d_%H:%M:%S).png"
+			maim -d 1 $path; viewnior $path
 		else
 			msg
 		fi
         ;;
     $area)
 		if [[ -f /usr/bin/maim ]]; then
-			filename=$(date +Screenshot_%Y-%m-%d_%H:%M:%S)
-			path="$(xdg-user-dir PICTURES)/screenshots/$filename"
-			maim -s $path.png; viewnior $path.png
+			path="$(xdg-user-dir PICTURES)/screenshots/$(date +Screenshot_%Y-%m-%d_%H:%M:%S).png"
+			maim -s $path; viewnior $path
 		else
 			msg
 		fi
         ;;
     $window)
 		if [[ -f /usr/bin/maim ]]; then
-			filename=$(date +Screenshot_%Y-%m-%d_%H:%M:%S)
-			path="$(xdg-user-dir PICTURES)/screenshots/$filename"
-			maim -d 1 -u -B -i "$(xdotool getactivewindow)" $path.png; viewnior $path.png
+			path="$(xdg-user-dir PICTURES)/screenshots/$(date +Screenshot_%Y-%m-%d_%H:%M:%S).png"
+			maim -d 1 -u -B -i "$(xdotool getactivewindow)" $path; viewnior $path
 		else
 			msg
 		fi

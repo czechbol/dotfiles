@@ -15,6 +15,7 @@ compinit
 # End of lines added by compinstall
 
 eval "$(starship init zsh)"
+eval "$(direnv hook zsh)"
 
 ## ZSH AUTOCOMPLETE CONFIGURATION
 zstyle ':autocomplete:*' default-context ''
@@ -105,3 +106,4 @@ bindkey -M menuselect '\r' .accept-line
 alias update='flatpak update && yay -Syu'
 export VAULT_ADDR="https://vault.corp.redhat.com:8200"
 export VAULT_NAMESPACE=exd
+export GOBIN=~/.local/bin/
