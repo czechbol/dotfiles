@@ -29,7 +29,7 @@ echo "Installing Pulseaudio"
 yay -S --noconfirm alsa-utils alsa-plugins pulseaudio pulseaudio-alsa pulseaudio-bluetooth pulseaudio-jack pasystray pavucontrol
 
 echo "Installing various tools"
-yay -S --noconfirm bolt ffmpeg zerotier-one direnv dnsutils youtube-dl netdiscover cups cups-pdf jpegoptim nmon openssh optipng pkgstats sshfs ufw unrar unzip usbutils wine wine-mono wine-gecko winetricks
+yay -S --noconfirm bolt ffmpeg zerotier-one python-psutil direnv dnsutils brightnessctl youtube-dl netdiscover cups cups-pdf jpegoptim nmon openssh optipng pkgstats sshfs ufw unrar unzip usbutils wine wine-mono wine-gecko winetricks
 yay -S --noconfirm file-roller firefox vivaldi vivaldi-ffmpeg-codecs thunderbird discord teamviewer steam-native-runtime gimp inkscape krita pdfchain code neovim minecraft-launcher audacity qbittorrent libreoffice-fresh libreoffice-extension-texmaths libreoffice-extension-writer2latex libreoffice-fresh-cs
 
 echo "Enabling services"
