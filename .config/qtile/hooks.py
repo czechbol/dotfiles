@@ -1,9 +1,11 @@
-import os
 import glob
+import os
 import random
 import subprocess
+from time import sleep
 
 from libqtile import hook
+from Xlib import display as xdisplay
 
 
 def get_num_monitors():
@@ -33,9 +35,10 @@ def get_num_monitors():
 def start_once():
     home = os.path.expanduser("~")
     subprocess.call([home + "/.config/qtile/autostart.sh"])
+    subprocess.Popen(["/opt/piavpn/bin/pia-client"] + ["%u"] + ["--quiet"])
 
 
-@hook.subscribe.startup_complete
+@hook.subscribe.screen_change
 def screen_change():
     home = os.path.expanduser("~")
     mon_num = get_num_monitors()
@@ -47,10 +50,11 @@ def screen_change():
         f"{home}/Pictures/backgrounds/desktop/tokyo-night/*/1920x1080/*.png"
     )
     for i in range(mon_num):
+        print(i)
         cmd_str.extend(
             ["-u", random.choice(random.choice([avogadr_files, other_files]))]
         )
-    subprocess.call(cmd_str)
+    subprocess.Popen(cmd_str)
 
 
 # Always display launcher in current group

@@ -27,7 +27,7 @@ chosen="$(echo -e "$options" | $rofi_command -p 'maim' -dmenu -selected-row 1)"
 case $chosen in
     $screen)
 		if [[ -f /usr/bin/maim ]]; then
-			path="$(xdg-user-dir PICTURES)/screenshots/$(date +Screenshot_%Y-%m-%d_%H:%M:%S).png"
+			path="$HOME/Pictures/screenshots/$(date +Screenshot_%Y-%m-%d_%H:%M:%S).png"
 			maim -d 1 $path; viewnior $path
 		else
 			msg
@@ -35,7 +35,8 @@ case $chosen in
         ;;
     $area)
 		if [[ -f /usr/bin/maim ]]; then
-			path="$(xdg-user-dir PICTURES)/screenshots/$(date +Screenshot_%Y-%m-%d_%H:%M:%S).png"
+			path="$HOME/Pictures/screenshots/$(date +Screenshot_%Y-%m-%d_%H:%M:%S).png"
+			echo $path
 			maim -s $path; viewnior $path
 		else
 			msg
@@ -43,7 +44,7 @@ case $chosen in
         ;;
     $window)
 		if [[ -f /usr/bin/maim ]]; then
-			path="$(xdg-user-dir PICTURES)/screenshots/$(date +Screenshot_%Y-%m-%d_%H:%M:%S).png"
+			path="$HOME/Pictures/screenshots/$(date +Screenshot_%Y-%m-%d_%H:%M:%S).png"
 			maim -d 1 -u -B -i "$(xdotool getactivewindow)" $path; viewnior $path
 		else
 			msg
