@@ -2,7 +2,6 @@ import glob
 import os
 import random
 import subprocess
-from time import sleep
 
 from libqtile import hook
 from Xlib import display as xdisplay
@@ -50,10 +49,20 @@ def screen_change():
         f"{home}/Pictures/backgrounds/desktop/tokyo-night/*/1920x1080/*.png"
     )
     for i in range(mon_num):
-        print(i)
         cmd_str.extend(
             ["-u", random.choice(random.choice([avogadr_files, other_files]))]
         )
+    subprocess.Popen(
+        [
+            "feh",
+            "--recursive",
+            "--randomize",
+            "--bg-center",
+            "--image-bg",
+            "#24283b",
+            "~/Pictures/backgrounds/desktop/tokyo-night/**/1920x1080/",
+        ]
+    )
     subprocess.Popen(cmd_str)
 
 

@@ -5,6 +5,7 @@ from commands import Commands
 
 mod = "mod4"
 
+NUMBERS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
 
 # BSP resizing taken from https://github.com/qtile/qtile/issues/1402
 def resize(qtile, direction):
@@ -88,66 +89,6 @@ keys = [
     ),
     Key([mod, "shift"], "Down", lazy.layout.shuffle_down(), desc="Move window down"),
     Key([mod, "shift"], "Up", lazy.layout.shuffle_up(), desc="Move window up"),
-    Key(
-        [mod, "shift"],
-        "1",
-        lazy.window.togroup("1"),
-        desc="Move window to group 1",
-    ),
-    Key(
-        [mod, "shift"],
-        "2",
-        lazy.window.togroup("2"),
-        desc="Move window to group 2",
-    ),
-    Key(
-        [mod, "shift"],
-        "3",
-        lazy.window.togroup("3"),
-        desc="Move window to group 3",
-    ),
-    Key(
-        [mod, "shift"],
-        "4",
-        lazy.window.togroup("4"),
-        desc="Move window to group 4",
-    ),
-    Key(
-        [mod, "shift"],
-        "5",
-        lazy.window.togroup("5"),
-        desc="Move window to group 5",
-    ),
-    Key(
-        [mod, "shift"],
-        "6",
-        lazy.window.togroup("6"),
-        desc="Move window to group 6",
-    ),
-    Key(
-        [mod, "shift"],
-        "7",
-        lazy.window.togroup("7"),
-        desc="Move window to group 7",
-    ),
-    Key(
-        [mod, "shift"],
-        "8",
-        lazy.window.togroup("8"),
-        desc="Move window to group 8",
-    ),
-    Key(
-        [mod, "shift"],
-        "9",
-        lazy.window.togroup("9"),
-        desc="Move window to group 9",
-    ),
-    Key(
-        [mod, "shift"],
-        "0",
-        lazy.window.togroup("0"),
-        desc="Move window to group 0",
-    ),
     # Resize window
     Key(
         [mod, "control"],
@@ -240,6 +181,26 @@ keys = [
     # Multi-screen test (not very convincing)
     Key([mod], "Escape", lazy.next_screen()),
 ]
+
+# Working with groups
+for num in NUMBERS:
+    keys.append(
+        Key(
+            [mod],
+            num,
+            lazy.group[num].toscreen(),
+            desc=f"Switch to group {num}",
+        )
+    )
+    keys.append(
+        Key(
+            [mod, "shift"],
+            num,
+            lazy.window.togroup(num),
+            desc=f"Move window to group {num}",
+        )
+    )
+
 
 mouse = [
     Drag(
