@@ -43,10 +43,10 @@ def screen_change():
     mon_num = get_num_monitors()
     cmd_str = ["betterlockscreen"]
     avogadr_files = glob.glob(
-        f"{home}/Pictures/backgrounds/desktop/tokyo-night/*/1920x1080/**/*.png"
+        f"{home}/Pictures/backgrounds/desktop/tokyo-night/**/**/*.png"
     )
     other_files = glob.glob(
-        f"{home}/Pictures/backgrounds/desktop/tokyo-night/*/1920x1080/*.png"
+        f"{home}/Pictures/backgrounds/desktop/tokyo-night/**/*.png"
     )
     for i in range(mon_num):
         cmd_str.extend(
@@ -60,7 +60,7 @@ def screen_change():
             "--bg-center",
             "--image-bg",
             "#24283b",
-            "~/Pictures/backgrounds/desktop/tokyo-night/**/1920x1080/",
+            "~/Pictures/backgrounds/desktop/tokyo-night/",
         ]
     )
     subprocess.Popen(cmd_str)

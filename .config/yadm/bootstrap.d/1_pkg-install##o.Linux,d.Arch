@@ -14,22 +14,22 @@ echo "Installing fonts"
 yay -S --noconfirm ttf-ms-fonts noto-fonts noto-fonts-emoji noto-fonts-emoji-flags gnu-free-fonts noto-fonts-cjk ttf-ubuntu-font-family ttf-victor-mono ttf-fira-code nerd-fonts-jetbrains-mono
 
 echo "Setting up shell"
-yay -S --noconfirm zsh ripgrep htop neofetch starship
+yay -S --noconfirm zsh ripgrep htop neofetch starship direnv
 git clone --depth 1 -- https://github.com/marlonrichert/zsh-snap.git
 source zsh-snap/install.zsh
 
 echo "Installing DEs/WMs and other relevant tools"
 yay -S --noconfirm qtile bspwm openbox sxhkd awesome
-yay -S --noconfirm autorandr feh picom kitty maim python-xlib rofi viewnior betterlockscreen gnome-keyring nemo
+yay -S --noconfirm autorandr feh picom kitty maim python-xlib rofi viewnior betterlockscreen gnome-keyring nemo brightnessctl wireless_tools bmon 
 
 echo "Installing Themes"
-yay -S --noconfirm lxappearance vimix-cursors vimix-gtk-themes vimix-icon-theme
+yay -S --noconfirm lxappearance vimix-cursors vimix-gtk-themes vimix-icon-theme redshift redshiftgui-bin
 
 echo "Installing Pulseaudio"
 yay -S --noconfirm alsa-utils alsa-plugins pulseaudio pulseaudio-alsa pulseaudio-bluetooth pulseaudio-jack pasystray pavucontrol
 
 echo "Installing various tools"
-yay -S --noconfirm bolt ffmpeg zerotier-one python-psutil direnv dnsutils brightnessctl youtube-dl netdiscover cups cups-pdf jpegoptim nmon openssh optipng pkgstats sshfs ufw unrar unzip usbutils wine wine-mono wine-gecko winetricks
+yay -S --noconfirm bolt ffmpeg zerotier-one python-psutil dnsutils brightnessctl youtube-dl netdiscover cups cups-pdf jpegoptim nmon openssh optipng pkgstats sshfs ufw unrar unzip usbutils wine wine-mono wine-gecko winetricks
 yay -S --noconfirm file-roller firefox vivaldi vivaldi-ffmpeg-codecs thunderbird discord teamviewer steam-native-runtime gimp inkscape krita pdfchain code neovim minecraft-launcher audacity qbittorrent libreoffice-fresh libreoffice-extension-texmaths libreoffice-extension-writer2latex libreoffice-fresh-cs
 
 echo "Enabling services"

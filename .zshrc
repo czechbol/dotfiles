@@ -74,6 +74,13 @@ znap source marlonrichert/zsh-autocomplete
 # NOTE: All configuration below should come AFTER sourcing zsh-autocomplete!
 #
 
+# Home key
+bindkey  "^[[H"   beginning-of-line
+# End key
+bindkey  "^[[F"   end-of-line
+# Delete key
+bindkey  "^[[3~"  delete-char
+
 # Up arrow:
 bindkey '\e[A' up-line-or-search
 bindkey '\eOA' up-line-or-search
