@@ -1,9 +1,48 @@
+import glob
+import os
+import random
+
 from libqtile import bar, widget
 from libqtile.config import Screen
 from libqtile.lazy import lazy
 from Xlib import display as xdisplay
 
 from commands import Commands
+from funcs import get_num_monitors, get_rand_wallpaper
+
+
+def get_num_monitors():
+    num_monitors = 0
+    try:
+        display = xdisplay.Display()
+        screen = display.screen()
+        resources = screen.root.xrandr_get_screen_resources()
+
+        for output in resources.outputs:
+            monitor = display.xrandr_get_output_info(output, resources.config_timestamp)
+            preferred = False
+            if hasattr(monitor, "preferred"):
+                preferred = monitor.preferred
+            elif hasattr(monitor, "num_preferred"):
+                preferred = monitor.num_preferred
+            if preferred:
+                num_monitors += 1
+    except Exception as e:
+        # always setup at least one monitor
+        return 1
+    else:
+        return num_monitors
+
+
+def get_rand_wallpaper():
+    home = os.path.expanduser("~")
+    avogadr_files = glob.glob(
+        f"{home}/Pictures/backgrounds/desktop/tokyo-night/**/1920x1080/**/*.png"
+    )
+    other_files = glob.glob(
+        f"{home}/Pictures/backgrounds/desktop/tokyo-night/**/1920x1080/*.png"
+    )
+    return random.choice(random.choice([avogadr_files, other_files]))
 
 
 separator_defaults = dict(
@@ -147,6 +186,7 @@ widget_list = [
     ),
 ]
 
+
 screens = [
     Screen(
         top=bar.Bar(
@@ -154,31 +194,9 @@ screens = [
             size=20,
             widgets=widget_list,
         ),
+        wallpaper=get_rand_wallpaper(),
     ),
 ]
-
-
-def get_num_monitors():
-    num_monitors = 0
-    try:
-        display = xdisplay.Display()
-        screen = display.screen()
-        resources = screen.root.xrandr_get_screen_resources()
-
-        for output in resources.outputs:
-            monitor = display.xrandr_get_output_info(output, resources.config_timestamp)
-            preferred = False
-            if hasattr(monitor, "preferred"):
-                preferred = monitor.preferred
-            elif hasattr(monitor, "num_preferred"):
-                preferred = monitor.num_preferred
-            if preferred:
-                num_monitors += 1
-    except Exception as e:
-        # always setup at least one monitor
-        return 1
-    else:
-        return num_monitors
 
 
 mon_num = get_num_monitors()
@@ -301,5 +319,6 @@ if mon_num > 1:
                     20,
                     background="1a1b26",
                 ),
+                wallpaper=get_rand_wallpaper(),
             ),
         )

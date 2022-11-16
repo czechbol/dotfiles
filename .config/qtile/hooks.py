@@ -6,28 +6,24 @@ import subprocess
 from libqtile import hook
 from Xlib import display as xdisplay
 
+from funcs import get_num_monitors, get_rand_wallpaper
 
-def get_num_monitors():
-    num_monitors = 0
-    try:
-        display = xdisplay.Display()
-        screen = display.screen()
-        resources = screen.root.xrandr_get_screen_resources()
 
-        for output in resources.outputs:
-            monitor = display.xrandr_get_output_info(output, resources.config_timestamp)
-            preferred = False
-            if hasattr(monitor, "preferred"):
-                preferred = monitor.preferred
-            elif hasattr(monitor, "num_preferred"):
-                preferred = monitor.num_preferred
-            if preferred:
-                num_monitors += 1
-    except Exception as e:
-        # always setup at least one monitor
-        return 1
-    else:
-        return num_monitors
+def lock_update():
+    home = os.path.expanduser("~")
+    mon_num = get_num_monitors()
+    cmd_str = ["betterlockscreen"]
+    avogadr_files = glob.glob(
+        f"{home}/Pictures/backgrounds/desktop/tokyo-night/**/1920x1080/**/*.png"
+    )
+    other_files = glob.glob(
+        f"{home}/Pictures/backgrounds/desktop/tokyo-night/**/1920x1080/*.png"
+    )
+    for i in range(mon_num):
+        cmd_str.extend(
+            ["-u", random.choice(random.choice([avogadr_files, other_files]))]
+        )
+    subprocess.Popen(cmd_str)
 
 
 @hook.subscribe.startup_complete
@@ -37,32 +33,13 @@ def start_once():
     subprocess.Popen(["/opt/piavpn/bin/pia-client"] + ["%u"] + ["--quiet"])
 
 
-@hook.subscribe.screen_change
+@hook.subscribe.screens_reconfigured
 def screen_change():
-    home = os.path.expanduser("~")
     mon_num = get_num_monitors()
     cmd_str = ["betterlockscreen"]
-    avogadr_files = glob.glob(
-        f"{home}/Pictures/backgrounds/desktop/tokyo-night/**/**/*.png"
-    )
-    other_files = glob.glob(
-        f"{home}/Pictures/backgrounds/desktop/tokyo-night/**/*.png"
-    )
+
     for i in range(mon_num):
-        cmd_str.extend(
-            ["-u", random.choice(random.choice([avogadr_files, other_files]))]
-        )
-    subprocess.Popen(
-        [
-            "feh",
-            "--recursive",
-            "--randomize",
-            "--bg-center",
-            "--image-bg",
-            "#24283b",
-            "~/Pictures/backgrounds/desktop/tokyo-night/",
-        ]
-    )
+        cmd_str.extend(["-u", get_rand_wallpaper()])
     subprocess.Popen(cmd_str)
 
 

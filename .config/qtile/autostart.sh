@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 autorandr --change && \
-feh --recursive --randomize --bg-center --image-bg "#24283b" ~/Pictures/backgrounds/desktop/tokyo-night/**/1920x1080/ && \
 picom & \
 pasystray & \
 /usr/lib/geoclue-2.0/demos/agent & \

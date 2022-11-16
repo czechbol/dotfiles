@@ -36,9 +36,10 @@ dgroups_key_binder = None
 main = None
 follow_mouse_focus = True
 bring_front_click = True
-cursor_warp = False
+cursor_warp = True
 
 auto_fullscreen = True
+reconfigure_screens = True
 focus_on_window_activation = "smart"
 
 # XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this

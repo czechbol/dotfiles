@@ -8,6 +8,21 @@ unsetopt beep notify
 bindkey -e
 # End of lines configured by zsh-newuser-install
 # The following lines were added by compinstall
+zstyle ':completion:*' completer _expand _complete _ignored _approximate
+zstyle ':completion:*' expand prefix suffix
+zstyle ':completion:*' file-sort name
+zstyle ':completion:*' format 'Completing %d'
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
+zstyle ':completion:*' matcher-list '' 'r:|[._-]=* r:|=*' 'm:{[:lower:]}={[:upper:]}' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*'
+zstyle ':completion:*' menu select=long
+zstyle ':completion:*' preserve-prefix '//[^/]##/'
+zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
+zstyle ':completion:*' squeeze-slashes true
+zstyle ':completion:*' use-compctl false
+zstyle ':completion:*' verbose true
+
 zstyle :compinstall filename '/home/aludes/.zshrc'
 
 autoload -Uz compinit
@@ -48,7 +63,7 @@ zstyle ':autocomplete:*' recent-dirs cdr
 # zsh-z|zoxide|z.lua|z.sh|autojump|fasd: Use this instead (if installed).
 # ⚠️ NOTE: This setting can NOT be changed at runtime.
 
-zstyle ':autocomplete:*' insert-unambiguous no
+zstyle ':autocomplete:*' insert-unambiguous yes
 # no:  Tab inserts the top completion.
 # yes: Tab first inserts a substring common to all listed completions, if any.
 
