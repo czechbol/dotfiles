@@ -159,7 +159,7 @@ keys = [
     Key([mod], "Return", lazy.spawn(Commands.terminal), desc="Launch terminal"),
     # Qtile utility shortcuts
     Key([mod, "shift"], "q", lazy.window.kill(), desc="Kill focused window"),
-    Key([mod, "shift"], "r", lazy.reload_config(), desc="Reload the config"),
+    Key([mod, "shift"], "r", lazy.restart(), desc="Restart qtile"),
     # Audio controls with amixer
     Key([], "XF86AudioMute", lazy.spawn("amixer sset 'Master' toggle")),
     Key([], "XF86AudioLowerVolume", lazy.spawn("amixer sset 'Master' 5%-")),
