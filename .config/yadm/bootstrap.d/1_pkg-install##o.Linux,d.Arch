@@ -20,7 +20,7 @@ source zsh-snap/install.zsh
 
 echo "Installing DEs/WMs and other relevant tools"
 yay -S --noconfirm qtile bspwm openbox sxhkd awesome
-yay -S --noconfirm autorandr feh picom kitty maim python-xlib rofi viewnior betterlockscreen gnome-keyring nemo brightnessctl wireless_tools bmon ntfs-3g gvfs-mtp
+yay -S --noconfirm autorandr feh picom kitty maim python-xlib rofi viewnior betterlockscreen gnome-keyring nemo brightnessctl wireless_tools bmon ntfs-3g gvfs-mtp numlockx lightdm-gtk-greeter-settings
 
 echo "Installing Themes"
 yay -S --noconfirm lxappearance vimix-cursors vimix-gtk-themes vimix-icon-theme redshift redshiftgui-bin

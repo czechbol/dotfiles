@@ -3,7 +3,7 @@ python python-pip ipython texlive-bibtexextra texlive-bin texlive-bin texlive-co
 ttf-ms-fonts noto-fonts noto-fonts-emoji noto-fonts-emoji-flags gnu-free-fonts noto-fonts-cjk ttf-ubuntu-font-family ttf-victor-mono ttf-fira-code nerd-fonts-jetbrains-mono \
 zsh ripgrep htop neofetch starship direnv \
 qtile bspwm openbox sxhkd awesome \
-autorandr feh picom kitty maim python-xlib rofi viewnior betterlockscreen gnome-keyring nemo brightnessctl wireless_tools bmon ntfs-3g gvfs-mtp \
+autorandr feh picom kitty maim python-xlib rofi viewnior betterlockscreen gnome-keyring nemo brightnessctl wireless_tools bmon ntfs-3g gvfs-mtp numlockx lightdm-gtk-greeter-settings \
 lxappearance vimix-cursors vimix-gtk-themes vimix-icon-theme redshift redshiftgui-bin \
 sof-firmware alsa-card-profiles alsa-firmware alsa-lib alsa-plugins alsa-topology-conf alsa-ucm-conf alsa-utils \
 lib32-pipewire pipewire pipewire-audio pipewire-pulse  wireplumber pasystray pavucontrol \
