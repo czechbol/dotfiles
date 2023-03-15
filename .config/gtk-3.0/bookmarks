@@ -1,5 +1,7 @@
-file:///home/aludes Home
-file:///home/aludes/Downloads Downloads
-file:///home/aludes/Pictures Pictures
-file:///home/aludes/Projects Projects
-sftp://naspi/mnt/RPiHDD RPiHDD
+file:///home/aludes/Documents
+file:///home/aludes/Music
+file:///home/aludes/Pictures
+file:///home/aludes/Videos
+file:///home/aludes/Downloads
+sftp://naspi/home/aludes naspi
+sftp://eilith/home/aludes eilith

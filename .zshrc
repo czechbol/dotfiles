@@ -1,9 +1,15 @@
+# Download Znap, if it's not there yet.
+[[ -f ~/.znap/zsh-snap/znap.zsh ]] ||
+    git clone --depth 1 -- \
+        https://github.com/marlonrichert/zsh-snap.git ~/.znap/zsh-snap
+
+zstyle ':znap:*' repos-dir ~/.znap
 source ~/.znap/zsh-snap/znap.zsh
 # Lines configured by zsh-newuser-install
 HISTFILE=~/.histfile
 HISTSIZE=100000
 SAVEHIST=1000
-setopt autocd extendedglob nomatch
+# setopt autocd extendedglob nomatch
 unsetopt beep notify
 bindkey -e
 # End of lines configured by zsh-newuser-install
@@ -82,7 +88,7 @@ zstyle ':autocomplete:*' fzf-completion no
 # Add a space after these completions:
 zstyle ':autocomplete:*' add-space \
     executables aliases functions builtins reserved-words commands
-
+zstyle ':autocomplete:*' async off
 
 znap source marlonrichert/zsh-autocomplete
 ##
@@ -125,7 +131,13 @@ bindkey -M menuselect '\r' .accept-line
 
 
 
-alias update='flatpak update && yay -Syu'
+alias update='sudo dnf update -y && flatpak update'
 export VAULT_ADDR="https://vault.corp.redhat.com:8200"
 export VAULT_NAMESPACE=exd
-export GOBIN=~/.local/bin/
+export GOPATH=~/go
+export GOBIN=~/go/bin/
+export PATH="$PATH:$(go env GOPATH)/bin"
+export PATH="$PATH:$HOME/.cargo/bin"
+export PATH="$PATH:/usr/local/go/bin"
+
+eval $(thefuck --alias)
