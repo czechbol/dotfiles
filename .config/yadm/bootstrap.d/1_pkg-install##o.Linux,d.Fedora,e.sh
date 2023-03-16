@@ -1,0 +1,18 @@
+sudo dnf install \ 
+    python3 python3-pip ipython texlive-scheme-basic texlive-cite texlive-latexindent latexmk cmake sqlite rust cargo ansible podman \
+    'google-roboto*' 'mozilla-fira*' fira-code-fonts \
+    kitty neovim zsh ripgrep htop neofetch direnv unzip p7zip p7zip-plugins unrar tlp tlp-rdw ImageMagick dnf-utils wine winetricks \
+    qdirstat blender gimp inkscape gparted vlc \
+    gnome-extensions-app rpi-imager gnome-tweak-tool \
+    codium vivaldi-stable yadm
+
+curl -LO https://get.golang.org/$(uname)/go_installer && chmod +x go_installer && ./go_installer && rm go_installer
+curl -sS https://starship.rs/install.sh | sh
+
+sudo chsh -s $(which zsh) $USER
+gsettings set org.gnome.desktop.input-sources show-all-sources true
+
+sudo fwupdmgr refresh --force
+sudo fwupdmgr get-updates
+sudo fwupdmgr update
+
