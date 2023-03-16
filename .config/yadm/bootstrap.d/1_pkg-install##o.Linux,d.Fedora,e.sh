@@ -9,10 +9,12 @@ sudo dnf install \
 curl -LO https://get.golang.org/$(uname)/go_installer && chmod +x go_installer && ./go_installer && rm go_installer
 curl -sS https://starship.rs/install.sh | sh
 
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak install flathub com.spotify.Client flatpak install flathub com.discordapp.Discord
+
 sudo chsh -s $(which zsh) $USER
 gsettings set org.gnome.desktop.input-sources show-all-sources true
 
 sudo fwupdmgr refresh --force
 sudo fwupdmgr get-updates
 sudo fwupdmgr update
-
