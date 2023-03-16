@@ -5,7 +5,7 @@ sudo dnf install \
     kitty neovim zsh ripgrep htop neofetch direnv unzip p7zip p7zip-plugins unrar tlp tlp-rdw ImageMagick dnf-utils wine winetricks \
     qdirstat blender gimp inkscape gparted vlc \
     gnome-extensions-app rpi-imager gnome-tweak-tool \
-    codium vivaldi-stable yadm
+    codium vivaldi-stable
 
 
 curl -LO https://get.golang.org/$(uname)/go_installer && chmod +x go_installer && ./go_installer && rm go_installer
