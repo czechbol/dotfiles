@@ -12,7 +12,6 @@ sudo dnf config-manager \
 sudo dnf upgrade --refresh -y
 sudo dnf update
 
-
 dnf install --downloadonly \ 
     python3 python3-pip ipython texlive-scheme-basic texlive-cite texlive-latexindent latexmk cmake sqlite rust cargo ansible podman gcc-go \
     docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin \
@@ -21,4 +20,3 @@ dnf install --downloadonly \
     qdirstat blender gimp inkscape gparted vlc \
     gnome-extensions-app rpi-imager gnome-tweak-tool \
     codium vivaldi-stable yadm
-
