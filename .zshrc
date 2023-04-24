@@ -51,11 +51,9 @@ bindkey  "^[[F"   end-of-line
 bindkey  "^[[3~"  delete-char
 
 alias update='sudo dnf update -y && flatpak update'
-export VAULT_ADDR="https://vault.corp.redhat.com:8200"
-export VAULT_NAMESPACE=exd
 export GOPATH=~/go
 export GOBIN=~/go/bin/
-export PATH="$PATH:$(go env GOPATH)/bin"
+export PATH="$PATH:$GOPATH/bin"
 export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:/usr/local/go/bin"
 
