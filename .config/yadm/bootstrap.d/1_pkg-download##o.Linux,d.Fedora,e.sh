@@ -11,10 +11,5 @@ sudo dnf config-manager \
 sudo dnf upgrade --refresh -y
 sudo dnf update
 
-dnf install --downloadonly \ 
-    python3 python3-pip ipython texlive-scheme-basic texlive-cite texlive-latexindent latexmk cmake sqlite rust cargo ansible podman \
-    'google-roboto*' 'mozilla-fira*' fira-code-fonts \
-    kitty neovim zsh ripgrep htop neofetch direnv unzip p7zip p7zip-plugins unrar tlp tlp-rdw ImageMagick dnf-utils wine winetricks \
-    qdirstat blender gimp inkscape gparted vlc \
-    gnome-extensions-app rpi-imager gnome-tweak-tool \
-    codium vivaldi-stable
+sudo dnf -y install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+
