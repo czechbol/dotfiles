@@ -6,9 +6,9 @@
 zstyle ':znap:*' repos-dir ~/.znap
 source ~/.znap/zsh-snap/znap.zsh
 # Lines configured by zsh-newuser-install
-HISTFILE=~/.histfile
+HISTFILE=~/.zsh_history
 HISTSIZE=100000
-SAVEHIST=1000
+SAVEHIST=10000
 # setopt autocd extendedglob nomatch
 unsetopt beep notify
 bindkey -e
