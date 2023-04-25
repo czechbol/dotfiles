@@ -50,7 +50,21 @@ bindkey  "^[[F"   end-of-line
 # Delete key
 bindkey  "^[[3~"  delete-char
 
+# Up arrow:
+bindkey "^[[A" up-line-or-search
+# Down arrow:
+bindkey "^[[B" down-line-or-select
+
+# Return key in completion menu & history menu:
+bindkey -M menuselect '\r' .accept-line
+# .accept-line: Accept command line.
+# accept-line:  Accept selection and exit menu.
+
+
+
+
 alias update='sudo dnf update -y && flatpak update'
+alias dotupdate='yadm add -u && yadm commit -m update && yadm push'
 export GOPATH=~/go
 export GOBIN=~/go/bin/
 export PATH="$PATH:$GOPATH/bin"
