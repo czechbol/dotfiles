@@ -38,6 +38,15 @@ compinit
 eval "$(starship init zsh)"
 eval "$(direnv hook zsh)"
 
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+
+znap source marlonrichert/zsh-autocomplete
+znap source zsh-users/zsh-autosuggestions
+znap source zsh-users/zsh-syntax-highlighting
+znap source ael-code/zsh-colored-man-pages
 
 # Home key
 bindkey  "^[[H"   beginning-of-line
@@ -47,25 +56,9 @@ bindkey  "^[[F"   end-of-line
 bindkey  "^[[3~"  delete-char
 
 # Up arrow:
-bindkey '\e[A' up-line-or-search
-bindkey '\eOA' up-line-or-search
-# up-line-or-search:  Open history menu.
-# up-line-or-history: Cycle to previous history line.
-
+bindkey "^[[A" up-line-or-beginning-search
 # Down arrow:
-bindkey '\e[B' down-line-or-select
-bindkey '\eOB' down-line-or-select
-# down-line-or-select:  Open completion menu.
-# down-line-or-history: Cycle to next history line.
-
-# Control-Space:
-bindkey '\0' list-expand
-# list-expand:      Reveal hidden completions.
-# set-mark-command: Activate text selection.
-
-# Uncomment the following lines to disable live history search:
-# zle -A {.,}history-incremental-search-forward
-# zle -A {.,}history-incremental-search-backward
+bindkey "^[[B" down-line-or-beginning-search
 
 # Return key in completion menu & history menu:
 bindkey -M menuselect '\r' .accept-line
