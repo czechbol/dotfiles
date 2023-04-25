@@ -40,3 +40,4 @@ export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:/usr/local/go/bin"
 
 eval $(thefuck --alias)
+. "$HOME/.cargo/env"

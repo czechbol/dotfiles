@@ -43,6 +43,8 @@ znap source zsh-users/zsh-autosuggestions
 znap source zsh-users/zsh-syntax-highlighting
 znap source ael-code/zsh-colored-man-pages
 
+bindkey '\t' menu-select "$terminfo[kcbt]" menu-select
+
 # Home key
 bindkey  "^[[H"   beginning-of-line
 # End key
@@ -55,8 +57,12 @@ bindkey "^[[A" up-line-or-search
 # Down arrow:
 bindkey "^[[B" down-line-or-select
 
+
+
 # Return key in completion menu & history menu:
-bindkey -M menuselect '\r' .accept-line
+bindkey -M menuselect '\r' accept-line
+bindkey -M menuselect '^[[C' accept-line
+bindkey -M menuselect '^[[D' accept-line
 # .accept-line: Accept command line.
 # accept-line:  Accept selection and exit menu.
 
