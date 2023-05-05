@@ -60,7 +60,7 @@ bindkey "^[[B" down-line-or-select
 
 
 # Return key in completion menu & history menu:
-bindkey -M menuselect '\r' accept-line
+bindkey -M menuselect '\r' .accept-line
 bindkey -M menuselect '^[[C' accept-line
 bindkey -M menuselect '^[[D' accept-line
 # .accept-line: Accept command line.
@@ -74,7 +74,7 @@ alias dotupdate='yadm add -u && yadm commit -m update && yadm push'
 export GOPATH=~/go
 export GOBIN=~/go/bin/
 export PATH="$PATH:$GOPATH/bin"
-export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:/usr/local/go/bin"
+export PATH="$PATH:~/.npm-global/bin"
 
 eval $(thefuck --alias)

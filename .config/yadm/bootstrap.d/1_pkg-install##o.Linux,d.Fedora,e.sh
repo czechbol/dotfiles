@@ -6,7 +6,7 @@ sudo dnf -y install \
     gnome-extensions-app rpi-imager gnome-tweak-tool \
     codium vivaldi-stable
 
-curl -sS https://starship.rs/install.sh | sh
+curl -sS https://raw.githubusercontent.com/starship/starship/master/install/install.sh | sh
 
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 flatpak install flathub com.spotify.Client com.discordapp.Discord
