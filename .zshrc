@@ -9,7 +9,7 @@ source ~/.znap/zsh-snap/znap.zsh
 HISTFILE=~/.zsh_history
 HISTSIZE=100000
 SAVEHIST=10000
-# setopt autocd extendedglob nomatch
+
 unsetopt beep notify
 bindkey -e
 # End of lines configured by zsh-newuser-install
@@ -57,7 +57,8 @@ bindkey "^[[A" up-line-or-search
 # Down arrow:
 bindkey "^[[B" down-line-or-select
 
-
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
 
 # Return key in completion menu & history menu:
 bindkey -M menuselect '\r' .accept-line
@@ -71,10 +72,11 @@ bindkey -M menuselect '^[[D' accept-line
 
 alias update='sudo dnf update -y && flatpak update'
 alias dotupdate='yadm add -u && yadm commit -m update && yadm push'
-export GOPATH=~/go
-export GOBIN=~/go/bin/
+alias gmt='go mod tidy'
+alias dk='docker kill $(docker ps -q)'
+export GOPATH=$HOME/go
+export GOBIN=$HOME/go/bin/
 export PATH="$PATH:$GOPATH/bin"
 export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:/usr/local/go/bin"
-
-eval $(thefuck --alias)
+export PATH=$PATH:/home/aludes/.spicetify
