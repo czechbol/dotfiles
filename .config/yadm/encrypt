@@ -1,3 +1,4 @@
 .gitconfig
 .ssh/*
+.config/yadm/config
 Projects/**/.gitconfig*
