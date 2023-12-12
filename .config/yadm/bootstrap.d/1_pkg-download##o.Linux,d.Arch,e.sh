@@ -1,5 +1,5 @@
 yay -Sw xorg lightdm lightdm-gtk-greeter mesa \
-python python-pip ipython texlive-bibtexextra texlive-bin texlive-bin texlive-core texlive-fontsextra texlive-langgreek texlive-latexextra texlive-latexindent-meta biber \
+python python-pip ipython \
 ttf-ms-fonts noto-fonts noto-fonts-emoji noto-fonts-emoji-flags gnu-free-fonts noto-fonts-cjk ttf-ubuntu-font-family ttf-victor-mono ttf-fira-code nerd-fonts-jetbrains-mono \
 zsh ripgrep htop neofetch starship direnv \
 qtile bspwm openbox sxhkd awesome \

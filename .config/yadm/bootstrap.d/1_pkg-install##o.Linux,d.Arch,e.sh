@@ -8,15 +8,13 @@ yay -S --noconfirm xorg lightdm lightdm-gtk-greeter mesa
 sudo systemctl enable lightdm
 
 echo "Installing python and LaTeX"
-yay -S --noconfirm python python-pip ipython texlive-bibtexextra texlive-bin texlive-bin texlive-core texlive-fontsextra texlive-langgreek texlive-latexextra texlive-latexindent-meta biber
+yay -S --noconfirm python python-pip ipython go
 
 echo "Installing fonts"
 yay -S --noconfirm ttf-ms-fonts noto-fonts noto-fonts-emoji noto-fonts-emoji-flags gnu-free-fonts noto-fonts-cjk ttf-ubuntu-font-family ttf-victor-mono ttf-fira-code nerd-fonts-jetbrains-mono
 
 echo "Setting up shell"
 yay -S --noconfirm zsh ripgrep htop neofetch starship direnv
-git clone --depth 1 -- https://github.com/marlonrichert/zsh-snap.git
-source zsh-snap/install.zsh
 
 echo "Installing DEs/WMs and other relevant tools"
 yay -S --noconfirm qtile bspwm openbox sxhkd awesome

@@ -7,7 +7,8 @@ sudo dnf -y install \
     gnome-extensions-app rpi-imager gnome-tweak-tool \
     code vivaldi-stable
 
-sudo systemctl enable docker --now
+sudo systemctl enable --now docker
+sudo systemctl enable --now bluetooth
 sudo usermod -aG docker $USER
 
 curl -sS https://raw.githubusercontent.com/starship/starship/master/install/install.sh | sh
