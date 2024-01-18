@@ -21,13 +21,12 @@ select-word-style bash
 
 eval "$(starship init zsh)"
 eval "$(direnv hook zsh)"
-source <(kubectl completion zsh)
 
 # key bindings
 bindkey '^H' backward-kill-word
 bindkey '5~' kill-word
 
-alias update='sudo dnf update -y && flatpak update'
+alias update='sudo apt update && sudo apt full-upgrade'
 alias dotupdate='yadm add -u && yadm commit -m update && yadm push'
 alias gmt='go mod tidy'
 alias dk='docker kill $(docker ps -q)'
@@ -39,4 +38,3 @@ export PATH="$PATH:$GOPATH/bin"
 export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:/usr/local/go/bin"
 export PATH="$PATH:/home/aludes/.local/bin"
-export PATH=$PATH:/home/aludes/.spicetify
