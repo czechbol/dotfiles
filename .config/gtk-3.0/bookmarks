@@ -1,8 +1,9 @@
-sftp://naspi/mnt/RPiHDD
-file:///home/aludes/Projects
-file:///home/aludes/Documents
-file:///home/aludes/Music
-file:///home/aludes/Pictures
-file:///home/aludes/Videos
-file:///home/aludes/Downloads
-sftp://armacle/home/ubuntu armacle
+file:///home/aludes/Projects Projects
+file:///home/aludes/Documents Documents
+file:///home/aludes/Music Music
+file:///home/aludes/Pictures Pictures
+file:///home/aludes/Videos Videos
+file:///home/aludes/Downloads Downloads
+sftp://argon/home/aludes argon
+sftp://voron/home/aludes voron
+sftp://jellyfin/home/aludes jellyfin

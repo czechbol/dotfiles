@@ -13,19 +13,34 @@ SAVEHIST=10000
 unsetopt beep notify
 bindkey -e
 
-autoload -Uz compinit
-compinit
+autoload -U compinit
+
+() {
+  setopt extendedglob local_options
+
+  if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh+24) ]]; then
+    compinit
+  else
+    compinit -C
+  fi
+}
 
 autoload -Uz select-word-style
 select-word-style bash
 
 eval "$(starship init zsh)"
 eval "$(direnv hook zsh)"
+eval "$(zoxide init zsh --cmd cd)"
 source <(kubectl completion zsh)
+# source <(goreleaser completion zsh)
+source /etc/profile.d/google-cloud-cli.sh
+
 
 # key bindings
 bindkey '^H' backward-kill-word
 bindkey '5~' kill-word
+bindkey '\t' menu-complete
+
 
 alias update='sudo dnf update -y && flatpak update'
 alias dotupdate='yadm add -u && yadm commit -m update && yadm push'

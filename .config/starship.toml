@@ -75,3 +75,14 @@ style = "bold green"
 [username]
 style_user = "bold dimmed blue"
 style_root = "bold dimmed red"
+
+[gcloud]
+symbol = '️🇬️'
+format = 'on [$symbol (\($project\))]($style) '
+disabled = true
+
+[kubernetes]
+symbol = "⎈"
+format = '[$symbol on $context( \($namespace\))]($style) '
+disabled = false
+
