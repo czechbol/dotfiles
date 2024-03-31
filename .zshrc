@@ -13,8 +13,17 @@ SAVEHIST=10000
 unsetopt beep notify
 bindkey -e
 
-autoload -Uz compinit
-compinit
+autoload -U compinit
+
+() {
+  setopt extendedglob local_options
+
+  if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh+24) ]]; then
+    compinit
+  else
+    compinit -C
+  fi
+}
 
 autoload -Uz select-word-style
 select-word-style bash
