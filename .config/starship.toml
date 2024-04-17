@@ -83,6 +83,6 @@ disabled = true
 
 [kubernetes]
 symbol = "⎈"
-format = '[$symbol on $context( \($namespace\))]($style) '
+format = '[$symbol $context( \($namespace\))]($style) '
 disabled = false
 
