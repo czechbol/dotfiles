@@ -117,6 +117,12 @@ if [[ $install_languages == "y" ]]; then
     done
 fi
 
+# virtual machines
+read -r -p "Is this a virtual machine? (y/n): " is_vm
+if [[ $is_vm == "y" ]]; then
+    packages+=" spice-vdagent"
+fi
+
 # additional packages
 packages+=" $system_utils $disk_utils $audio_packages $pipewire_packages $network_system_tools $file_management_tools $system_utils $wine_packages $media_players $web_browsers $email_clients $remote_access $gaming $graphics_design_tools $development_tools $office_suite $fonts"
 

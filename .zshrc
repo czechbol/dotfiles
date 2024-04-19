@@ -31,7 +31,6 @@ autoload -Uz select-word-style
 select-word-style bash
 
 # init stuff
-# check if these packages exist first
 if command -v starship >/dev/null; then
     eval "$(starship init zsh)"
 fi
@@ -48,13 +47,18 @@ if [[ -f /etc/profile.d/google-cloud-sdk.sh ]]; then
     source /etc/profile.d/google-cloud-sdk.sh
 fi
 
+
 # key bindings
 bindkey '^H' backward-kill-word
 bindkey '5~' kill-word
 bindkey '\t' menu-complete
 
+
 alias update='sudo dnf update -y && flatpak update'
+# update dotfiles with yadm and autosquash commits that were made today
 alias dotupdate='yadm add -u && yadm commit --autosquash --fixup HEAD && yadm push'
+alias dotgit="GIT_WORK_TREE=~ GIT_DIR=~/.local/share/yadm/repo.git"
+
 alias gmt='go mod tidy'
 alias gcl='golangci-lint run'
 alias dk='docker kill $(docker ps -q)'
@@ -62,12 +66,12 @@ alias dcu="docker compose up -d"
 alias dcd="docker compose down"
 
 export KUBE_EDITOR="code -w"
+export EDITOR="code -w"
 
-# PATH exports
 export GOPATH=$HOME/go
-export GOBIN=$GOPATH/bin
-export PATH="$PATH:$GOBIN"
+export GOBIN=$HOME/go/bin/
+export PATH="$PATH:$GOPATH/bin"
 export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:/usr/local/go/bin"
-export PATH="$PATH:$HOME/.local/bin"
-export PATH="$PATH:$HOME/.spicetify"
+export PATH="$PATH:/home/aludes/.local/bin"
+export PATH=$PATH:/home/aludes/.spicetify
