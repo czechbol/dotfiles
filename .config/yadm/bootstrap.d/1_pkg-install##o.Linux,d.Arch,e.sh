@@ -5,23 +5,22 @@ read -r -s -p "Enter your sudo password: " sudo_password
 echo "$sudo_password" | sudo -S echo "Thank you!"
 
 # package list
-window_manager_utils="autorandr feh picom maim python-xlib rofi viewnior betterlockscreen gnome-keyring nemo brightnessctl wireless_tools bmon numlockx lightdm-gtk-greeter-settings"
-disk_utils="gparted ntfs-3g exfat-utils dosfstools mtools gvfs-mtp"
-audio_packages="sof-firmware alsa-card-profiles alsa-firmware alsa-lib alsa-plugins alsa-topology-conf alsa-ucm-conf alsa-utils"
-pipewire_packages="lib32-pipewire pipewire pipewire-audio pipewire-pulse wireplumber pasystray pavucontrol"
+pipewire_packages="lib32-pipewire pipewire pipewire-alsa pipewire-jack pipewire-audio pipewire-pulse gst-plugin-pipewire wireplumber pasystray pavucontrol pamixer"
 network_system_tools="bolt zerotier-one python-psutil bind youtube-dl netdiscover cups cups-pdf"
-file_management_tools="jpegoptim nmon file-roller optipng pkgstats sshfs ufw unrar unzip usbutils"
-system_utils="zsh ripgrep htop neofetch starship direnv kitty zoxide kubectl kubectx"
+file_management_tools="jpegoptim nmon file-roller optipng pkgstats sshfs ufw unrar unzip usbutils qt5-imageformats ffmpegthumbs kde-cli-tools kservice5 libnotify dolphin ark"
 fonts="ttf-ms-fonts noto-fonts noto-fonts-emoji noto-fonts-emoji-flags gnu-free-fonts noto-fonts-cjk ttf-ubuntu-font-family ttf-victor-mono ttf-fira-code"
 wine_packages="wine wine-mono wine-gecko winetricks"
-media_players="vlc ffmpeg"
+media_players="vlc ffmpeg spicetify-cli"
 web_browsers="firefox vivaldi"
+communication="discord"
 email_clients="thunderbird"
-remote_access="discord teamviewer"
-gaming="steam-native-runtime"
+remote_access=" teamviewer"
+gaming="steam-native-runtime gamemode"
 graphics_design_tools="gimp inkscape krita pdfchain"
-development_tools="code code-marketplace neovim minecraft-launcher audacity qbittorrent"
+development_tools="visual-studio-code-bin code-marketplace neovim minecraft-launcher audacity qbittorrent"
 office_suite="libreoffice-fresh libreoffice-extension-texmaths libreoffice-extension-writer2latex libreoffice-fresh-cs"
+
+window_manager_utils="autorandr feh picom maim python-xlib rofi-lbonn-wayland-git waybar cliphist swappy grimblast-git slurp hyprpicker wlogout swaylock-effects-git swww viewnior network-manager-applet betterlockscreen gnome-keyring nemo mangohud cava qt5-quickcontrols qt5-quickcontrols2 qt5-graphicaleffects sddm udiskie brightnessctl wireless_tools bmon numlockx lightdm-gtk-greeter-settings dunst polkit-gnome xdg-desktop-portal-hyprland nwg-look qt5ct qt6ct"
 
 # essential packages
 packages="xorg lightdm lightdm-gtk-greeter mesa"
@@ -124,12 +123,13 @@ if [[ $is_vm == "y" ]]; then
 fi
 
 # additional packages
-packages+=" $system_utils $disk_utils $audio_packages $pipewire_packages $network_system_tools $file_management_tools $system_utils $wine_packages $media_players $web_browsers $email_clients $remote_access $gaming $graphics_design_tools $development_tools $office_suite $fonts"
+packages+=" $pipewire_packages $network_system_tools $file_management_tools $fonts $wine_packages $media_players $web_browsers $communication $email_clients $remote_access $gaming $graphics_design_tools $development_tools $office_suite"
 
 # download the selected packages
 echo "Installing the selected packages..."
 yay -Syu --needed --noconfirm $packages
 
+exit 0
 sudo systemctl enable lightdm.service
 sudo systemctl enable zerotier-one.service
 

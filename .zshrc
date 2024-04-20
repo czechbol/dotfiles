@@ -56,7 +56,7 @@ bindkey '\t' menu-complete
 
 alias update='sudo dnf update -y && flatpak update'
 # update dotfiles with yadm and autosquash commits that were made today
-alias dotupdate='yadm add -u && yadm commit --autosquash --fixup HEAD && yadm push'
+alias dotupdate='yadm add -u && yadm commit --fixup HEAD && yadm push'
 alias dotgit="GIT_WORK_TREE=~ GIT_DIR=~/.local/share/yadm/repo.git"
 
 alias gmt='go mod tidy'
