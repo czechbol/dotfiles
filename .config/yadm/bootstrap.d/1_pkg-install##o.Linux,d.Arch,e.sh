@@ -4,6 +4,17 @@
 read -r -s -p "Enter your sudo password: " sudo_password
 echo "$sudo_password" | sudo -S echo "Thank you!"
 
+echo -e "Setting grub theme"
+sudo tar -xzf ~/.config/yadm/data/Grub_Retroboot.tar.gz -C /usr/share/grub/themes/
+sudo sed -i "/^GRUB_DEFAULT=/c\GRUB_DEFAULT=saved
+/^GRUB_GFXMODE=/c\GRUB_GFXMODE=1280x1024x32,auto
+/^GRUB_THEME=/c\GRUB_THEME=\"/usr/share/grub/themes/Retroboot/theme.txt\"
+/^#GRUB_THEME=/c\GRUB_THEME=\"/usr/share/grub/themes/Retroboot/theme.txt\"
+/^#GRUB_SAVEDEFAULT=true/c\GRUB_SAVEDEFAULT=true" /etc/default/grub
+
+
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+
 # package list
 pipewire_packages="lib32-pipewire pipewire pipewire-alsa pipewire-jack pipewire-audio pipewire-pulse gst-plugin-pipewire wireplumber pasystray pavucontrol pamixer"
 network_system_tools="bolt zerotier-one python-psutil bind youtube-dl netdiscover cups cups-pdf"
@@ -129,8 +140,28 @@ packages+=" $pipewire_packages $network_system_tools $file_management_tools $fon
 echo "Installing the selected packages..."
 yay -Syu --needed --noconfirm $packages
 
-exit 0
-sudo systemctl enable lightdm.service
+# sddm
+if pkg_installed sddm; then
+    sudo tar -xzf ~/.config/yadm/data/Sddm_Candy.tar.gz -C /usr/share/sddm/themes/
+    sudo touch /etc/sddm.conf.d/kde_settings.conf
+    sudo cp /etc/sddm.conf.d/kde_settings.conf /etc/sddm.conf.d/kde_settings.t2.bkp
+    sudo cp /usr/share/sddm/themes/Candy/kde_settings.conf /etc/sddm.conf.d/
+else
+    echo -e "sddm is not installed..."
+fi
+
+# dolphin
+if pkg_installed dolphin && pkg_installed xdg-utils; then
+    
+    echo -e "\033[0;32m[FILEMANAGER]\033[0m detected // dolphin"
+    xdg-mime default org.kde.dolphin.desktop inode/directory
+    echo -e "\033[0;32m[FILEMANAGER]\033[0m setting" "$(xdg-mime query default "inode/directory")" "as default file explorer..."
+    
+else
+    echo -e "\033[0;33m[WARNING]\033[0m dolphin is not installed..."
+fi
+
+
 sudo systemctl enable zerotier-one.service
 
 # change user shell to zsh
