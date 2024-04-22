@@ -1,0 +1,46 @@
+{
+    "default_filament_colour": [
+        "#77767B"
+    ],
+    "enable_pressure_advance": [
+        "1"
+    ],
+    "filament_cost": [
+        "560"
+    ],
+    "filament_max_volumetric_speed": [
+        "35"
+    ],
+    "filament_settings_id": [
+        "Voron Fiberlogy ABS"
+    ],
+    "filament_start_gcode": [
+        "; Filament gcode"
+    ],
+    "filament_vendor": [
+        "Fiberlogy"
+    ],
+    "from": "User",
+    "hot_plate_temp_initial_layer": [
+        "100"
+    ],
+    "inherits": "Voron Generic ABS",
+    "is_custom_defined": "0",
+    "name": "Voron Fiberlogy ABS",
+    "nozzle_temperature": [
+        "255"
+    ],
+    "nozzle_temperature_initial_layer": [
+        "255"
+    ],
+    "overhang_fan_speed": [
+        "45"
+    ],
+    "pressure_advance": [
+        "0.0332"
+    ],
+    "reduce_fan_stop_start_freq": [
+        "0"
+    ],
+    "version": "1.8.0.0"
+}

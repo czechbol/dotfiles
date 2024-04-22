@@ -1,2 +1,5 @@
 [General]
-theme=wallbash
+theme=Catppuccin-Mocha-Teal#
+
+[Applications]
+Catppuccin-Mocha-Teal%23=dolphin

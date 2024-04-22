@@ -1,0 +1,9 @@
+{
+    "from": "User",
+    "inherits": "0.20mm Standard @Voron",
+    "is_custom_defined": "0",
+    "name": "0.20mm Standard @Voron - Copy",
+    "print_settings_id": "0.20mm Standard @Voron - Copy",
+    "sparse_infill_pattern": "zig-zag",
+    "version": "1.8.0.0"
+}

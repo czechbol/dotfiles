@@ -1,0 +1,55 @@
+{
+    "default_filament_colour": [
+        "#77767B"
+    ],
+    "enable_pressure_advance": [
+        "1"
+    ],
+    "fan_cooling_layer_time": [
+        "20"
+    ],
+    "fan_min_speed": [
+        "10"
+    ],
+    "filament_cost": [
+        "560"
+    ],
+    "filament_max_volumetric_speed": [
+        "35"
+    ],
+    "filament_settings_id": [
+        "Voron eSun ABS+"
+    ],
+    "filament_shrink": [
+        "99.56%"
+    ],
+    "filament_start_gcode": [
+        "; Filament gcode"
+    ],
+    "filament_vendor": [
+        "eSun"
+    ],
+    "from": "User",
+    "hot_plate_temp_initial_layer": [
+        "100"
+    ],
+    "inherits": "Voron Generic ABS",
+    "is_custom_defined": "0",
+    "name": "Voron eSun ABS+",
+    "nozzle_temperature": [
+        "270"
+    ],
+    "overhang_fan_speed": [
+        "45"
+    ],
+    "pressure_advance": [
+        "0.0316"
+    ],
+    "reduce_fan_stop_start_freq": [
+        "0"
+    ],
+    "slow_down_layer_time": [
+        "1"
+    ],
+    "version": "1.8.0.0"
+}

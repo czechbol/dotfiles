@@ -1,0 +1,5 @@
+timeout 300 'swaylock -e --clock --grace 2 --indicator-idle-visible'
+timeout 305 'hyprctl dispatch dpms off' resume 'hyprctl dispatch dpms on'
+timeout 10 'if pgrep swaylock; then hyprctl dispatch dpms off; fi' resume 'hyprctl dispatch dpms on'
+before-sleep 'playerctl pause'
+before-sleep 'swaylock -e --clock --grace 2 --indicator-idle-visible'

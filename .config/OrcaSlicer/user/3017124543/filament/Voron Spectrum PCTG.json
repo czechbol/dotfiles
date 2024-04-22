@@ -1,0 +1,49 @@
+{
+    "default_filament_colour": [
+        "#F9F06B"
+    ],
+    "enable_pressure_advance": [
+        "1"
+    ],
+    "fan_max_speed": [
+        "100"
+    ],
+    "filament_cost": [
+        "567"
+    ],
+    "filament_flow_ratio": [
+        "1"
+    ],
+    "filament_max_volumetric_speed": [
+        "35"
+    ],
+    "filament_settings_id": [
+        "Voron Spectrum PCTG"
+    ],
+    "filament_type": [
+        "PCTG"
+    ],
+    "filament_vendor": [
+        "Spectrum"
+    ],
+    "from": "User",
+    "hot_plate_temp": [
+        "85"
+    ],
+    "inherits": "Voron Generic PETG",
+    "is_custom_defined": "0",
+    "name": "Voron Spectrum PCTG",
+    "nozzle_temperature": [
+        "245"
+    ],
+    "nozzle_temperature_initial_layer": [
+        "240"
+    ],
+    "pressure_advance": [
+        "0.07"
+    ],
+    "slow_down_layer_time": [
+        "1"
+    ],
+    "version": "1.8.0.0"
+}

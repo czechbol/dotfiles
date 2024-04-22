@@ -1,0 +1,52 @@
+{
+    "default_filament_colour": [
+        "#C64600"
+    ],
+    "enable_pressure_advance": [
+        "1"
+    ],
+    "filament_cost": [
+        "550"
+    ],
+    "filament_max_volumetric_speed": [
+        "35"
+    ],
+    "filament_settings_id": [
+        "Voron FilamentPM ABS-T"
+    ],
+    "filament_start_gcode": [
+        "; Filament gcode"
+    ],
+    "filament_type": [
+        "ABS-T"
+    ],
+    "filament_vendor": [
+        "FilamentPM"
+    ],
+    "from": "User",
+    "hot_plate_temp": [
+        "110"
+    ],
+    "hot_plate_temp_initial_layer": [
+        "100"
+    ],
+    "inherits": "Voron Generic ABS",
+    "is_custom_defined": "0",
+    "name": "Voron FilamentPM ABS-T",
+    "nozzle_temperature": [
+        "255"
+    ],
+    "nozzle_temperature_initial_layer": [
+        "255"
+    ],
+    "overhang_fan_speed": [
+        "45"
+    ],
+    "pressure_advance": [
+        "0.05"
+    ],
+    "reduce_fan_stop_start_freq": [
+        "0"
+    ],
+    "version": "1.8.0.0"
+}

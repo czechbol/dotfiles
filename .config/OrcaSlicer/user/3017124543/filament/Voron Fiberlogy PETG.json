@@ -1,0 +1,43 @@
+{
+    "default_filament_colour": [
+        "#8FF0A4"
+    ],
+    "enable_pressure_advance": [
+        "1"
+    ],
+    "fan_max_speed": [
+        "100"
+    ],
+    "filament_cost": [
+        "610"
+    ],
+    "filament_max_volumetric_speed": [
+        "200"
+    ],
+    "filament_settings_id": [
+        "Voron Fiberlogy PETG"
+    ],
+    "filament_vendor": [
+        "Fiberlogy"
+    ],
+    "from": "User",
+    "hot_plate_temp_initial_layer": [
+        "75"
+    ],
+    "inherits": "Voron Generic PETG",
+    "is_custom_defined": "0",
+    "name": "Voron Fiberlogy PETG",
+    "nozzle_temperature": [
+        "235"
+    ],
+    "nozzle_temperature_initial_layer": [
+        "230"
+    ],
+    "pressure_advance": [
+        "0.049"
+    ],
+    "slow_down_layer_time": [
+        "0"
+    ],
+    "version": "1.8.0.0"
+}

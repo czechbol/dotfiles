@@ -1,0 +1,25 @@
+[warning]	2024-03-31 14:17:33.292402[Thread 0x0000780178320480]:get_network_function, can not find function bambu_network_get_profile_3mf
+[error]	2024-03-31 14:17:33.995123[Thread 0x0000780178320480]:calc_exclude_triangles:Unable to create exclude triangles
+[error]	2024-03-31 14:17:34.001644[Thread 0x00007800d56006c0]:Unable to open the file/home/aludes/Downloads/Moccamaster KBT Carafe Button Activator.stl
+[error]	2024-03-31 14:17:34.002784[Thread 0x00007800cac006c0]:Unable to open the file/home/aludes/Downloads/AB Belt Holder - Front Body - V2 (2 Screw Version).stl
+[error]	2024-03-31 14:17:34.002858[Thread 0x00007800d50006c0]:Unable to open the file/home/aludes/Downloads/knob.obj
+[error]	2024-03-31 14:17:34.003041[Thread 0x00007800d4a006c0]:Unable to open the file/home/aludes/Downloads/AB Belt Holder - Back Body - V3 (2 Screw Version).stl
+[error]	2024-03-31 14:17:34.003236[Thread 0x00007800e06006c0]:Unable to open the file/home/aludes/Downloads/alignment stop-350.stl
+[error]	2024-03-31 14:17:34.003491[Thread 0x00007800ca0006c0]:Unable to open the file/home/aludes/Downloads/Lever.stl
+[error]	2024-03-31 14:17:34.003541[Thread 0x00007800ca6006c0]:Unable to open the file/home/aludes/Downloads/Voron_Design_Cube_v7.stl
+[error]	2024-03-31 14:17:34.003572[Thread 0x00007800c94006c0]:Unable to open the file/home/aludes/Downloads/Cubesat_Bottom_Frame.stl
+[error]	2024-03-31 14:17:34.003647[Thread 0x00007800c9a006c0]:Unable to open the file/home/aludes/Downloads/[a]_top_corner_cable_hide_left_x2.stl
+[error]	2024-03-31 14:17:34.003851[Thread 0x00007800bec006c0]:Unable to open the file/home/aludes/Downloads/Knob for faucet v2.stl
+[error]	2024-03-31 14:17:34.003864[Thread 0x00007800be6006c0]:Unable to open the file/home/aludes/Downloads/exhaust_cover.stl
+[error]	2024-03-31 14:17:34.003952[Thread 0x00007800c88006c0]:Unable to open the file/home/aludes/Downloads/SpringPlungerExtender.stl
+[error]	2024-03-31 14:17:34.004050[Thread 0x00007800bf2006c0]:Unable to open the file/home/aludes/Downloads/mafie_pecet.stl
+[error]	2024-03-31 14:17:34.004084[Thread 0x00007800cb2006c0]:Unable to open the file/home/aludes/Downloads/Cartridge_90.stl
+[error]	2024-03-31 14:17:34.004242[Thread 0x00007800c8e006c0]:Unable to open the file/home/aludes/Downloads/V6_Plenum[2020_extrusion].stl
+[warning]	2024-03-31 14:17:34.291175[Thread 0x0000780178320480]:14:17:34: Warning: Error running JavaScript: Unsupported result type
+[warning]	2024-03-31 14:17:34.293023[Thread 0x0000780178320480]:14:17:34: Warning: Error running JavaScript: Unsupported result type
+[warning]	2024-03-31 14:17:34.294777[Thread 0x0000780178320480]:14:17:34: Warning: Error running JavaScript: Unsupported result type
+[warning]	2024-03-31 14:17:34.296643[Thread 0x0000780178320480]:14:17:34: Warning: Error running JavaScript: Unsupported result type
+[error]	2024-03-31 14:17:35.593396[Thread 0x0000780178320480]:calc_exclude_triangles:Unable to create exclude triangles
+[error]	2024-03-31 14:17:35.620952[Thread 0x0000780178320480]:connect_server error: network_agent=0x56ff3f5b0b50, ret=-2
+[warning]	2024-03-31 14:17:36.271664[Thread 0x00007800e2e006c0]:[Orca Updater]: online version=1.8.4.6, current_version=1.8.4.6, no need to download
+[error]	2024-03-31 14:18:08.947065[Thread 0x0000780178320480]:calc_exclude_triangles:Unable to create exclude triangles

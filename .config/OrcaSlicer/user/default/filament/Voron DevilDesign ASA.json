@@ -1,0 +1,46 @@
+{
+    "default_filament_colour": [
+        "#FFFFFF"
+    ],
+    "fan_cooling_layer_time": [
+        "15"
+    ],
+    "fan_max_speed": [
+        "45"
+    ],
+    "filament_cost": [
+        "635"
+    ],
+    "filament_max_volumetric_speed": [
+        "35"
+    ],
+    "filament_settings_id": [
+        "Voron DevilDesign ASA"
+    ],
+    "filament_vendor": [
+        "Devil Design"
+    ],
+    "from": "User",
+    "hot_plate_temp": [
+        "100"
+    ],
+    "hot_plate_temp_initial_layer": [
+        "100"
+    ],
+    "inherits": "Voron Generic ASA",
+    "is_custom_defined": "0",
+    "name": "Voron DevilDesign ASA",
+    "nozzle_temperature": [
+        "240"
+    ],
+    "nozzle_temperature_initial_layer": [
+        "240"
+    ],
+    "reduce_fan_stop_start_freq": [
+        "0"
+    ],
+    "slow_down_min_speed": [
+        "15"
+    ],
+    "version": "1.8.0.0"
+}

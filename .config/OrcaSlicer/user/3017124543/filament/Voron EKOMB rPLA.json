@@ -1,0 +1,43 @@
+{
+    "default_filament_colour": [
+        "#F8E45C"
+    ],
+    "enable_pressure_advance": [
+        "1"
+    ],
+    "filament_cost": [
+        "603"
+    ],
+    "filament_max_volumetric_speed": [
+        "30"
+    ],
+    "filament_settings_id": [
+        "Voron EKOMB rPLA"
+    ],
+    "filament_type": [
+        "rPLA"
+    ],
+    "filament_vendor": [
+        "EKOMB"
+    ],
+    "from": "User",
+    "full_fan_speed_layer": [
+        "5"
+    ],
+    "hot_plate_temp": [
+        "65"
+    ],
+    "inherits": "Voron Generic PLA",
+    "is_custom_defined": "0",
+    "name": "Voron EKOMB rPLA",
+    "nozzle_temperature": [
+        "215"
+    ],
+    "nozzle_temperature_initial_layer": [
+        "210"
+    ],
+    "pressure_advance": [
+        "0.044"
+    ],
+    "version": "1.8.0.0"
+}

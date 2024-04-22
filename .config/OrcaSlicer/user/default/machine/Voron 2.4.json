@@ -1,0 +1,81 @@
+{
+    "fan_kickstart": "1",
+    "from": "User",
+    "inherits": "Voron 2.4 350 0.4 nozzle",
+    "is_custom_defined": "0",
+    "machine_end_gcode": "PRINT_END    ;end script from macro",
+    "machine_max_acceleration_e": [
+        "10000",
+        "5000"
+    ],
+    "machine_max_acceleration_extruding": [
+        "4300",
+        "20000"
+    ],
+    "machine_max_acceleration_retracting": [
+        "4300",
+        "5000"
+    ],
+    "machine_max_acceleration_x": [
+        "4300",
+        "20000"
+    ],
+    "machine_max_acceleration_y": [
+        "4300",
+        "20000"
+    ],
+    "machine_max_acceleration_z": [
+        "1000",
+        "200"
+    ],
+    "machine_max_jerk_x": [
+        "10",
+        "12"
+    ],
+    "machine_max_jerk_y": [
+        "10",
+        "12"
+    ],
+    "machine_max_speed_e": [
+        "120",
+        "25"
+    ],
+    "machine_max_speed_x": [
+        "850",
+        "200"
+    ],
+    "machine_max_speed_y": [
+        "850",
+        "200"
+    ],
+    "machine_max_speed_z": [
+        "300",
+        "12"
+    ],
+    "machine_start_gcode": ";M190 S[bed_temperature_initial_layer_single]\n;M109 S[nozzle_temperature_initial_layer]\nPRINT_START EXTRUDER=[nozzle_temperature_initial_layer] BED=[bed_temperature_initial_layer_single]",
+    "min_layer_height": [
+        "0.0375"
+    ],
+    "name": "Voron 2.4",
+    "nozzle_type": "brass",
+    "print_host": "10.147.19.252",
+    "printable_height": "330",
+    "printer_settings_id": "Voron 2.4",
+    "retract_lift_above": [
+        "0.2"
+    ],
+    "retraction_length": [
+        "0.4"
+    ],
+    "retraction_speed": [
+        "50"
+    ],
+    "thumbnails": [
+        "64x64",
+        "400x300"
+    ],
+    "version": "1.8.0.0",
+    "z_hop_types": [
+        "Spiral Lift"
+    ]
+}

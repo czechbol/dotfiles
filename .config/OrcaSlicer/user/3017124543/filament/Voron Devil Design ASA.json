@@ -1,0 +1,40 @@
+{
+    "default_filament_colour": [
+        "#62A0EA"
+    ],
+    "enable_pressure_advance": [
+        "1"
+    ],
+    "filament_cost": [
+        "635"
+    ],
+    "filament_max_volumetric_speed": [
+        "35"
+    ],
+    "filament_settings_id": [
+        "Voron Devil Design ASA"
+    ],
+    "filament_vendor": [
+        "Devil Design"
+    ],
+    "from": "User",
+    "hot_plate_temp_initial_layer": [
+        "100"
+    ],
+    "inherits": "Voron Generic ASA",
+    "is_custom_defined": "0",
+    "name": "Voron Devil Design ASA",
+    "nozzle_temperature": [
+        "240"
+    ],
+    "nozzle_temperature_initial_layer": [
+        "240"
+    ],
+    "overhang_fan_speed": [
+        "45"
+    ],
+    "pressure_advance": [
+        "0.0407"
+    ],
+    "version": "1.8.0.0"
+}

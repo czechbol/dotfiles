@@ -1,0 +1,40 @@
+{
+    "default_filament_colour": [
+        "#99C1F1"
+    ],
+    "enable_pressure_advance": [
+        "1"
+    ],
+    "filament_cost": [
+        "597"
+    ],
+    "filament_max_volumetric_speed": [
+        "30"
+    ],
+    "filament_settings_id": [
+        "Voron PrintWithSmile PLA"
+    ],
+    "filament_vendor": [
+        "PrintWithSmile"
+    ],
+    "from": "User",
+    "full_fan_speed_layer": [
+        "5"
+    ],
+    "hot_plate_temp": [
+        "65"
+    ],
+    "inherits": "Voron Generic PLA",
+    "is_custom_defined": "0",
+    "name": "Voron PrintWithSmile PLA",
+    "nozzle_temperature": [
+        "215"
+    ],
+    "nozzle_temperature_initial_layer": [
+        "210"
+    ],
+    "pressure_advance": [
+        "0.044"
+    ],
+    "version": "1.8.0.0"
+}

@@ -5,11 +5,11 @@ read -r -s -p "Enter your sudo password: " sudo_password
 echo "$sudo_password" | sudo -S echo "Thank you!"
 
 echo -e "Setting grub theme"
-sudo tar -xzf ~/.config/yadm/data/Grub_Retroboot.tar.gz -C /usr/share/grub/themes/
+sudo tar -xzf ~/.config/yadm/data/catppuccin-mocha-grub-theme.tar.gz -C /boot/grub/themes/themes/
 sudo sed -i "/^GRUB_DEFAULT=/c\GRUB_DEFAULT=saved
-/^GRUB_GFXMODE=/c\GRUB_GFXMODE=1280x1024x32,auto
-/^GRUB_THEME=/c\GRUB_THEME=\"/usr/share/grub/themes/Retroboot/theme.txt\"
-/^#GRUB_THEME=/c\GRUB_THEME=\"/usr/share/grub/themes/Retroboot/theme.txt\"
+/^GRUB_GFXMODE=/c\GRUB_GFXMODE=1920x1080x32,auto
+/^GRUB_THEME=/c\GRUB_THEME=\"/boot/grub/themes/catppuccin-mocha-grub-theme/theme.txt\"
+/^#GRUB_THEME=/c\GRUB_THEME=\"/boot/grub/themes/themes/catppuccin-mocha-grub-theme/theme.txt\"
 /^#GRUB_SAVEDEFAULT=true/c\GRUB_SAVEDEFAULT=true" /etc/default/grub
 
 
@@ -25,7 +25,7 @@ media_players="vlc ffmpeg spicetify-cli"
 web_browsers="firefox vivaldi"
 communication="discord"
 email_clients="thunderbird"
-remote_access=" teamviewer"
+remote_access=" teamviewer"P
 gaming="steam-native-runtime gamemode"
 graphics_design_tools="gimp inkscape krita pdfchain"
 development_tools="visual-studio-code-bin code-marketplace neovim minecraft-launcher audacity qbittorrent"
@@ -141,27 +141,11 @@ echo "Installing the selected packages..."
 yay -Syu --needed --noconfirm $packages
 
 # sddm
-if pkg_installed sddm; then
-    sudo tar -xzf ~/.config/yadm/data/Sddm_Candy.tar.gz -C /usr/share/sddm/themes/
-    sudo touch /etc/sddm.conf.d/kde_settings.conf
-    sudo cp /etc/sddm.conf.d/kde_settings.conf /etc/sddm.conf.d/kde_settings.t2.bkp
-    sudo cp /usr/share/sddm/themes/Candy/kde_settings.conf /etc/sddm.conf.d/
-else
-    echo -e "sddm is not installed..."
-fi
+sudo tar -xzf ~/.config/yadm/data/sddm_catppuccin-mocha.tar.gz -C /usr/share/sddm/themes/
+sudo rm /etc/sddm.conf.d/kde_settings.conf
+sudo cp /usr/share/sddm/themes/catppuccin-mocha/kde_settings.conf /etc/sddm.conf.d/
 
-# dolphin
-if pkg_installed dolphin && pkg_installed xdg-utils; then
-    
-    echo -e "\033[0;32m[FILEMANAGER]\033[0m detected // dolphin"
-    xdg-mime default org.kde.dolphin.desktop inode/directory
-    echo -e "\033[0;32m[FILEMANAGER]\033[0m setting" "$(xdg-mime query default "inode/directory")" "as default file explorer..."
-    
-else
-    echo -e "\033[0;33m[WARNING]\033[0m dolphin is not installed..."
-fi
-
-
+sudo systemctl enable sddm.service
 sudo systemctl enable zerotier-one.service
 
 # change user shell to zsh

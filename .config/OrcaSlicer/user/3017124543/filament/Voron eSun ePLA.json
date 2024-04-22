@@ -1,0 +1,46 @@
+{
+    "default_filament_colour": [
+        "#99C1F1"
+    ],
+    "enable_pressure_advance": [
+        "1"
+    ],
+    "filament_cost": [
+        "373"
+    ],
+    "filament_max_volumetric_speed": [
+        "30"
+    ],
+    "filament_settings_id": [
+        "Voron eSun ePLA"
+    ],
+    "filament_type": [
+        "ePLA"
+    ],
+    "filament_vendor": [
+        "eSun"
+    ],
+    "from": "User",
+    "full_fan_speed_layer": [
+        "5"
+    ],
+    "hot_plate_temp": [
+        "65"
+    ],
+    "inherits": "Voron Generic PLA",
+    "is_custom_defined": "0",
+    "name": "Voron eSun ePLA",
+    "nozzle_temperature": [
+        "210"
+    ],
+    "nozzle_temperature_initial_layer": [
+        "205"
+    ],
+    "pressure_advance": [
+        "0.044"
+    ],
+    "slow_down_layer_time": [
+        "1"
+    ],
+    "version": "1.8.0.0"
+}
