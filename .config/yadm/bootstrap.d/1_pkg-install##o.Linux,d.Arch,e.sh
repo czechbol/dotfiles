@@ -16,22 +16,22 @@ sudo sed -i "/^GRUB_DEFAULT=/c\GRUB_DEFAULT=saved
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
 # package list
-pipewire_packages="lib32-pipewire pipewire pipewire-alsa pipewire-jack pipewire-audio pipewire-pulse gst-plugin-pipewire wireplumber pasystray pavucontrol pamixer"
-network_system_tools="bolt zerotier-one python-psutil bind youtube-dl netdiscover cups cups-pdf"
+communication="discord"
+development_tools="visual-studio-code-bin code-marketplace neovim minecraft-launcher audacity qbittorrent"
+email_clients="thunderbird"
 file_management_tools="jpegoptim nmon file-roller optipng pkgstats sshfs ufw unrar unzip usbutils qt5-imageformats ffmpegthumbs kde-cli-tools kservice5 libnotify dolphin ark"
 fonts="ttf-ms-fonts noto-fonts noto-fonts-emoji noto-fonts-emoji-flags gnu-free-fonts noto-fonts-cjk ttf-ubuntu-font-family ttf-victor-mono ttf-fira-code"
-wine_packages="wine wine-mono wine-gecko winetricks"
-media_players="vlc ffmpeg spicetify-cli"
-web_browsers="firefox vivaldi"
-communication="discord"
-email_clients="thunderbird"
-remote_access=" teamviewer"P
 gaming="steam-native-runtime gamemode"
 graphics_design_tools="gimp inkscape krita pdfchain"
-development_tools="visual-studio-code-bin code-marketplace neovim minecraft-launcher audacity qbittorrent"
+media_players="vlc ffmpeg spicetify-cli"
+network_system_tools="bolt zerotier-one python-psutil bind youtube-dl netdiscover cups cups-pdf"
 office_suite="libreoffice-fresh libreoffice-extension-texmaths libreoffice-extension-writer2latex libreoffice-fresh-cs"
+pipewire_packages="lib32-pipewire pipewire pipewire-alsa pipewire-jack pipewire-audio pipewire-pulse gst-plugin-pipewire wireplumber pasystray pavucontrol pamixer"
+remote_access=" teamviewer"P
+web_browsers="firefox vivaldi"
+wine_packages="wine wine-mono wine-gecko winetricks"
 
-window_manager_utils="autorandr feh picom maim python-xlib rofi-lbonn-wayland-git waybar cliphist swappy grimblast-git slurp hyprpicker wlogout swaylock-effects-git swww viewnior network-manager-applet betterlockscreen gnome-keyring nemo mangohud cava qt5-quickcontrols qt5-quickcontrols2 qt5-graphicaleffects sddm udiskie brightnessctl wireless_tools bmon numlockx lightdm-gtk-greeter-settings dunst polkit-gnome xdg-desktop-portal-hyprland nwg-look qt5ct qt6ct"
+window_manager_utils="autorandr feh picom maim python-xlib rofi-lbonn-wayland-git waybar cliphist swappy grimblast-git slurp wlogout swww viewnior network-manager-applet betterlockscreen gnome-keyring nemo mangohud cava qt5-quickcontrols qt5-quickcontrols2 qt5-graphicaleffects sddm udiskie brightnessctl wireless_tools bmon numlockx lightdm-gtk-greeter-settings dunst polkit-gnome xdg-desktop-portal-hyprland nwg-look qt5ct qt6ct"
 
 # essential packages
 packages="xorg lightdm lightdm-gtk-greeter mesa"
@@ -45,7 +45,7 @@ if [[ $install_desktop == "y" ]]; then
         [2]="plasma"
         [3]="xfce4 xfce4-goodies"
         [4]="cinnamon"
-        [5]="hyprland"
+        [5]="hyprland hyprpicker hyprcursor hyprlock hypridle"
         [6]="i3-wm i3status i3lock"
         [7]="awesome"
         [8]="bspwm sxhkd"
