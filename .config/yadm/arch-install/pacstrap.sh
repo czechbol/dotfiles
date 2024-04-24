@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cryptdevice=""
+
 function parse_arguments() {
     while getopts ":he:p:" opt; do
         case $opt in
@@ -12,7 +14,6 @@ function parse_arguments() {
     done
 }
 
-cryptdevice=""
 
 function display_help() {
     echo "Usage: $0 [-e  <encrypted-partition> -p <physical-volume>]"
