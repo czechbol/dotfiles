@@ -98,7 +98,7 @@ function set_hostname() {
 
 function setup_mkinitcpio() {
     if [[ -n $cryptdevice ]]; then
-        sed -i 's/^HOOKS=(base udev autodetect modconf block filesystems keyboard fsck)/HOOKS=(base udev autodetect modconf block encrypt lvm2 filesystems keyboard fsck)/' /etc/mkinitcpio.conf
+        sed -i '/^HOOKS=/s/\(block\)\(.*filesystems\)/\1 encrypt lvm2\2/' /etc/mkinitcpio.conf
         mkinitcpio -P
     fi
 }

@@ -89,17 +89,13 @@ function reboot_system() {
 }
 
 check_options
-echo "encrypted_partition=$encrypted_partition, pv_name=$pv_name"
 set_cryptdevice
-echo "cryptdevice=$cryptdevice"
-read -r -p "Continue?"
 generate_fstab
 mount_efi_system_partition
 select_kernel
 prompt_for_user_input
 export_variables
 set_ntp
-generate_fstab
 install_essential_packages
 change_root_into_new_system
 reboot_system
