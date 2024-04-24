@@ -35,7 +35,7 @@ wine_packages="wine wine-mono wine-gecko winetricks"
 window_manager_utils="autorandr feh picom maim python-xlib rofi-lbonn-wayland-git waybar cliphist swappy grimblast-git slurp wlogout swww viewnior network-manager-applet gnome-keyring nemo mangohud cava qt5-quickcontrols qt5-quickcontrols2 qt5-graphicaleffects sddm udiskie brightnessctl wireless_tools bmon numlockx lightdm-gtk-greeter-settings dunst polkit-gnome xdg-desktop-portal-hyprland nwg-look qt5ct qt6ct"
 
 # essential packages
-packages="xorg lightdm lightdm-gtk-greeter mesa"
+packages="xorg lightdm lightdm-gtk-greeter mesa zsh"
 
 # desktop environments and window managers
 # multiselect options of desktop environments and window managers
