@@ -5,11 +5,12 @@ read -r -s -p "Enter your sudo password: " sudo_password
 echo "$sudo_password" | sudo -S echo "Thank you!"
 
 echo -e "Setting grub theme"
-sudo tar -xf ~/.config/yadm/data/catppuccin-mocha-grub-theme.tar.gz -C /boot/grub/themes/themes/
+# sudo mkdir -p /boot/grub/themes/
+sudo tar -xf ~/.config/yadm/data/catppuccin-mocha-grub-theme.tar.gz -C /boot/grub/themes/
 sudo sed -i "/^GRUB_DEFAULT=/c\GRUB_DEFAULT=saved
 /^GRUB_GFXMODE=/c\GRUB_GFXMODE=1920x1080x32,auto
 /^GRUB_THEME=/c\GRUB_THEME=\"/boot/grub/themes/catppuccin-mocha-grub-theme/theme.txt\"
-/^#GRUB_THEME=/c\GRUB_THEME=\"/boot/grub/themes/themes/catppuccin-mocha-grub-theme/theme.txt\"
+/^#GRUB_THEME=/c\GRUB_THEME=\"/boot/grub/themes/catppuccin-mocha-grub-theme/theme.txt\"
 /^#GRUB_SAVEDEFAULT=true/c\GRUB_SAVEDEFAULT=true" /etc/default/grub
 
 
