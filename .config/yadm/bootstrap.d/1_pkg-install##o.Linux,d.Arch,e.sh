@@ -32,7 +32,7 @@ remote_access=" teamviewer"P
 web_browsers="firefox vivaldi"
 wine_packages="wine wine-mono wine-gecko winetricks"
 
-window_manager_utils="autorandr feh picom maim python-xlib rofi-lbonn-wayland-git waybar cliphist swappy grimblast-git slurp wlogout swww viewnior network-manager-applet betterlockscreen gnome-keyring nemo mangohud cava qt5-quickcontrols qt5-quickcontrols2 qt5-graphicaleffects sddm udiskie brightnessctl wireless_tools bmon numlockx lightdm-gtk-greeter-settings dunst polkit-gnome xdg-desktop-portal-hyprland nwg-look qt5ct qt6ct"
+window_manager_utils="autorandr feh picom maim python-xlib rofi-lbonn-wayland-git waybar cliphist swappy grimblast-git slurp wlogout swww viewnior network-manager-applet gnome-keyring nemo mangohud cava qt5-quickcontrols qt5-quickcontrols2 qt5-graphicaleffects sddm udiskie brightnessctl wireless_tools bmon numlockx lightdm-gtk-greeter-settings dunst polkit-gnome xdg-desktop-portal-hyprland nwg-look qt5ct qt6ct"
 
 # essential packages
 packages="xorg lightdm lightdm-gtk-greeter mesa"
@@ -92,7 +92,7 @@ if [[ $install_desktop == "y" ]]; then
     fi
     
     # if there is a at least one number higher than 4 in the desktop_choices array selected, then install additional packages
-    if [[ " ${desktop_choices[*]} " =~ " 5 " ]] || [[ " ${desktop_choices[*]} " =~ " 6 " ]] || [[ " ${desktop_choices[*]} " =~ " 7 " ]] || [[ " ${desktop_choices[*]} " =~ " 8 " ]] || [[ " ${desktop_choices[*]} " =~ " 9 " ]]; then
+    if [[ " ${desktop_choices[*]} " =~ "5" ]] || [[ " ${desktop_choices[*]} " =~ "6" ]] || [[ " ${desktop_choices[*]} " =~ "7" ]] || [[ " ${desktop_choices[*]} " =~ "8" ]] || [[ " ${desktop_choices[*]} " =~ "9" ]]; then
         packages+=" $window_manager_utils"
     fi
     
