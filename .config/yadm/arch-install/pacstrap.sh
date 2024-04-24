@@ -93,6 +93,8 @@ function reboot_system() {
 parse_arguments
 check_options
 set_cryptdevice
+echo "cryptdevice=$cryptdevice"
+read -r -p "Continue?"
 generate_fstab
 mount_efi_system_partition
 select_kernel
