@@ -18,7 +18,7 @@ sudo grub-mkconfig -o /boot/grub/grub.cfg
 
 # package list
 communication="discord"
-development_tools="visual-studio-code-bin code-marketplace neovim audacity qbittorrent"
+development_tools="visual-studio-code-bin kitty starship code-marketplace neovim audacity qbittorrent"
 email_clients="thunderbird"
 file_management_tools="jpegoptim nmon file-roller optipng pkgstats sshfs ufw unrar unzip usbutils qt5-imageformats ffmpegthumbs kde-cli-tools kservice5 libnotify dolphin ark"
 fonts="ttf-ms-fonts noto-fonts noto-fonts-emoji noto-fonts-emoji-flags gnu-free-fonts noto-fonts-cjk ttf-ubuntu-font-family ttf-victor-mono ttf-fira-code"
