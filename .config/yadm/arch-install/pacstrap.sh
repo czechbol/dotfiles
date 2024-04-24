@@ -36,10 +36,6 @@ function set_cryptdevice() {
     fi
 }
 
-function generate_fstab() {
-    genfstab -U /mnt >> /mnt/etc/fstab
-}
-
 function mount_efi_system_partition() {
     esp=$(lsblk -lpno NAME,FSTYPE | grep "vfat" | awk '{print $1}')
     mkdir -p /mnt/boot/EFI
@@ -90,7 +86,9 @@ function reboot_system() {
 
 check_options
 set_cryptdevice
-generate_fstab
+
+genfstab -U /mnt >> /mnt/etc/fstab
+
 mount_efi_system_partition
 select_kernel
 prompt_for_user_input
