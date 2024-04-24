@@ -3,7 +3,7 @@
         "en": [
             {
                 "ecode": "0500403A",
-                "intro": "The current temperature is too low. In order to protect you and your printer. Printing task, moving axis and other operations is disabled. Please move the printer to an environment above 10 celsius degree."
+                "intro": "The current temperature is too low. In order to protect you and your printer. Printing tasks, moving axis, and other operations are disabled. Please move the printer to an environment above 10°C."
             },
             {
                 "ecode": "07008006",
@@ -1070,13 +1070,29 @@
                 "intro": "Heatbed temperature malfunction."
             }
         ],
-        "ver": 202403311730
+        "ver": 202404151030
     },
     "device_hms": {
         "en": [
             {
+                "ecode": "03001A0000020002",
+                "intro": "The nozzle is clogged with filament."
+            },
+            {
+                "ecode": "030002000001000B",
+                "intro": "The nozzle temperature is abnormal. Temperature control system may have an issue."
+            },
+            {
+                "ecode": "030091000001000C",
+                "intro": "The chamber heater 1 has been working at full load for a long time. The temperature control system may have an issue."
+            },
+            {
+                "ecode": "030001000001000D",
+                "intro": "An issue occurred when heating the heatbed previously. To continue using your printer, please refer to the wiki to troubleshoot."
+            },
+            {
                 "ecode": "0500030000010024",
-                "intro": "The current temperature is too low. In order to protect you and your printer. Printing task, moving axis and other operations is disabled. Please move the printer to an environment above 10 celsius degree."
+                "intro": "The current temperature is too low. In order to protect you and your printer. Printing task, moving axis and other operations is disabled. Please move the printer to an environment above 10°C."
             },
             {
                 "ecode": "03000F0000010001",
@@ -1087,24 +1103,12 @@
                 "intro": "An abnormality occurs during the heating process of the heatbed, the heating modules may be broken."
             },
             {
-                "ecode": "030001000001000D",
-                "intro": "An abnormality happened in heating modules of heatbed before. To continue to use your printer, please refer to the wiki to troubleshoot."
-            },
-            {
                 "ecode": "030001000001000C",
                 "intro": "The heatbed has worked at full load for a long time. The temperature control system may be abnormal."
             },
             {
                 "ecode": "0500020000020006",
                 "intro": "Streaming function error. Please check the network and try again. You can restart or update the printer if the issue persists."
-            },
-            {
-                "ecode": "030091000001000C",
-                "intro": "The chamber heater 1 works at full load for a long time. Temperature control system may be abnormal."
-            },
-            {
-                "ecode": "030002000001000B",
-                "intro": "The nozzle temperature is abnormal. Temperature control system may be abnormal."
             },
             {
                 "ecode": "03000D0000020004",
@@ -1325,10 +1329,6 @@
             {
                 "ecode": "0300110000020002",
                 "intro": "The resonance frequency of the Y axis differs greatly from the last calibration. Please clean the carbon rod and rerun the machine calibration afterward."
-            },
-            {
-                "ecode": "03001A0000020002",
-                "intro": "The nozzle is clogged with filament."
             },
             {
                 "ecode": "12FF200000020007",
@@ -4143,7 +4143,7 @@
                 "intro": "The nozzle temperature is abnormal; the sensor may have an open circuit."
             }
         ],
-        "ver": 202403311730
+        "ver": 202404221830
     },
-    "version": "202403311730"
+    "version": "202404221830"
 }
