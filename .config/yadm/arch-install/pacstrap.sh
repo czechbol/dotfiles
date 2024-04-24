@@ -14,6 +14,8 @@ function parse_arguments() {
     done
 }
 
+echo "encrypted_partition=$encrypted_partition, pv_name=$pv_name"
+
 
 function display_help() {
     echo "Usage: $0 [-e  <encrypted-partition> -p <physical-volume>]"
