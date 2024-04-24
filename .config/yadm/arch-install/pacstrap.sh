@@ -91,8 +91,8 @@ function reboot_system() {
 }
 
 parse_arguments
-echo "encrypted_partition=$encrypted_partition, pv_name=$pv_name"
 check_options
+echo "encrypted_partition=$encrypted_partition, pv_name=$pv_name"
 set_cryptdevice
 echo "cryptdevice=$cryptdevice"
 read -r -p "Continue?"
