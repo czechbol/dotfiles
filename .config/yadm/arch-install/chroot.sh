@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Access the exported variables
-cryptdevice=\$cryptdevice
+cryptdevice=""
 
 
 function prompt_for_user_input() {
@@ -82,7 +82,7 @@ function generate_mirrorlist() {
 }
 
 function install_packages() {
-    if [[ -v cryptdevice ]]; then
+    if [[ -n $cryptdevice ]]; then
         pacman -Sy --needed --noconfirm intel-ucode base-devel nano networkmanager wpa_supplicant netctl dialog lvm2
     else
         pacman -Sy --needed --noconfirm intel-ucode base-devel nano networkmanager wpa_supplicant netctl dialog
@@ -98,7 +98,7 @@ function set_hostname() {
 }
 
 function setup_mkinitcpio() {
-    if [[ -v cryptdevice ]]; then
+    if [[ -n $cryptdevice ]]; then
         sed -i 's/^HOOKS=(base udev autodetect modconf block filesystems keyboard fsck)/HOOKS=(base udev autodetect modconf block encrypt lvm2 filesystems keyboard fsck)/' /etc/mkinitcpio.conf
         mkinitcpio -P
     fi
@@ -114,7 +114,7 @@ function create_user() {
 
 function install_boot_loader() {
     pacman -S --needed --noconfirm grub efibootmgr dosfstools mtools os-prober
-    if [[ -v cryptdevice ]]; then
+    if [[ -n $cryptdevice ]]; then
         sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet"/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet cryptdevice='"$cryptdevice"'"/' /etc/default/grub
         sed -i 's/^#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/' /etc/default/grub
     else

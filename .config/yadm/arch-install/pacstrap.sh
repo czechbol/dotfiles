@@ -66,12 +66,6 @@ function select_kernel() {
     done
 }
 
-function export_variables() {
-    if [[ -v cryptdevice ]]; then
-        export cryptdevice
-    fi
-}
-
 function set_ntp() {
     timedatectl set-ntp true
 }
@@ -81,6 +75,9 @@ function install_essential_packages() {
 }
 
 function change_root_into_new_system() {
+    if [[ -n $cryptdevice ]]; then
+        sed -i "s|cryptdevice=\"\"|cryptdevice=\"$cryptdevice\"|" chroot.sh
+    fi
     mv chroot.sh /mnt/chroot.sh
     arch-chroot /mnt sh /chroot.sh
 }
