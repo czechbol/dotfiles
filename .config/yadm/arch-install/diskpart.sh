@@ -515,7 +515,7 @@ done
 
 if [[ $ENCRYPTED ]]; then
     # Run the next script with the e flag and the encrypted disk partition
-    sh pacstrap.sh -e "${encrypted_partition}" -p "$pv_name"
+    bash pacstrap.sh -e "${encrypted_partition}" -p "$pv_name"
 else
-    sh pacstrap.sh
+    bash pacstrap.sh
 fi

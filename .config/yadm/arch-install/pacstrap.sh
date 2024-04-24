@@ -79,7 +79,7 @@ function change_root_into_new_system() {
         sed -i "s|cryptdevice=\"\"|cryptdevice=\"$cryptdevice\"|" chroot.sh
     fi
     mv chroot.sh /mnt/chroot.sh
-    arch-chroot /mnt sh /chroot.sh
+    arch-chroot /mnt bash /chroot.sh
 }
 
 function reboot_system() {
