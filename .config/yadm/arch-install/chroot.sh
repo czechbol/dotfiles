@@ -114,12 +114,7 @@ function create_user() {
 function install_boot_loader() {
     pacman -S --needed --noconfirm grub efibootmgr dosfstools mtools os-prober
     if [[ -n $cryptdevice ]]; then
-        awk -v cryptdevice="$cryptdevice" -i inplace '
-            BEGIN { FS=OFS="\"" }
-            /^GRUB_CMDLINE_LINUX_DEFAULT=/ {
-                $2 = "loglevel=3 quiet cryptdevice=" cryptdevice
-            }
-        1' /etc/default/grub
+        sed -i 's|^GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet"|GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet cryptdevice='"$cryptdevice"'|' /etc/default/grub
         sed -i 's/^#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/' /etc/default/grub
     else
         sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet"/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet"/' /etc/default/grub
