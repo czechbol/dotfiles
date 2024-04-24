@@ -145,7 +145,9 @@ if ! yay -Syu --needed --noconfirm $packages; then
 fi
 
 # sddm
-sudo tar -xf ~/.config/yadm/data/sddm_catppuccin-mocha.tar.gz -C /usr/share/sddm/themes/
+curl -O https://github.com/catppuccin/sddm/releases/download/v1.0.0/catppuccin-mocha.zip
+sudo tar -xf ./catppuccin-mocha.zip -C /usr/share/sddm/themes/
+rm catppuccin-mocha.zip
 sudo rm /etc/sddm.conf.d/kde_settings.conf
 sudo cp /usr/share/sddm/themes/catppuccin-mocha/kde_settings.conf /etc/sddm.conf.d/
 
