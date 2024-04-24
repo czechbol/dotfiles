@@ -2,17 +2,15 @@
 
 cryptdevice=""
 
-function parse_arguments() {
-    while getopts ":he:p:" opt; do
-        case $opt in
-            h) display_help
-            exit 0;;
-            e) encrypted_partition=$OPTARG;;
-            p) pv_name=$OPTARG;;
-            \?) echo "Invalid option -$OPTARG" >&2;;
-        esac
-    done
-}
+while getopts ":he:p:" opt; do
+    case $opt in
+        h) display_help
+        exit 0;;
+        e) encrypted_partition=$OPTARG;;
+        p) pv_name=$OPTARG;;
+        \?) echo "Invalid option -$OPTARG" >&2;;
+    esac
+done
 
 function display_help() {
     echo "Usage: $0 [-e  <encrypted-partition> -p <physical-volume>]"
@@ -90,7 +88,6 @@ function reboot_system() {
     reboot
 }
 
-parse_arguments
 check_options
 echo "encrypted_partition=$encrypted_partition, pv_name=$pv_name"
 set_cryptdevice
