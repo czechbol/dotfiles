@@ -5,7 +5,7 @@ read -r -s -p "Enter your sudo password: " sudo_password
 echo "$sudo_password" | sudo -S echo "Thank you!"
 
 echo -e "Setting grub theme"
-sudo tar -xzf ~/.config/yadm/data/catppuccin-mocha-grub-theme.tar.gz -C /boot/grub/themes/themes/
+sudo tar -xf ~/.config/yadm/data/catppuccin-mocha-grub-theme.tar.gz -C /boot/grub/themes/themes/
 sudo sed -i "/^GRUB_DEFAULT=/c\GRUB_DEFAULT=saved
 /^GRUB_GFXMODE=/c\GRUB_GFXMODE=1920x1080x32,auto
 /^GRUB_THEME=/c\GRUB_THEME=\"/boot/grub/themes/catppuccin-mocha-grub-theme/theme.txt\"
@@ -141,7 +141,7 @@ echo "Installing the selected packages..."
 yay -Syu --needed --noconfirm $packages
 
 # sddm
-sudo tar -xzf ~/.config/yadm/data/sddm_catppuccin-mocha.tar.gz -C /usr/share/sddm/themes/
+sudo tar -xf ~/.config/yadm/data/sddm_catppuccin-mocha.tar.gz -C /usr/share/sddm/themes/
 sudo rm /etc/sddm.conf.d/kde_settings.conf
 sudo cp /usr/share/sddm/themes/catppuccin-mocha/kde_settings.conf /etc/sddm.conf.d/
 
