@@ -155,4 +155,5 @@ sudo chsh "$USER" -s "$(which zsh)"
 # install complete
 echo "Installation complete."
 
+read -r -p "Continue? (y/n): "
 # End of file
