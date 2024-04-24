@@ -14,9 +14,6 @@ function parse_arguments() {
     done
 }
 
-echo "encrypted_partition=$encrypted_partition, pv_name=$pv_name"
-
-
 function display_help() {
     echo "Usage: $0 [-e  <encrypted-partition> -p <physical-volume>]"
     echo "Options:"
@@ -94,6 +91,7 @@ function reboot_system() {
 }
 
 parse_arguments
+echo "encrypted_partition=$encrypted_partition, pv_name=$pv_name"
 check_options
 set_cryptdevice
 echo "cryptdevice=$cryptdevice"
