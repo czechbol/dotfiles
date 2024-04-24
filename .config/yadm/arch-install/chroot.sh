@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Access the exported variables
 cryptdevice=""
 
 

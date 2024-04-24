@@ -12,6 +12,8 @@ function parse_arguments() {
     done
 }
 
+cryptdevice=""
+
 function display_help() {
     echo "Usage: $0 [-e  <encrypted-partition> -p <physical-volume>]"
     echo "Options:"
