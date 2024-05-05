@@ -87,11 +87,11 @@ function reboot_system() {
 check_options
 set_cryptdevice
 
+mkdir -p /mnt/etc
 genfstab -U /mnt >> /mnt/etc/fstab
 
 mount_efi_system_partition
 select_kernel
-prompt_for_user_input
 export_variables
 set_ntp
 install_essential_packages

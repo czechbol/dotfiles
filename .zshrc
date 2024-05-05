@@ -1,4 +1,4 @@
-# Download Znap, if it's not there yet.
+# Download antidote, if it's not there yet.
 if [[ ! -f ${ZDOTDIR:-~}/.antidote/antidote.zsh ]]; then
     git clone --depth 1 -- \
     https://github.com/mattmc3/antidote.git ${ZDOTDIR:-~}/.antidote
@@ -26,6 +26,9 @@ autoload -U compinit
         compinit -C
     fi
 }
+
+zstyle ':completion:*' fzf-search-display true
+zstyle ':fzf-tab:complete:_zlua:*' query-string input
 
 autoload -Uz select-word-style
 select-word-style bash
@@ -70,8 +73,11 @@ export EDITOR="code -w"
 
 export GOPATH=$HOME/go
 export GOBIN=$HOME/go/bin/
+NPM_PACKAGES="$HOME/.npm-packages"
+NODE_PATH="$NPM_PACKAGES/lib/node_modules:$NODE_PATH"
 export PATH="$PATH:$GOPATH/bin"
 export PATH="$PATH:$HOME/.cargo/bin"
+export PATH="$NPM_PACKAGES/bin:$PATH"
 export PATH="$PATH:/usr/local/go/bin"
 export PATH="$PATH:/home/aludes/.local/bin"
 export PATH=$PATH:/home/aludes/.spicetify

@@ -20,6 +20,9 @@
     "filament_settings_id": [
         "Voron Spectrum PCTG"
     ],
+    "filament_shrink": [
+        "99.83%"
+    ],
     "filament_type": [
         "PCTG"
     ],
@@ -34,13 +37,13 @@
     "is_custom_defined": "0",
     "name": "Voron Spectrum PCTG",
     "nozzle_temperature": [
-        "245"
+        "230"
     ],
     "nozzle_temperature_initial_layer": [
-        "240"
+        "225"
     ],
     "pressure_advance": [
-        "0.07"
+        "0.046"
     ],
     "slow_down_layer_time": [
         "1"

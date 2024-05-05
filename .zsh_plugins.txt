@@ -190,7 +190,8 @@ belak/zsh-utils path:editor
 # Syntax highlighting
 #zsh-users/zsh-syntax-highlighting kind:defer
 zdharma-continuum/fast-syntax-highlighting kind:defer
-marlonrichert/zsh-autocomplete kind:defer
+#marlonrichert/zsh-autocomplete kind:defer
+Aloxaf/fzf-tab kind:defer
 
 
 ### Completions

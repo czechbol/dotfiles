@@ -1,4 +1,5 @@
 {
+    "change_filament_gcode": "M600",
     "emit_machine_limits_to_gcode": "0",
     "fan_speedup_time": "1",
     "from": "User",
