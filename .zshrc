@@ -1,39 +1,100 @@
-# Download antidote, if it's not there yet.
-if [[ ! -f ${ZDOTDIR:-~}/.antidote/antidote.zsh ]]; then
-    git clone --depth 1 -- \
-    https://github.com/mattmc3/antidote.git ${ZDOTDIR:-~}/.antidote
+# Set the directory we want to store zinit and plugins
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+
+# Download Zinit, if it's not there yet
+if [ ! -d "$ZINIT_HOME" ]; then
+   mkdir -p "$(dirname $ZINIT_HOME)"
+   git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
 fi
 
-source ${ZDOTDIR:-~}/.antidote/antidote.zsh
-antidote load
+# Source/Load zinit
+source "${ZINIT_HOME}/zinit.zsh"
 
+# Define the path of the timestamp file
+TIMESTAMP_FILE="$HOME/.zinit_last_update"
+
+# If the timestamp file doesn't exist or it was modified more than 24 hours ago
+if [[ ! -e "$TIMESTAMP_FILE" ]] || [[ "$(find "$TIMESTAMP_FILE" -mtime +1)" ]]; then
+    zinit self-update
+    zinit update --parallel
+
+    # Update the timestamp file
+    touch "$TIMESTAMP_FILE"
+fi
+
+# Add in zsh plugins
+zinit light zsh-users/zsh-syntax-highlighting
+zinit light zsh-users/zsh-completions
+zinit light zsh-users/zsh-autosuggestions
+zinit light Aloxaf/fzf-tab
+zinit light peterhurford/up.zsh
+zinit light mattmc3/zman
+
+# Add in snippets
+zinit snippet OMZP::ansible
+zinit snippet OMZP::archlinux
+zinit snippet OMZP::argocd
+zinit snippet OMZP::command-not-found
+zinit snippet OMZP::direnv
+zinit snippet OMZP::dnf
+zinit snippet OMZP::docker-compose
+zinit snippet OMZP::docker
+zinit snippet OMZP::git
+zinit snippet OMZP::kubectl
+zinit snippet OMZP::kubectx
+zinit snippet OMZP::pre-commit
+zinit snippet OMZP::ripgrep
+zinit snippet OMZP::sudo
+zinit snippet OMZP::systemd
+
+# Load completions
+autoload -Uz compinit && compinit
+
+zinit cdreplay -q
+
+# Keybindings
+bindkey -e
+bindkey '^p' history-search-backward
+bindkey '^n' history-search-forward
+bindkey '^[[A' fzf-history-widget
+bindkey '^[w' kill-region
+bindkey '^H' backward-kill-word
+bindkey '^[[1;5D' backward-word
+bindkey '^[[1;5C' forward-word
+bindkey '^[[3;5~' kill-word
+
+
+# History
+HISTSIZE=10000
 HISTFILE=~/.zsh_history
-HISTSIZE=100000
-SAVEHIST=10000
+SAVEHIST=$HISTSIZE
+HISTDUP=erase
+setopt appendhistory
+setopt sharehistory
+setopt hist_ignore_space
+setopt hist_ignore_all_dups
+setopt hist_save_no_dups
+setopt hist_ignore_dups
+setopt hist_find_no_dups
+
+
+# Completion styling
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' menu no
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
+zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
 unsetopt beep notify
-bindkey -e
-
-autoload -U compinit
-
-() {
-    setopt extendedglob local_options
-    
-    if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh+24) ]]; then
-        antidote update
-        compinit
-    else
-        compinit -C
-    fi
-}
-
-zstyle ':completion:*' fzf-search-display true
-zstyle ':fzf-tab:complete:_zlua:*' query-string input
 
 autoload -Uz select-word-style
 select-word-style bash
 
-# init stuff
+
+# Shell integrations
+if command -v fzf >/dev/null; then
+    eval "$(fzf --zsh)"
+fi
 if command -v starship >/dev/null; then
     eval "$(starship init zsh)"
 fi
@@ -50,14 +111,9 @@ if [[ -f /etc/profile.d/google-cloud-sdk.sh ]]; then
     source /etc/profile.d/google-cloud-sdk.sh
 fi
 
-
-# key bindings
-bindkey '^H' backward-kill-word
-bindkey '5~' kill-word
-bindkey '\t' menu-complete
-
-
-alias update='sudo dnf update -y && flatpak update'
+alias ls='ls --color -h --group-directories-first'
+alias vim='nvim'
+alias c='clear'
 # update dotfiles with yadm and autosquash commits that were made today
 alias dotupdate='yadm add -u && yadm commit -m "update" && yadm push'
 alias dotgit="GIT_WORK_TREE=~ GIT_DIR=~/.local/share/yadm/repo.git"

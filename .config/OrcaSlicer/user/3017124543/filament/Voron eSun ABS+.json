@@ -37,16 +37,13 @@
     "is_custom_defined": "0",
     "name": "Voron eSun ABS+",
     "nozzle_temperature": [
-        "250"
-    ],
-    "nozzle_temperature_initial_layer": [
-        "245"
+        "255"
     ],
     "overhang_fan_speed": [
         "45"
     ],
     "pressure_advance": [
-        "0.0364"
+        "0.027"
     ],
     "reduce_fan_stop_start_freq": [
         "0"

@@ -2,8 +2,76 @@
     "device_error": {
         "en": [
             {
+                "ecode": "12018007",
+                "intro": "Failed to extrude the filament. The extruder may be clogged or the filament may be stuck; please refer to HMS. After troubleshooting, click \"Retry\" button."
+            },
+            {
+                "ecode": "12028007",
+                "intro": "Failed to extrude the filament. The extruder may be clogged or the filament may be stuck; please refer to HMS. After troubleshooting, click \"Retry\" button."
+            },
+            {
+                "ecode": "12038007",
+                "intro": "Failed to extrude the filament. The extruder may be clogged or the filament may be stuck; please refer to HMS. After troubleshooting, click \"Retry\" button."
+            },
+            {
+                "ecode": "12018014",
+                "intro": "Failed to check the filament location in the tool head; please refer to the HMS. After troubleshooting, click the \"Retry\" button."
+            },
+            {
+                "ecode": "12028014",
+                "intro": "Failed to check the filament location in the tool head; please refer to the HMS. After troubleshooting, click the \"Retry\" button."
+            },
+            {
+                "ecode": "05014038",
+                "intro": "The region settings do not match the printer; please check the printer's region settings."
+            },
+            {
+                "ecode": "12018016",
+                "intro": "The extruder is not extruding normally; please refer to the HMS. After trouble shooting. If the defects are acceptable, please click \"Retry\" button."
+            },
+            {
+                "ecode": "12028016",
+                "intro": "The extruder is not extruding normally; please refer to the HMS. After trouble shooting. If the defects are acceptable, please click \"Retry\" button."
+            },
+            {
+                "ecode": "12038016",
+                "intro": "The extruder is not extruding normally; please refer to the HMS. After trouble shooting. If the defects are acceptable, please click \"Retry\" button."
+            },
+            {
+                "ecode": "03008015",
+                "intro": "The filament has run out; please load new filament. If the filament is loaded, please select \"Resume\"."
+            },
+            {
+                "ecode": "05014033",
+                "intro": "Your APP region is not matched with your printer; please download the APP in the corresponding region and register your account again."
+            },
+            {
+                "ecode": "03008017",
+                "intro": "Foreign objects detected on  hotbed. Please check and clean the hotbed, then tap \"Resume\" button to resume the print job."
+            },
+            {
+                "ecode": "0514039",
+                "intro": "Device login has expired; please try to bind again."
+            },
+            {
+                "ecode": "1000C001",
+                "intro": "High bed temperature may lead to filament clogging in the nozzle. You may open the chamber door."
+            },
+            {
+                "ecode": "03008010",
+                "intro": "The hotend fan speed is abnormal."
+            },
+            {
+                "ecode": "12008006",
+                "intro": "Unable to feed filament into the extruder. This could be due to entangled filament or a stuck spool. If not, please check if the AMS PTFE tube is connected."
+            },
+            {
+                "ecode": "12008016",
+                "intro": "The extruder is not extruding normally. Refer to the Assistant for troubleshooting. There may be defects in this layer, you may resume if the defects are acceptable."
+            },
+            {
                 "ecode": "0500403A",
-                "intro": "The current temperature is too low. In order to protect you and your printer. Printing tasks, moving axis, and other operations are disabled. Please move the printer to an environment above 10°C."
+                "intro": "The current temperature is too low. In order to protect you and your printer. Printing task, moving axis and other operations are disabled. Please move the printer to an environment above 10 celsius degree."
             },
             {
                 "ecode": "07008006",
@@ -146,20 +214,12 @@
                 "intro": "The cutter is stuck. Please make sure the cutter handle is out."
             },
             {
-                "ecode": "03008010",
-                "intro": "Printing stopped because the hotend fan speed is abnormal."
-            },
-            {
                 "ecode": "12008011",
                 "intro": "AMS filament ran out. Please insert a new filament into the same AMS slot."
             },
             {
                 "ecode": "03008011",
                 "intro": "Detected build plate is not the same as the Gcode file. Please adjust slicer settings or use the correct plate."
-            },
-            {
-                "ecode": "03008015",
-                "intro": "The filament has run out, please load new filament in the \"filament\" page."
             },
             {
                 "ecode": "07018006",
@@ -230,44 +290,12 @@
                 "intro": "MicroSD Card read/write exception. please reinsert or replace MicroSD Card ."
             },
             {
-                "ecode": "0514039",
-                "intro": "Device login has expired, please try to bind again."
-            },
-            {
                 "ecode": "03008018",
                 "intro": "Chamber temperature malfunction."
             },
             {
                 "ecode": "03008019",
                 "intro": "No build plate is placed."
-            },
-            {
-                "ecode": "12018007",
-                "intro": "Failed to extrude the filament. The extruder may be clogged or the filament may be stuck, please refer to HMS. After troubleshooting, click \"Retry\" button."
-            },
-            {
-                "ecode": "12038007",
-                "intro": "Failed to extrude the filament. The extruder may be clogged or the filament may be stuck, please refer to HMS. After troubleshooting, click \"Retry\" button."
-            },
-            {
-                "ecode": "12008016",
-                "intro": "The extruder is not extruding normally, please refer to the HMS. After trouble shooting. If the defects are acceptable, please click \"Retry\" button."
-            },
-            {
-                "ecode": "12018016",
-                "intro": "The extruder is not extruding normally, please refer to the HMS. After trouble shooting. If the defects are acceptable, please click \"Retry\" button."
-            },
-            {
-                "ecode": "12028016",
-                "intro": "The extruder is not extruding normally, please refer to the HMS. After trouble shooting. If the defects are acceptable, please click \"Retry\" button."
-            },
-            {
-                "ecode": "12038016",
-                "intro": "The extruder is not extruding normally, please refer to the HMS. After trouble shooting. If the defects are acceptable, please click \"Retry\" button."
-            },
-            {
-                "ecode": "12028007",
-                "intro": "Failed to extrude the filament. The extruder may be clogged or the filament may be stuck, please refer to HMS. After troubleshooting, click \"Retry\" button."
             },
             {
                 "ecode": "03008014",
@@ -286,16 +314,8 @@
                 "intro": "No build plate is placed."
             },
             {
-                "ecode": "05014038",
-                "intro": "The regional settings do not match the printer, please check the printer's regional settings."
-            },
-            {
                 "ecode": "05004002",
                 "intro": "Unsupported print file path or name. Please resend the printing job."
-            },
-            {
-                "ecode": "03008017",
-                "intro": "Foreign objects detected on  hotbed, Please check and clean the hotbed, Then tap \"Resume\" button to resume the print job."
             },
             {
                 "ecode": "05008036",
@@ -322,20 +342,12 @@
                 "intro": "Timelapse is not supported because Print sequence is set to \"By object\"."
             },
             {
-                "ecode": "1000C001",
-                "intro": "High bed temperature may lead to filament clogging in the nozzle. Please ensure ventilation for the printer."
-            },
-            {
                 "ecode": "05014035",
                 "intro": "The device is in the process of binding and cannot respond to new binding requests."
             },
             {
                 "ecode": "05014032",
                 "intro": "QR code binding is in progress, so device discovery binding cannot be performed. You can scan the QR code on the screen for binding or exit the QR code display page on screen and try device discovery binding."
-            },
-            {
-                "ecode": "05014033",
-                "intro": "Your APP region is not matched with your printer, please download the APP in the corresponding region and register your account again."
             },
             {
                 "ecode": "12028005",
@@ -606,10 +618,6 @@
                 "intro": "Failed to feed the filament. Please load the filament and then click the \"Retry\" button."
             },
             {
-                "ecode": "12008006",
-                "intro": "Failed to feed the filament into the toolhead. Please check whether the filament is stuck. After troubleshooting, click the \"Retry\" button."
-            },
-            {
                 "ecode": "12018006",
                 "intro": "Failed to feed the filament into the toolhead. Please check whether the filament is stuck. After troubleshooting, click the \"Retry\" button."
             },
@@ -636,14 +644,6 @@
             {
                 "ecode": "12018013",
                 "intro": "Timeout while purging old filament. Please check if the filament is stuck or the extruder clogged. After troubleshooting, click the \"Retry\" button."
-            },
-            {
-                "ecode": "12018014",
-                "intro": "Failed to check the filament location in the tool head, please refer to the HMS. After troubleshooting, click the \"Retry\" button."
-            },
-            {
-                "ecode": "12028014",
-                "intro": "Failed to check the filament location in the tool head, please refer to the HMS. After troubleshooting, click the \"Retry\" button."
             },
             {
                 "ecode": "12038014",
@@ -1070,13 +1070,37 @@
                 "intro": "Heatbed temperature malfunction."
             }
         ],
-        "ver": 202404151030
+        "ver": 202405112230
     },
     "device_hms": {
         "en": [
             {
-                "ecode": "03001A0000020002",
-                "intro": "The nozzle is clogged with filament."
+                "ecode": "0C00030000020010",
+                "intro": "Foreign objects detected on hotbed: please check and clean the hotbed."
+            },
+            {
+                "ecode": "0500010000030004",
+                "intro": "Not enough space in MicroSD Card; please clear some space."
+            },
+            {
+                "ecode": "0300020000010006",
+                "intro": "The nozzle temperature is abnormal; the sensor may have a short circuit. Please check whether the connector is properly plugged in."
+            },
+            {
+                "ecode": "0500030000010021",
+                "intro": "Hardware incompatible: please check the laser."
+            },
+            {
+                "ecode": "0500050000010001",
+                "intro": "The factory data of AP board is abnormal; please replace the AP board with a new one."
+            },
+            {
+                "ecode": "0500050000030002",
+                "intro": "The device is in the engineering state; please pay attention to the information security related matters."
+            },
+            {
+                "ecode": "0300180000010005",
+                "intro": "The Z axis motor got stuck while moving, or the extrusion force sensor may have an issue; please check if there is any foreign matter on the Z sliders or Z timing belt wheels."
             },
             {
                 "ecode": "030002000001000B",
@@ -1093,6 +1117,14 @@
             {
                 "ecode": "0500030000010024",
                 "intro": "The current temperature is too low. In order to protect you and your printer. Printing task, moving axis and other operations is disabled. Please move the printer to an environment above 10°C."
+            },
+            {
+                "ecode": "0500020000020008",
+                "intro": "Time synchronization failed."
+            },
+            {
+                "ecode": "03001A0000020002",
+                "intro": "The nozzle is clogged with filament."
             },
             {
                 "ecode": "03000F0000010001",
@@ -1303,20 +1335,8 @@
                 "intro": "The heatbed acceleration sensor detected unexpected continuous force. The sensor may be stuck, or the analog front end may be broken."
             },
             {
-                "ecode": "0500050000030002",
-                "intro": "The device is in the engineering state, please pay attention to the information security related matters."
-            },
-            {
                 "ecode": "03000D000001000B",
                 "intro": "The Z axis motor seems to be stuck when moving. Please check if there is any foreign matter on the Z sliders or Z timing belt wheels ."
-            },
-            {
-                "ecode": "0C00030000020010",
-                "intro": "Foreign objects detected on hotbed, Please check and clean the hotbed."
-            },
-            {
-                "ecode": "0500050000010001",
-                "intro": "The factory data of AP board is abnormal, please replace the AP board with a new one."
             },
             {
                 "ecode": "03000D0000020001",
@@ -2687,10 +2707,6 @@
                 "intro": "The filament buffer signal is abnormal; the spring may be stuck or the filament may be tangle."
             },
             {
-                "ecode": "0500010000030004",
-                "intro": "Not enough space in MicroSD Card, please clear some space."
-            },
-            {
                 "ecode": "0500010000030005",
                 "intro": "MicroSD Card error: please reinsert, format or replace it."
             },
@@ -2783,10 +2799,6 @@
                 "intro": "The temperature of the heated bed exceeds the limit and automatically adjusts to the limit temperature."
             },
             {
-                "ecode": "0300020000010006",
-                "intro": "The nozzle temperature is abnormal; the sensor may have a short circuit, please check whether the connector is properly plugged."
-            },
-            {
                 "ecode": "0300200000010003",
                 "intro": "X axis homing abnormal: the timing belt may be loose."
             },
@@ -2797,10 +2809,6 @@
             {
                 "ecode": "0C00030000020004",
                 "intro": "First layer inspection is not supported for the current print job."
-            },
-            {
-                "ecode": "0500030000010021",
-                "intro": "Hardware incompatible, please check the laser."
             },
             {
                 "ecode": "0C0003000003000d",
@@ -4143,7 +4151,7 @@
                 "intro": "The nozzle temperature is abnormal; the sensor may have an open circuit."
             }
         ],
-        "ver": 202404221830
+        "ver": 202405112230
     },
-    "version": "202404221830"
+    "version": "202405112230"
 }

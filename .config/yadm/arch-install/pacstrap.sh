@@ -92,8 +92,7 @@ genfstab -U /mnt >> /mnt/etc/fstab
 
 mount_efi_system_partition
 select_kernel
-export_variables
 set_ntp
 install_essential_packages
-change_root_into_new_system
+change_root_into_new_systeme
 reboot_system
