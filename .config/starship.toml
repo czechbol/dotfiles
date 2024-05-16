@@ -1,8 +1,6 @@
+right_format = "$cmd_duration$time"
 format = "$all$directory$character"
 add_newline = false
-
-[line_break]
-disabled = true
 
 [[battery.display]]
 threshold = 30
@@ -13,11 +11,16 @@ error_symbol = "[✖](bold red) "
 
 [cmd_duration]
 min_time = 10_000  # Show command duration over 10,000 milliseconds (=10 sec)
-format = " [$duration]($style)"
+format = " [$duration]($style) "
 
 [directory]
 truncation_length = 5
 format = "[$path]($style)[$read_only]($read_only_style) "
+
+[gcloud]
+symbol = '️🇬️'
+format = 'on [$symbol (\($project\))]($style) '
+disabled = true
 
 [git_branch]
 symbol = "🌱 "
@@ -59,6 +62,14 @@ format = "<[$symbol$version]($style)> "
 symbol = "ஃ "
 style = "bold green"
 
+[kubernetes]
+symbol = "⎈"
+format = '[$symbol $context( \($namespace\))]($style) '
+disabled = false
+
+[line_break]
+disabled = true
+
 [memory_usage]
 format = "$symbol[${ram}]($style) "
 threshold = 50
@@ -75,14 +86,3 @@ style = "bold green"
 [username]
 style_user = "bold dimmed blue"
 style_root = "bold dimmed red"
-
-[gcloud]
-symbol = '️🇬️'
-format = 'on [$symbol (\($project\))]($style) '
-disabled = true
-
-[kubernetes]
-symbol = "⎈"
-format = '[$symbol $context( \($namespace\))]($style) '
-disabled = false
-

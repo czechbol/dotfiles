@@ -1,3 +1,4 @@
+
 # Set the directory we want to store zinit and plugins
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 
@@ -33,17 +34,12 @@ zinit light mattmc3/zman
 # Add in snippets
 zinit snippet OMZP::ansible
 zinit snippet OMZP::archlinux
-zinit snippet OMZP::argocd
 zinit snippet OMZP::command-not-found
-zinit snippet OMZP::direnv
 zinit snippet OMZP::dnf
-zinit snippet OMZP::docker-compose
-zinit snippet OMZP::docker
 zinit snippet OMZP::git
 zinit snippet OMZP::kubectl
 zinit snippet OMZP::kubectx
 zinit snippet OMZP::pre-commit
-zinit snippet OMZP::ripgrep
 zinit snippet OMZP::sudo
 zinit snippet OMZP::systemd
 
