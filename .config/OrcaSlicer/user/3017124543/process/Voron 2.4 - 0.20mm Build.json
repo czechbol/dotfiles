@@ -6,7 +6,6 @@
     "default_acceleration": "0",
     "default_jerk": "0",
     "enable_arc_fitting": "1",
-    "enable_support": "1",
     "from": "User",
     "inherits": "0.20mm Standard @Voron",
     "inner_wall_speed": "300",

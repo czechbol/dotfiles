@@ -34,9 +34,9 @@
         "states": {
             "c": 90, // critical
             "h": 60, // high
-            "m": 30, // medium
+            "m": 30 // medium
         },
-        "interval": 30,
+        "interval": 10,
         "format": "󰾆 {used}GB",
         "rotate": 0,
         "format-m": "󰾅 {used}GB",
@@ -66,7 +66,7 @@
         "interval": 5, // once every 5 seconds
         "tooltip": true,
         "max-length": 1000,
-        "on-click": "gpuinfo.sh --toggle",
+        "on-click": "gpuinfo.sh --toggle"
     },
 
     "custom/gpuinfo#nvidia": {
@@ -76,7 +76,7 @@
         "rotate": 0,
         "interval": 5, // once every 5 seconds
         "tooltip": true,
-        "max-length": 1000,
+        "max-length": 1000
     },
 
     "custom/gpuinfo#amd": {
@@ -86,7 +86,7 @@
         "rotate": 0,
         "interval": 5, // once every 5 seconds
         "tooltip": true,
-        "max-length": 1000,
+        "max-length": 1000
     },
 
     "custom/gpuinfo#intel": {
@@ -96,7 +96,7 @@
         "rotate": 0,
         "interval": 5, // once every 5 seconds
         "tooltip": true,
-        "max-length": 1000,
+        "max-length": 1000
     },
 
     "idle_inhibitor": {
@@ -109,9 +109,10 @@
     },
 
     "clock": {
-        "format": "{:%I:%M %p}",
+        "interval": 1,
+        "format": "{:%H:%M}",
         "rotate": 0,
-        "format-alt": "{:%R 󰃭 %d·%m·%y}",
+        "format-alt": "{:%H:%M:%S 󰃭 %d·%m·%y}",
         "tooltip-format": "<tt>{calendar}</tt>",
         "calendar": {
             "mode": "month",
@@ -134,7 +135,6 @@
     },
 
     "hyprland/workspaces": {
-        "disable-scroll": true,
         "rotate": 0,
         "all-outputs": true,
         "active-only": false,
@@ -183,7 +183,7 @@
         "format-disconnected": "󰖪 ",
         "tooltip-format-disconnected": "Disconnected",
         "format-alt": "<span foreground='#99ffdd'> {bandwidthDownBytes}</span> <span foreground='#ffcc66'> {bandwidthUpBytes}</span>",
-        "interval": 2,
+        "interval": 2
     },
 
     "bluetooth": {
@@ -243,7 +243,7 @@
         "on-click": "systemupdate.sh up",
         "interval": 86400, // once every day
         "tooltip": true,
-        "signal": 20,
+        "signal": 20
     },
 
     "custom/keybindhint": {
@@ -372,4 +372,3 @@
     }
 
 }
-

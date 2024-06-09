@@ -106,6 +106,9 @@ fi
 if [[ -f /etc/profile.d/google-cloud-sdk.sh ]]; then
     source /etc/profile.d/google-cloud-sdk.sh
 fi
+if [[ -f eza ]]; then
+    alias ls=eza
+fi
 
 alias ls='ls --color -h --group-directories-first'
 alias vim='nvim'

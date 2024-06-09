@@ -28,13 +28,16 @@
         "240"
     ],
     "nozzle_temperature_initial_layer": [
-        "240"
+        "245"
     ],
     "overhang_fan_speed": [
         "45"
     ],
     "pressure_advance": [
-        "0.0407"
+        "0.033"
+    ],
+    "slow_down_layer_time": [
+        "1"
     ],
     "version": "1.8.0.0"
 }
