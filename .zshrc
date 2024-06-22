@@ -89,7 +89,13 @@ select-word-style bash
 
 # Shell integrations
 if command -v fzf >/dev/null; then
-    eval "$(fzf --zsh)"
+    FZF_VERSION=$(fzf --version | cut -d' ' -f1)
+    if [[ $(echo -e "0.48.0\n$FZF_VERSION" | sort -V | head -n1) == $FZF_VERSION ]]; then
+        source /usr/share/doc/fzf/examples/key-bindings.zsh
+        source /usr/share/doc/fzf/examples/completion.zsh
+    else
+        eval "$(fzf --zsh)"
+    fi
 fi
 if command -v oh-my-posh >/dev/null; then
     eval "$(oh-my-posh init zsh -c ${HOME}/.config/oh-my-posh/config.yaml)"
