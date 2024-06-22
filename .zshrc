@@ -91,7 +91,9 @@ select-word-style bash
 if command -v fzf >/dev/null; then
     eval "$(fzf --zsh)"
 fi
-if command -v starship >/dev/null; then
+if command -v oh-my-posh >/dev/null; then
+    eval "$(oh-my-posh init zsh -c ${HOME}/.config/oh-my-posh/config.yaml)"
+elif command -v starship >/dev/null; then
     eval "$(starship init zsh)"
 fi
 if command -v direnv >/dev/null; then
