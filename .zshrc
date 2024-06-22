@@ -1,80 +1,48 @@
 # Download Znap, if it's not there yet.
-[[ -f ~/.znap/zsh-snap/znap.zsh ]] ||
+[[ -f ${ZDOTDIR:-~}/.antidote/antidote.zsh ]] ||
     git clone --depth 1 -- \
-        https://github.com/marlonrichert/zsh-snap.git ~/.znap/zsh-snap
+        https://github.com/mattmc3/antidote.git ${ZDOTDIR:-~}/.antidote
 
-zstyle ':znap:*' repos-dir ~/.znap
-source ~/.znap/zsh-snap/znap.zsh
-# Lines configured by zsh-newuser-install
+source ${ZDOTDIR:-~}/.antidote/antidote.zsh
+antidote load
+
 HISTFILE=~/.zsh_history
 HISTSIZE=100000
 SAVEHIST=10000
-# setopt autocd extendedglob nomatch
+
 unsetopt beep notify
 bindkey -e
-# End of lines configured by zsh-newuser-install
-# The following lines were added by compinstall
-zstyle ':completion:*' completer _expand _complete _ignored _approximate
-zstyle ':completion:*' expand prefix suffix
-zstyle ':completion:*' file-sort name
-zstyle ':completion:*' format 'Completing %d'
-zstyle ':completion:*' group-name ''
-zstyle ':completion:*' list-colors ''
-zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
-zstyle ':completion:*' matcher-list '' 'r:|[._-]=* r:|=*' 'm:{[:lower:]}={[:upper:]}' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*'
-zstyle ':completion:*' menu select=long
-zstyle ':completion:*' preserve-prefix '//[^/]##/'
-zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
-zstyle ':completion:*' squeeze-slashes true
-zstyle ':completion:*' use-compctl false
-zstyle ':completion:*' verbose true
 
-zstyle :compinstall filename '/home/aludes/.zshrc'
+autoload -U compinit
 
-autoload -Uz compinit
-compinit
-# End of lines added by compinstall
+() {
+  setopt extendedglob local_options
+
+  if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh+24) ]]; then
+    compinit
+  else
+    compinit -C
+  fi
+}
+
+autoload -Uz select-word-style
+select-word-style bash
 
 eval "$(starship init zsh)"
 eval "$(direnv hook zsh)"
 
-znap source marlonrichert/zsh-autocomplete
-znap source zsh-users/zsh-autosuggestions
-znap source zsh-users/zsh-syntax-highlighting
-znap source ael-code/zsh-colored-man-pages
-
-bindkey '\t' menu-select "$terminfo[kcbt]" menu-select
-
-# Home key
-bindkey  "^[[H"   beginning-of-line
-# End key
-bindkey  "^[[F"   end-of-line
-# Delete key
-bindkey  "^[[3~"  delete-char
-
-# Up arrow:
-bindkey "^[[A" up-line-or-search
-# Down arrow:
-bindkey "^[[B" down-line-or-select
-
-
-
-# Return key in completion menu & history menu:
-bindkey -M menuselect '\r' .accept-line
-bindkey -M menuselect '^[[C' accept-line
-bindkey -M menuselect '^[[D' accept-line
-# .accept-line: Accept command line.
-# accept-line:  Accept selection and exit menu.
-
-
-
+# key bindings
+bindkey '^H' backward-kill-word
+bindkey '5~' kill-word
 
 alias update='sudo dnf update -y && flatpak update'
-alias dotupdate='yadm add -u && yadm commit -m update && yadm push'
-export GOPATH=~/go
-export GOBIN=~/go/bin/
+alias gmt='go mod tidy'
+alias dk='docker kill $(docker ps -q)'
+alias dcu="docker compose up -d"
+alias dcd="docker compose down"
+export GOPATH=$HOME/go
+export GOBIN=$HOME/go/bin/
 export PATH="$PATH:$GOPATH/bin"
+export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:/usr/local/go/bin"
-export PATH="$PATH:~/.npm-global/bin"
-
-eval $(thefuck --alias)
+export PATH="$PATH:/home/aludes/.local/bin"
