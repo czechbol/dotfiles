@@ -108,11 +108,13 @@ fi
 if [[ -f /etc/profile.d/google-cloud-sdk.sh ]]; then
     source /etc/profile.d/google-cloud-sdk.sh
 fi
-if [[ -f eza ]]; then
+if command -v eza >/dev/null; then
     alias ls=eza
+    alias ls='eza -h --group-directories-first'
+else
+    alias ls='ls -h --group-directories-first'
 fi
 
-alias ls='ls --color -h --group-directories-first'
 alias vim='nvim'
 alias c='clear'
 # update dotfiles with yadm and autosquash commits that were made today
