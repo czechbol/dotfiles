@@ -1,4 +1,3 @@
-
 # Set the directory we want to store zinit and plugins
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 
@@ -86,6 +85,11 @@ unsetopt beep notify
 autoload -Uz select-word-style
 select-word-style bash
 
+export PATH="$PATH:$GOPATH/bin"
+export PATH="$PATH:$HOME/.cargo/bin"
+export PATH="$NPM_PACKAGES/bin:$PATH"
+export PATH="$PATH:/usr/local/go/bin"
+export PATH="$PATH:/home/aludes/.local/bin"
 
 # Shell integrations
 if command -v fzf >/dev/null; then
@@ -114,8 +118,11 @@ fi
 if [[ -f /etc/profile.d/google-cloud-sdk.sh ]]; then
     source /etc/profile.d/google-cloud-sdk.sh
 fi
-if [[ -f eza ]]; then
+if command -v eza >/dev/null; then
     alias ls=eza
+    alias ls='eza -h --group-directories-first'
+else
+    alias ls='ls -h --group-directories-first'
 fi
 
 alias ls='ls --color -h --group-directories-first'
@@ -133,8 +140,3 @@ export GOPATH=$HOME/go
 export GOBIN=$HOME/go/bin/
 NPM_PACKAGES="$HOME/.npm-packages"
 NODE_PATH="$NPM_PACKAGES/lib/node_modules:$NODE_PATH"
-export PATH="$PATH:$GOPATH/bin"
-export PATH="$PATH:$HOME/.cargo/bin"
-export PATH="$NPM_PACKAGES/bin:$PATH"
-export PATH="$PATH:/usr/local/go/bin"
-export PATH="$PATH:/home/aludes/.local/bin"
