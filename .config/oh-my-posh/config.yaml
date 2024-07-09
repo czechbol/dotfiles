@@ -20,6 +20,13 @@ blocks:
     template: "{{ .Path }}"
     properties:
       style: full
+  - type: kubectl
+    style: plain
+    foreground: p:blue
+    background: transparent
+    template: " \uF1D1 {{if .Namespace}}{{.Namespace}}@{{ end }}{{.Context}}"
+    properties:
+      display_default: true
   - type: git
     style: plain
     foreground: p:grey
