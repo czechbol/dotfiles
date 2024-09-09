@@ -6,7 +6,7 @@
     "layer": "top",
     "position": "top",
     "mod": "dock",
-    "height": 31,
+    "height": 28,
     "exclusive": true,
     "passthrough": false,
     "gtk-layer-shell": true,
@@ -15,8 +15,8 @@
 
 // positions generated based on config.ctl //
 
-	"modules-left": ["custom/padd","custom/l_end","cpu","memory","custom/cpuinfo","custom/gpuinfo","custom/r_end","custom/l_end","idle_inhibitor","clock","custom/r_end","custom/l_end","hyprland/workspaces","custom/r_end","custom/padd"],
-	"modules-center": ["custom/padd","custom/l_end","wlr/taskbar","custom/r_end","custom/padd"],
+	"modules-left": ["custom/padd","custom/l_end","cpu","memory","custom/cpuinfo","custom/r_end","custom/l_end","idle_inhibitor","clock","custom/r_end","custom/l_end","hyprland/workspaces","custom/r_end","custom/padd"],
+	"modules-center": ["custom/padd","custom/l_end","hyprland/window","custom/r_end","custom/padd"],
 	"modules-right": ["custom/padd","custom/l_end","backlight","network","bluetooth","pulseaudio","pulseaudio#microphone","custom/updates","custom/keybindhint","custom/r_end","custom/l_end","tray","battery","custom/r_end","custom/l_end","custom/wallchange","custom/theme","custom/wbar","custom/cliphist","custom/power","custom/r_end","custom/padd"],
 
 
@@ -34,9 +34,9 @@
         "states": {
             "c": 90, // critical
             "h": 60, // high
-            "m": 30 // medium
+            "m": 30, // medium
         },
-        "interval": 10,
+        "interval": 30,
         "format": "󰾆 {used}GB",
         "rotate": 0,
         "format-m": "󰾅 {used}GB",
@@ -58,47 +58,6 @@
         "max-length": 1000
     },
 
-    "custom/gpuinfo": {
-        "exec": " gpuinfo.sh",
-        "return-type": "json",
-        "format": "{}",
-        "rotate": 0,
-        "interval": 5, // once every 5 seconds
-        "tooltip": true,
-        "max-length": 1000,
-        "on-click": "gpuinfo.sh --toggle"
-    },
-
-    "custom/gpuinfo#nvidia": {
-        "exec": " gpuinfo.sh --use nvidia ",
-        "return-type": "json",
-        "format": "{}",
-        "rotate": 0,
-        "interval": 5, // once every 5 seconds
-        "tooltip": true,
-        "max-length": 1000
-    },
-
-    "custom/gpuinfo#amd": {
-        "exec": " gpuinfo.sh --use amd ",
-        "return-type": "json",
-        "format": "{}",
-        "rotate": 0,
-        "interval": 5, // once every 5 seconds
-        "tooltip": true,
-        "max-length": 1000
-    },
-
-    "custom/gpuinfo#intel": {
-        "exec": " gpuinfo.sh --use intel ",
-        "return-type": "json",
-        "format": "{}",
-        "rotate": 0,
-        "interval": 5, // once every 5 seconds
-        "tooltip": true,
-        "max-length": 1000
-    },
-
     "idle_inhibitor": {
         "format": "{icon}",
         "rotate": 0,
@@ -109,10 +68,9 @@
     },
 
     "clock": {
-        "interval": 1,
-        "format": "{:%H:%M}",
+        "format": "{:%I:%M %p}",
         "rotate": 0,
-        "format-alt": "{:%H:%M:%S 󰃭 %d·%m·%y}",
+        "format-alt": "{:%R 󰃭 %d·%m·%y}",
         "tooltip-format": "<tt>{calendar}</tt>",
         "calendar": {
             "mode": "month",
@@ -135,6 +93,7 @@
     },
 
     "hyprland/workspaces": {
+        "disable-scroll": true,
         "rotate": 0,
         "all-outputs": true,
         "active-only": false,
@@ -146,22 +105,22 @@
         }
     },
 
-	"wlr/taskbar": {
-		"format": "{icon}",
-		"rotate": 0,
-		"icon-size": 18,
-		"icon-theme": "Tela-circle-dracula",
-        "spacing": 0,
-		"tooltip-format": "{title}",
-		"on-click": "activate",
-		"on-click-middle": "close",
-		"ignore-list": [
-			"Alacritty"
-		],
-		"app_ids-mapping": {
-			"firefoxdeveloperedition": "firefox-developer-edition"
-		}
-	},
+    "hyprland/window": {
+        "format": "  {}",
+        "rotate": 0,
+        "separate-outputs": true,
+        "rewrite": {
+            "aludes@arnach:(.*)": "$1 ",
+            "(.*) — Mozilla Firefox": "$1 󰈹",
+            "(.*)Mozilla Firefox": "Firefox 󰈹",
+            "(.*) - Visual Studio Code": "$1 󰨞",
+            "(.*)Visual Studio Code": "Code 󰨞",
+            "(.*) — Dolphin": "$1 󰉋",
+            "(.*)Spotify": "Spotify 󰓇",
+            "(.*)Steam": "Steam 󰓓"
+        },
+        "max-length": 1000
+    },
 
     "backlight": {
         "device": "intel_backlight",
@@ -183,7 +142,7 @@
         "format-disconnected": "󰖪 ",
         "tooltip-format-disconnected": "Disconnected",
         "format-alt": "<span foreground='#99ffdd'> {bandwidthDownBytes}</span> <span foreground='#ffcc66'> {bandwidthUpBytes}</span>",
-        "interval": 2
+        "interval": 2,
     },
 
     "bluetooth": {
@@ -243,7 +202,7 @@
         "on-click": "systemupdate.sh up",
         "interval": 86400, // once every day
         "tooltip": true,
-        "signal": 20
+        "signal": 20,
     },
 
     "custom/keybindhint": {
@@ -253,13 +212,12 @@
     },
 
     "tray": {
-        "icon-size": 18,
+        "icon-size": 16,
         "rotate": 0,
         "spacing": 5
     },
 
     "battery": {
-        "interval": 10,
         "states": {
             "good": 95,
             "warning": 30,
@@ -373,3 +331,4 @@
     }
 
 }
+

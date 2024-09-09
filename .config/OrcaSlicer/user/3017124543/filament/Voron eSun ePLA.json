@@ -6,7 +6,7 @@
         "1"
     ],
     "filament_cost": [
-        "373"
+        "563"
     ],
     "filament_max_volumetric_speed": [
         "30"
@@ -34,7 +34,7 @@
         "195"
     ],
     "nozzle_temperature_initial_layer": [
-        "190"
+        "200"
     ],
     "pressure_advance": [
         "0.0448"

@@ -105,6 +105,9 @@ fi
 if command -v kubectl >/dev/null; then
     source <(kubectl completion zsh)
 fi
+if command -v delta >/dev/null; then
+    source <(delta --generate-completion zsh)
+fi
 if [[ -f /etc/profile.d/google-cloud-sdk.sh ]]; then
     source /etc/profile.d/google-cloud-sdk.sh
 fi
@@ -129,6 +132,7 @@ alias dcd="docker compose down"
 
 export KUBE_EDITOR="code -w"
 export EDITOR="code -w"
+export BAT_PAGER="less -RF"
 
 export GOPATH=$HOME/go
 export GOBIN=$HOME/go/bin/

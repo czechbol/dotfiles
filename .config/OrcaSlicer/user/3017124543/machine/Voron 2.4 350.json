@@ -1,6 +1,10 @@
 {
-    "change_filament_gcode": "M600",
+    "change_filament_gcode": "T[next_extruder]",
+    "cooling_tube_length": "0.01",
+    "cooling_tube_retraction": "0",
     "emit_machine_limits_to_gcode": "0",
+    "enable_filament_ramming": "0",
+    "extra_loading_move": "0",
     "fan_speedup_time": "1",
     "from": "User",
     "inherits": "Voron 2.4 350 0.4 nozzle",
@@ -46,16 +50,20 @@
         "300",
         "12"
     ],
-    "machine_start_gcode": ";M190 S[bed_temperature_initial_layer_single]\n;M109 S[nozzle_temperature_initial_layer]\n\nPRINT_START EXTRUDER=[nozzle_temperature_initial_layer] BED=[bed_temperature_initial_layer_single]\n{if curr_bed_type==\"Textured PEI Plate\"}\n  SET_GCODE_OFFSET Z=-0.05\n{else}\n  SET_GCODE_OFFSET Z=0.0\n{endif}\n\nG1 E0.8 F3600",
-    "manual_filament_change": "1",
+    "machine_start_gcode": ";M190 S[bed_temperature_initial_layer_single]\n;M109 S[nozzle_temperature_initial_layer]\n\n{if curr_bed_type==\"Textured PEI Plate\"}\nSET_GCODE_OFFSET Z=-0.1\n{else}\nSET_GCODE_OFFSET Z=0.0\n{endif}\n\nMMU_START_SETUP INITIAL_TOOL={initial_tool} REFERENCED_TOOLS=!referenced_tools! TOOL_COLORS=!colors! TOOL_TEMPS=!temperatures! TOOL_MATERIALS=!materials! FILAMENT_NAMES=!filament_names! PURGE_VOLUMES=!purge_volumes!\nMMU_START_CHECK\n\nPRINT_START EXTRUDER=[nozzle_temperature_initial_layer] BED=[bed_temperature_initial_layer_single]\n\nMMU_START_LOAD_INITIAL_TOOL\n; Optionally add YOUR additional start logic to run just prior to start\nCLEAN_NOZZLE\n\nG91\nG1 E1.0 F3600\nG92 E0.0\nG90\n",
     "min_layer_height": [
         "0.0375"
     ],
     "name": "Voron 2.4 350",
     "nozzle_type": "brass",
-    "print_host": "10.147.19.252",
+    "parking_pos_retraction": "0",
+    "print_host": "192.168.31.252",
     "printable_height": "330",
     "printer_settings_id": "Voron 2.4 350",
+    "printer_structure": "corexy",
+    "retract_length_toolchange": [
+        "0"
+    ],
     "retraction_length": [
         "0.4"
     ],
@@ -63,10 +71,7 @@
         "50"
     ],
     "support_multi_bed_types": "1",
-    "thumbnails": [
-        "64x64",
-        "400x300"
-    ],
+    "thumbnails": "64x64/PNG, 400x300/PNG",
     "version": "1.8.0.0",
     "z_hop": [
         "0.8"

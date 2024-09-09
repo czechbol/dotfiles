@@ -22,7 +22,7 @@
     ],
     "from": "User",
     "full_fan_speed_layer": [
-        "5"
+        "4"
     ],
     "hot_plate_temp": [
         "65"
@@ -31,10 +31,10 @@
     "is_custom_defined": "0",
     "name": "Voron EKOMB rPLA",
     "nozzle_temperature": [
-        "215"
+        "195"
     ],
     "nozzle_temperature_initial_layer": [
-        "210"
+        "200"
     ],
     "pressure_advance": [
         "0.044"

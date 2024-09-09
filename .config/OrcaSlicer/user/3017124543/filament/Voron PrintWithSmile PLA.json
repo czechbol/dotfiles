@@ -28,10 +28,10 @@
     "is_custom_defined": "0",
     "name": "Voron PrintWithSmile PLA",
     "nozzle_temperature": [
-        "215"
+        "195"
     ],
     "nozzle_temperature_initial_layer": [
-        "210"
+        "190"
     ],
     "pressure_advance": [
         "0.03346"
