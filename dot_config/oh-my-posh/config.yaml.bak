@@ -1,0 +1,146 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+
+version: 2
+final_space: true
+console_title_template: "{{ .Shell }} in {{ .Folder }}"
+blocks:
+- type: prompt
+  alignment: left
+  newline: true
+  segments:
+  - type: session
+    style: plain
+    foreground: p:blue
+    background: transparent
+    template: " {{ if .SSHSession }}\ueba9 {{ .UserName }} {{ .HostName }} {{ end }}"
+  - type: path
+    style: plain
+    foreground: blue
+    background: transparent
+    template: "{{ .Path }}"
+    properties:
+      style: full
+  - type: kubectl
+    style: plain
+    foreground: p:blue
+    background: transparent
+    template: " \uF1D1 {{if .Namespace}}{{.Namespace}}@{{ end }}{{.Context}}"
+    properties:
+      display_default: true
+  - type: git
+    style: plain
+    foreground: p:grey
+    background: transparent
+    template: " {{ if .UpstreamURL }}{{ url .UpstreamIcon .UpstreamURL }} {{ end }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }} "
+    properties:
+      branch_max_length: 25
+      fetch_status: true
+      fetch_upstream_icon: true
+  - type: root
+    style: plain
+    foreground: p:red
+    background: transparent
+    template: " \uf0e7 "
+- type: rprompt
+  segments:
+  - type: node
+    style: plain
+    foreground: p:green
+    background: transparent
+    template: "\ue718 "
+    properties:
+      display_mode: files
+      fetch_package_manager: true
+      home_enabled: false
+  - type: go
+    style: plain
+    foreground: p:blue
+    background: transparent
+    template: "\ue626 "
+    properties:
+      fetch_version: false
+  - type: python
+    style: plain
+    foreground: p:yellow
+    background: transparent
+    fetch_virtual_env: true
+    template: "\ue235 "
+    properties:
+      display_mode: environment
+      fetch_version: false
+      fetch_virtual_env: true
+  - type: executiontime
+    style: plain
+    foreground: yellow
+    background: transparent
+    template: "{{ .FormattedMs }}"
+    properties:
+      threshold: 500
+  - type: battery
+    style: plain
+    foreground: p:red
+    background: transparent
+    foreground_templates:
+    - "{{if gt .Percentage 80}}p:green{{end}}"
+    - "{{if gt .Percentage 30}}p:yellow{{end}}"
+    - "{{if lt .Percentage 30}}p:red{{end}}"
+    template: "{{ if lt .Percentage 80 }}bat {{ .Percentage }}%{{ if eq \"Charging\" .State.String }} charging{{ end }}{{ end }}"
+- type: prompt
+  alignment: left
+  segments:
+  - type: text
+    style: plain
+    foreground_templates:
+    - "{{if gt .Code 0}}p:red{{end}}"
+    - "{{if eq .Code 0}}p:green{{end}}"
+    background: transparent
+    template: ❯
+  newline: true
+tooltips:
+- type: aws
+  tips:
+  - aws
+  style: plain
+  foreground: p:yellow
+  background: transparent
+  trailing_diamond: 
+  template: " \ue7ad {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} "
+  properties:
+    display_default: true
+- type: gcp
+  tips:
+  - gcp
+  style: plain
+  foreground: p:blue
+  background: transparent
+  trailing_diamond: 
+  template: " \ue7ad {{ .Project }} {{ if .Region }}@{{ .Region }}{{ end }} "
+  properties:
+    display_default: true
+transient_prompt:
+  foreground_templates:
+  - "{{if gt .Code 0}}p:red{{end}}"
+  - "{{if eq .Code 0}}p:green{{end}}"
+  background: transparent
+  template: "❯ "
+secondary_prompt:
+  foreground: p:darkGray
+  background: transparent
+  template: "•   "
+palette:
+  black: "black"
+  blue: "blue"
+  green: "green"
+  red: "red"
+  yellow: "yellow"
+  magenta: "magenta"
+  cyan: "cyan"
+  white: "white"
+  darkGray: "darkGray"
+  lightRed: "lightRed"
+  lightGreen: "lightGreen"
+  lightYellow: "lightYellow"
+  lightBlue: "lightBlue"
+  lightMagenta: "lightMagenta"
+  lightCyan: "lightCyan"
+  lightWhite: "lightWhite"

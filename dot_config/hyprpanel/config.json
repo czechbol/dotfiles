@@ -1,0 +1,69 @@
+{
+  "bar.customModules.updates.pollingInterval": 1440000,
+  "theme.font.size": "1rem",
+  "theme.font.weight": 600,
+  "theme.bar.scaling": 85,
+  "theme.bar.floating": false,
+  "theme.bar.menus.background": "#11111b",
+  "wallpaper.pywal": false,
+  "theme.bar.transparent": true,
+  "theme.bar.buttons.workspaces.enableBorder": false,
+  "bar.workspaces.monitorSpecific": false,
+  "bar.workspaces.show_numbered": false,
+  "bar.workspaces.show_icons": false,
+  "bar.workspaces.showWsIcons": true,
+  "bar.workspaces.showApplicationIcons": true,
+  "theme.bar.buttons.workspaces.smartHighlight": true,
+  "menus.clock.time.military": true,
+  "bar.clock.format": "%a %b %d  %H:%M:%S",
+  "bar.layouts": {
+    "0": {
+      "left": [
+        "dashboard",
+        "workspaces",
+        "windowtitle"
+      ],
+      "middle": [
+        "media"
+      ],
+      "right": [
+        "volume",
+        "network",
+        "bluetooth",
+        "systray",
+        "clock",
+        "notifications"
+      ]
+    },
+    "1": {
+      "left": [
+        "dashboard",
+        "workspaces",
+        "windowtitle"
+      ],
+      "middle": [
+        "media"
+      ],
+      "right": [
+        "volume",
+        "clock",
+        "notifications"
+      ]
+    },
+    "2": {
+      "left": [
+        "dashboard",
+        "workspaces",
+        "windowtitle"
+      ],
+      "middle": [
+        "media"
+      ],
+      "right": [
+        "volume",
+        "clock",
+        "notifications"
+      ]
+    }
+  }
+}
