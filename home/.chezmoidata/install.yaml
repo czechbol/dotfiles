@@ -1,0 +1,326 @@
+install:
+  arch:
+    yay:
+      # System
+      - alsa-utils
+      - audacity
+      - autorandr
+      - bolt
+      - chromium
+      - clipse
+      - cups
+      - cups-pdf
+      - dnsutils
+      - exfatprogs
+      - ffmpeg
+      - file-roller
+      - firefox
+      - gimp
+      - gnome-disk-utility
+      - gparted
+      - gst-plugin-pipewire
+      - inkscape
+      - jellyfin-media-player
+      - kitty
+      - krita
+      - libreoffice-extension-texmaths
+      - libreoffice-extension-writer2latex
+      - libreoffice-fresh
+      - libreoffice-fresh-cs
+      - mesa
+      - nemo
+      - nemo-fileroller
+      - ntfs-3g
+      - orca-slicer-bin
+      - pamixer
+      - pasystray
+      - pavucontrol
+      - pika-backup
+      - pipewire
+      - pipewire-alsa
+      - pipewire-audio
+      - pipewire-jack
+      - pipewire-pulse
+      - prusa-slicer
+      - rpi-imager
+      - rustdesk
+      - spotify
+      - sshfs
+      - superslicer-bin
+      - vivaldi
+      - vlc
+      - winbox
+      - wireplumber
+      - xpadneo-dkms
+      - zerotier-one
+
+      # Fun
+      - discord
+      - steam
+
+      # Productivity
+      - ansible
+      - docker
+      - docker-buildx
+      - docker-compose
+      - git
+      - jq
+      - kubectl
+      - obsidian
+      - podman
+      - visual-studio-code-bin
+      - httpie-desktop-bin
+
+      # Tools
+      - bat
+      - bork
+      - curlie
+      - direnv
+      - doggo
+      - duf
+      - dust
+      - eza
+      - fastfetch
+      - fzf
+      - git-delta
+      - glances
+      - gotop
+      - helix
+      - htop
+      - lazygit
+      - less
+      - neovim
+      - nvtop
+      - oh-my-posh
+      - ripgrep
+      - superfile
+      - tldr
+      - tokei
+      - zoxide
+      - zsh
+      - starship
+      - viewnior
+
+      # Fonts
+      - gnu-free-fonts
+      - noto-fonts
+      - ttf-cascadia-code-nerd
+      - ttf-dejavu
+      - ttf-fira-code
+      - ttf-icomoon-feather
+      - ttf-iosevka-nerd
+      - ttf-jetbrains-mono
+      - ttf-jetbrains-mono-nerd
+      - ttf-liberation
+      - ttf-ms-fonts
+      - ttf-ubuntu-font-family
+      - ttf-victor-mono
+
+      # Hyprland
+      - hyprland
+      - hyprpicker
+      - hyprcursor
+      - hyprlock
+      - hypridle
+      - hyprpolkitagent
+      - hyprsunset
+      - hyprpaper
+      - ags-hyprpanel-git
+      - grimblast
+      - rofi-wayland
+      - brightnessctl
+      - bluez
+      - bluez-utils
+
+      # Golang
+      - go
+      - gopls
+      - goreleaser
+      - delve
+      - golangci-lint
+
+      # Python
+      - python
+      - python-pip
+      - python-poetry
+      - ipython
+
+      # Node
+      - npm
+      - nvm
+      - yarn
+
+  fedora:
+    manual:
+      - kubectl
+      - vscode
+      - oh-my-posh
+
+    flathub:
+      - org.gnome.World.PikaBackup
+      - com.rustdesk.RustDesk
+      - com.spotify.Client
+      - com.mikrotik.WinBox
+      - com.github.iwalton3.jellyfin-media-player
+      - com.discordapp.Discord
+      - md.obsidian.Obsidian
+      - io.httpie.Httpie
+
+    repos:
+      - vivaldi:
+          repoFile: https://repo.vivaldi.com/archive/vivaldi-fedora.repo
+          packages:
+            - vivaldi-stable
+      - docker:
+          repoFile: https://download.docker.com/linux/fedora/docker-ce.repo
+          packages:
+            - docker-ce
+            - docker-ce-cli
+            - containerd.io
+            - docker-buildx-plugin
+            - docker-compose-plugin
+    copr:
+      - clipse:
+          repo: azandure/clipse
+          package: clipse
+      - lazygit:
+          repo: atim/lazygit
+          package: lazygit
+
+    golang:
+      - github.com/mr-karan/doggo/cmd/doggo@latest
+      - github.com/xxxserxxx/gotop/v4/cmd/gotop@latest
+      - github.com/yorukot/superfile@latest
+
+    cargo:
+      - du-dust
+
+    dnf:
+      # System
+      - alsa-utils
+      - audacity
+      - autorandr
+      - bolt
+      - chromium
+      - clipse
+      - cups
+      - cups-pdf
+      - dnf-plugins-core
+      - exfatprogs
+      - ffmpeg
+      - file-roller
+      - firefox
+      - fuse-sshfs
+      - gimp
+      - gnome-disk-utility
+      - gparted
+      - inkscape
+      - jellyfin-media-player
+      - kitty
+      - krita
+      - libreoffice
+      - libreoffice-TexMaths
+      - libreoffice-langpack-cs
+      - mesa
+      - nemo
+      - nemo-fileroller
+      - ntfs-3g
+      - pamixer
+      - pasystray
+      - pavucontrol
+      - pika-backup
+      - pipewire
+      - pipewire-alsa
+      - pipewire-plugin-jack
+      - rpi-imager
+      - spotify
+      - vlc
+      - wireplumber
+      - zerotier-one
+
+      # Communication
+      - discord
+
+      # Productivity
+      - ansible
+      - docker
+      - docker-buildx
+      - docker-compose
+      - git
+      - jq
+      - obsidian
+      - podman
+
+      # Tools
+      - bat
+      - direnv
+      - duf
+      - eza
+      - fastfetch
+      - fzf
+      - git-delta
+      - helix
+      - htop
+      - lazygit
+      - less
+      - neovim
+      - nvtop
+      - ripgrep
+      - tldr
+      - tokei
+      - zoxide
+      - zsh
+      - starship
+      - viewnior
+
+      # Fonts
+      - gnu-free-fonts
+      - noto-fonts
+      - ttf-cascadia-code-nerd
+      - ttf-dejavu
+      - ttf-fira-code
+      - ttf-icomoon-feather
+      - ttf-iosevka-nerd
+      - ttf-jetbrains-mono
+      - ttf-jetbrains-mono-nerd
+      - ttf-liberation
+      - ttf-ms-fonts
+      - ttf-ubuntu-font-family
+      - ttf-victor-mono
+
+      # Hyprland
+      - hyprland
+      - hyprpicker
+      - hyprcursor
+      - hyprlock
+      - hypridle
+      - hyprpolkitagent
+      - hyprsunset
+      - hyprpaper
+      - ags-hyprpanel-git
+      - grimblast
+      - rofi-wayland
+      - brightnessctl
+      - bluez
+      - bluez-utils
+
+      # Golang
+      - go
+      - gopls
+      - goreleaser
+      - delve
+      - golangci-lint
+
+      # Python
+      - python
+      - python-pip
+      - python-poetry
+      - ipython
+
+      # Node
+      - npm
+      - nvm
+      - yarn
+
+      # Rust
+      - cargo

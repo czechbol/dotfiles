@@ -1,0 +1,60 @@
+#!/bin/bash
+
+echo "Detected system: {{ .chezmoi.osRelease.prettyName }}"
+
+{{ if eq .chezmoi.osRelease.id "arch" -}}
+    # Ensure yay is installed
+    {{ if not (findExecutable "yay" (list "/sbin/" "/bin/" "/usr/sbin/" "/usr/bin/" )) }}
+        echo "Installing yay..."
+        sudo pacman -S --needed --noconfirm git base-devel
+        git clone https://aur.archlinux.org/yay.git
+        (cd yay && makepkg -sic)
+    {{end}}
+
+    echo "Enabling NTP..."
+    sudo timedatectl set-ntp true
+
+    echo "Installing packages..."
+    echo "{{ .install.arch.yay | join " "}}"
+
+    yay -S --needed --noconfirm {{ .install.arch.yay | join " " }}
+{{ else if eq .chezmoi.osRelease.id "fedora" -}}
+    echo "Updating packages..."
+    sudo dnf -y -q update
+
+    echo "Enabling RPM Fusion..."
+    sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+    sudo dnf config-manager setopt fedora-cisco-openh264.enabled=1
+
+
+    echo "Installing DNF packages..."
+    echo "{{ .install.fedora.dnf | join " "}}"
+    sudo dnf install -y {{ .install.fedora.dnf | join " "}}
+
+    echo "Setting up custom repos..."
+    {{ range $v := .install.fedora.repos }}
+        sudo dnf config-manager addrepo --from-repofile={{ $v.repoFile }}
+        sudo dnf install -y {{ $v.packages | join " "}}
+    {{ end }}
+    {{ range $v := .install.fedora.copr }}
+        sudo dnf copr enable -y {{ $v.repo }}
+        sudo dnf install -y {{ $v.package }}
+    {{ end }}
+
+    echo "Installing packages from language repos"
+    {{ range $v := .install.fedora.golang }}
+        go install $v
+    {{ end }}
+    {{ range $v := .install.fedora.cargo }}
+        cargo install $v
+    {{ end }}
+
+    echo "Installing Flathub packages..."
+    flatpak install flathub {{ .install.fedora.flathub | join " "}}
+
+    echo "Packages that need to be installed manually:"
+    echo "{{ .install.fedora.manual | join ", "}}"
+
+{{ else -}}
+echo "Automatic package installation is not supported."
+{{ end -}}
