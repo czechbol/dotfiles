@@ -2,20 +2,6 @@
 
 export confDir="${XDG_CONFIG_HOME:-$HOME/.config}"
 
-# Restores the shader after screenshot has been taken
-restore_shader() {
-    if [ -n "$shader" ]; then
-        hyprshade on "$shader"
-    fi
-}
-
-# Saves the current shader and turns it off
-save_shader() {
-    shader=$(hyprshade current)
-    hyprshade off
-    trap restore_shader EXIT
-}
-
 # Function to print error message
 print_error() {
     cat <<"EOF"
@@ -34,27 +20,35 @@ setup_directories() {
         XDG_PICTURES_DIR="$HOME/Pictures"
     fi
 
-    swpy_dir="${confDir}/swappy"
     save_dir="${2:-$XDG_PICTURES_DIR/Screenshots}"
     save_file=$(date +'%y%m%d_%Hh%Mm%Ss_screenshot.png')
-    temp_screenshot="/tmp/screenshot.png"
+    temp_screenshot=$(mktemp -t screenshot_XXXXXX.png)
 
     mkdir -p "$save_dir"
-    mkdir -p "$swpy_dir"
-    printf "[Default]\nsave_dir=%s\nsave_filename_format=%s\n" "$save_dir" "$save_file" >"$swpy_dir/config"
+}
+
+setup_editor() {
+    if command -v satty >/dev/null; then
+        editor=satty
+    elif command -v swappy >/dev/null; then
+        editor=swappy
+    else
+        notify-send "Screenshot" "Editor missing\nInstall satty or swappy"
+        exit 1
+    fi
 }
 
 # Function to handle different actions
 handle_action() {
     case $1 in
         p) # print all outputs
-            grimblast copysave screen "$temp_screenshot" && restore_shader && swappy -f "$temp_screenshot" ;;
+            grimblast save screen "$temp_screenshot" && "$editor" -f "$temp_screenshot" ;;
         s) # drag to manually snip an area / click on a window to print it
-            grimblast copysave area "$temp_screenshot" && restore_shader && swappy -f "$temp_screenshot" ;;
+            grimblast save area "$temp_screenshot" && "$editor" -f "$temp_screenshot" ;;
         sf) # frozen screen, drag to manually snip an area / click on a window to print it
-            grimblast --freeze copysave area "$temp_screenshot" && restore_shader && swappy -f "$temp_screenshot" ;;
+            grimblast --freeze save area "$temp_screenshot" && "$editor" -f "$temp_screenshot" ;;
         m) # print focused monitor
-            grimblast copysave output "$temp_screenshot" && restore_shader && swappy -f "$temp_screenshot" ;;
+            grimblast save output "$temp_screenshot" && "$editor" -f "$temp_screenshot" ;;
         *) # invalid option
             print_error ;;
     esac
@@ -76,8 +70,8 @@ notify_user() {
 }
 
 # Main script execution
-save_shader # Saving the current shader
 setup_directories "$0" # Set up directories and filenames
+setup_editor
 handle_action "$1" # Handle the action based on the input argument
 cleanup_temp_screenshot # Clean up temporary screenshot
 notify_user # Notify user if the screenshot was saved
