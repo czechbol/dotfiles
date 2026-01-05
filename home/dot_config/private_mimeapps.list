@@ -1,0 +1,16 @@
+[Added Associations]
+text/plain=userapp-code-9KL332.desktop;
+text/csv=userapp-code-9KL332.desktop;
+image/svg+xml=org.gnome.Loupe.desktop;
+image/jpeg=viewnior.desktop;
+application/pdf=userapp-zathura-WYW7F3.desktop;
+
+[Default Applications]
+text/html=vivaldi-stable.desktop
+x-scheme-handler/http=vivaldi-stable.desktop
+x-scheme-handler/https=vivaldi-stable.desktop
+x-scheme-handler/about=vivaldi-stable.desktop
+x-scheme-handler/unknown=vivaldi-stable.desktop
+text/csv=userapp-code-9KL332.desktop
+image/svg+xml=org.gnome.Loupe.desktop
+image/jpeg=viewnior.desktop

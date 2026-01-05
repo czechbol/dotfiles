@@ -1,23 +1,52 @@
 #!/bin/bash
+set -e  # Exit on error
+
+echo "=========================================="
+echo "Setting up dotfiles for: {{ .chezmoi.osRelease.prettyName }}"
+echo "Hostname: {{ .chezmoi.hostname }}"
+echo "=========================================="
+
+# Common setup for all distros
+echo ""
+echo "==> Setting up common directories and files..."
+mkdir -p ~/Pictures/wallpapers
+mkdir -p ~/.local/bin
+
+# Clone wallpapers if not present (shallow clone to save space)
+if [ ! -d ~/Pictures/wallpapers/catppuccin-wallpapers ]; then
+    echo "==> Cloning catppuccin wallpapers..."
+    git clone --depth 1 https://github.com/zhichaoh/catppuccin-wallpapers ~/Pictures/wallpapers/catppuccin-wallpapers
+else
+    echo "==> Wallpapers already exist, skipping..."
+fi
 
 echo "Detected system: {{ .chezmoi.osRelease.prettyName }}"
 
 {{ if eq .chezmoi.osRelease.id "arch" -}}
-    # Ensure yay is installed
-    {{ if not (findExecutable "yay" (list "/sbin/" "/bin/" "/usr/sbin/" "/usr/bin/" )) }}
-        echo "Installing yay..."
-        sudo pacman -S --needed --noconfirm git base-devel
-        git clone https://aur.archlinux.org/yay.git
-        (cd yay && makepkg -sic)
-    {{end}}
+echo ""
+echo "==> Arch Linux Setup"
 
-    echo "Enabling NTP..."
-    sudo timedatectl set-ntp true
+# Ensure yay is installed
+{{ if not (findExecutable "yay" (list "/sbin/" "/bin/" "/usr/sbin/" "/usr/bin/" )) }}
+echo "==> Installing yay AUR helper..."
+sudo pacman -S --needed --noconfirm git base-devel
+git clone https://aur.archlinux.org/yay.git /tmp/yay
+(cd /tmp/yay && makepkg -si --noconfirm)
+rm -rf /tmp/yay
+{{end}}
 
-    echo "Installing packages..."
-    echo "{{ .install.arch.yay | join " "}}"
+echo "==> Enabling NTP..."
+sudo timedatectl set-ntp true
 
-    yay -S --needed --noconfirm {{ .install.arch.yay | join " " }}
+echo "==> Installing packages..."
+yay -S --needed --noconfirm {{ .install.arch.yay | join " " }}
+
+echo "==> Installing kubectl plugins..."
+if command -v kubectl &> /dev/null && command -v kubectl-krew &> /dev/null; then
+    kubectl krew install {{ .install.arch.krew | join " " }} || echo "Warning: Some kubectl plugins failed to install"
+else
+    echo "Warning: kubectl or krew not found, skipping kubectl plugins"
+fi
 {{ else if eq .chezmoi.osRelease.id "fedora" -}}
     echo "Updating packages..."
     sudo dnf -y -q update
@@ -56,5 +85,38 @@ echo "Detected system: {{ .chezmoi.osRelease.prettyName }}"
     echo "{{ .install.fedora.manual | join ", "}}"
 
 {{ else -}}
-echo "Automatic package installation is not supported."
+echo ""
+echo "Warning: Automatic package installation is not supported for this OS."
 {{ end -}}
+
+# Post-install steps (common for all distros)
+echo ""
+echo "==> Post-install configuration..."
+
+# Enable services if they exist
+if systemctl list-unit-files | grep -q gdm.service; then
+    sudo systemctl enable gdm
+fi
+
+if systemctl list-unit-files | grep -q docker.service; then
+    sudo systemctl enable docker
+    # Add user to docker group
+    if ! groups $USER | grep -q docker; then
+        sudo usermod -aG docker $USER
+        echo "Added $USER to docker group (logout required)"
+    fi
+fi
+
+# Set zsh as default shell if installed
+if command -v zsh &> /dev/null; then
+    if [ "$SHELL" != "$(which zsh)" ]; then
+        echo "==> Setting zsh as default shell..."
+        chsh -s $(which zsh)
+    fi
+fi
+
+echo ""
+echo "=========================================="
+echo "Setup complete!"
+echo "=========================================="
+echo "Please logout and login again for all changes to take effect."

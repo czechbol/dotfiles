@@ -1,0 +1,20 @@
+# Ignore log files and cache directories
+
+# Log files
+**/*.log
+**/*.log.*
+**/log/
+**/logs/
+
+# Cache directories
+**/cache/
+**/Cache/
+**/GPUCache/
+
+# Temporary files
+**/tmp/
+**/temp/
+**/.tmp/
+
+# Go telemetry data
+.config/go/telemetry/**

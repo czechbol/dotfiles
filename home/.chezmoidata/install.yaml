@@ -47,6 +47,7 @@ install:
       - spotify
       - sshfs
       - superslicer-bin
+      - swww
       - vivaldi
       - vlc
       - winbox
@@ -56,20 +57,25 @@ install:
 
       # Fun
       - discord
-      - steam
+      - slack
 
       # Productivity
       - ansible
+      - aws-cli-v2
       - docker
       - docker-buildx
       - docker-compose
       - git
       - jq
       - kubectl
+      - krew
+      - google-cloud-cli-gke-gcloud-auth-plugin
+      - google-cloud-cli
       - obsidian
       - podman
       - visual-studio-code-bin
       - httpie-desktop-bin
+      - perimeter81
 
       # Tools
       - bat
@@ -116,6 +122,9 @@ install:
       - ttf-ubuntu-font-family
       - ttf-victor-mono
 
+      # GNOME
+      - gnome
+
       # Hyprland
       - hyprland
       - hyprpicker
@@ -149,6 +158,12 @@ install:
       - npm
       - nvm
       - yarn
+
+    krew:
+      - ctx
+      - ns
+      - sniff
+      - ktop
 
   fedora:
     manual:
@@ -240,6 +255,7 @@ install:
 
       # Communication
       - discord
+      - slack
 
       # Productivity
       - ansible
@@ -300,6 +316,11 @@ install:
       - ags-hyprpanel-git
       - grimblast
       - rofi-wayland
+      - swappy
+      - catppuccin-cursors-mocha
+      - catppuccin-mocha-grub-theme-git
+      - papirus-folders-catppuccin-git
+      - nwg-look
       - brightnessctl
       - bluez
       - bluez-utils
