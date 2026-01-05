@@ -185,6 +185,12 @@ if command -v zsh &> /dev/null; then
     fi
 fi
 
+# Enable chezmoi status check timer
+echo "==> Setting up chezmoi status check timer..."
+systemctl --user daemon-reload
+systemctl --user enable --now chezmoi-check.timer
+echo "✓ Chezmoi status check will run daily at 11:00 AM"
+
 echo ""
 echo "=========================================="
 echo "Setup complete!"

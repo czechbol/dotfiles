@@ -1,0 +1,6 @@
+[Unit]
+Description=Check for uncommitted dotfile changes
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash -c 'cd ~/.local/share/chezmoi && if [ -n "$(chezmoi status)" ]; then notify-send "Dotfiles" "You have uncommitted changes. Run: chezmoi cd && git status"; fi'

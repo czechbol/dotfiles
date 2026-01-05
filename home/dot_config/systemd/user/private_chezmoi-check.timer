@@ -1,0 +1,9 @@
+[Unit]
+Description=Daily chezmoi status check
+
+[Timer]
+OnCalendar=*-*-* 11:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
