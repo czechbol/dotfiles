@@ -76,6 +76,50 @@ else
     echo "✓ Age key already exists"
 fi
 
+# Setup machine-specific data from Bitwarden
+echo ""
+echo "==> Setting up machine data from Bitwarden..."
+CHEZMOI_DATA_DIR="{{ .chezmoi.sourceDir }}/home/.chezmoidata"
+mkdir -p "$CHEZMOI_DATA_DIR"
+
+if [ ! -f "$CHEZMOI_DATA_DIR/machine.yaml" ]; then
+    echo "==> Retrieving machine identity from Bitwarden..."
+
+    # Get the identity data from Bitwarden
+    BW_IDENTITY=$(bw get item chezmoi-identity 2>/dev/null)
+
+    if [ -z "$BW_IDENTITY" ]; then
+        echo "ERROR: Could not find 'chezmoi-identity' in Bitwarden!"
+        echo ""
+        echo "Please create an Identity item in Bitwarden:"
+        echo "  Name: chezmoi-identity"
+        echo "  First Name: Your first name"
+        echo "  Last Name: Your last name"
+        echo "  Username: Your system username"
+        echo "  Email: Your email for this machine"
+        echo "  Company: Machine type (e.g., 'work', 'personal', or company name)"
+        echo "  Custom field 'git-user': Your git username"
+        exit 1
+    fi
+
+    # Parse the identity data and create machine.yaml
+    cat > "$CHEZMOI_DATA_DIR/machine.yaml" <<EOF
+machine:
+  type: "$(echo "$BW_IDENTITY" | jq -r '.identity.company')"
+  hostname: "{{ .chezmoi.hostname }}"
+
+user:
+  name: "$(echo "$BW_IDENTITY" | jq -r '.identity.firstName + " " + .identity.lastName')"
+  username: "$(echo "$BW_IDENTITY" | jq -r '.identity.username')"
+  email: "$(echo "$BW_IDENTITY" | jq -r '.identity.email')"
+  git_user: "$(echo "$BW_IDENTITY" | jq -r '.fields[] | select(.name=="git-user") | .value')"
+EOF
+
+    echo "✓ Machine data retrieved and saved"
+else
+    echo "✓ Machine data already exists"
+fi
+
 # Common setup for all distros
 echo ""
 echo "==> Setting up common directories and files..."
