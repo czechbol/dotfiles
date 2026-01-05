@@ -6,6 +6,76 @@ echo "Setting up dotfiles for: {{ .chezmoi.osRelease.prettyName }}"
 echo "Hostname: {{ .chezmoi.hostname }}"
 echo "=========================================="
 
+# Prerequisites check
+echo ""
+echo "==> Checking prerequisites..."
+
+# Check if bitwarden-cli is installed
+if ! command -v bw &> /dev/null; then
+    echo "ERROR: Bitwarden CLI (bw) is not installed!"
+    echo "Please install it first:"
+    echo "  Arch: yay -S bitwarden-cli"
+    echo "  Fedora: sudo dnf install bitwarden-cli"
+    echo "Then login: bw login"
+    exit 1
+fi
+
+# Check Bitwarden status and unlock if needed
+BW_STATUS=$(bw status | jq -r .status)
+
+if [ "$BW_STATUS" == "unauthenticated" ]; then
+    echo "ERROR: Not logged in to Bitwarden!"
+    echo "Please run: bw login"
+    exit 1
+elif [ "$BW_STATUS" == "locked" ]; then
+    echo "==> Unlocking Bitwarden vault..."
+    export BW_SESSION=$(bw unlock --raw)
+    if [ -z "$BW_SESSION" ]; then
+        echo "ERROR: Failed to unlock Bitwarden"
+        exit 1
+    fi
+    echo "✓ Bitwarden unlocked"
+elif [ "$BW_STATUS" == "unlocked" ]; then
+    echo "✓ Bitwarden already unlocked"
+    # Session might be in environment already
+    if [ -z "$BW_SESSION" ]; then
+        echo "Warning: BW_SESSION not set, attempting to get session..."
+        export BW_SESSION=$(bw unlock --raw)
+    fi
+fi
+
+# Setup age encryption key from Bitwarden
+echo ""
+echo "==> Setting up age encryption..."
+mkdir -p ~/.config/age
+
+if [ ! -f ~/.config/age/key.txt ]; then
+    echo "==> Retrieving age key from Bitwarden..."
+
+    # Get the age key from Bitwarden secure note
+    AGE_KEY=$(bw get notes "chezmoi-age-key" 2>/dev/null || echo "")
+
+    if [ -z "$AGE_KEY" ]; then
+        echo "ERROR: Could not find 'chezmoi-age-key' in Bitwarden!"
+        echo ""
+        echo "Please create a Secure Note in Bitwarden:"
+        echo "  1. Open Bitwarden"
+        echo "  2. Create new Secure Note"
+        echo "  3. Name: chezmoi-age-key"
+        echo "  4. Note content: Paste your age key from ~/.config/age/key.txt"
+        echo ""
+        echo "Your current age key:"
+        cat ~/.config/age/key.txt 2>/dev/null || echo "(age key not found on this machine)"
+        exit 1
+    fi
+
+    echo "$AGE_KEY" > ~/.config/age/key.txt
+    chmod 600 ~/.config/age/key.txt
+    echo "✓ Age key retrieved and saved"
+else
+    echo "✓ Age key already exists"
+fi
+
 # Common setup for all distros
 echo ""
 echo "==> Setting up common directories and files..."
