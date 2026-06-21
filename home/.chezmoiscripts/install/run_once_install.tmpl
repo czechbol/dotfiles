@@ -14,6 +14,9 @@ echo "Detected system: {{ .chezmoi.osRelease.prettyName }}"
     echo "Enabling NTP..."
     sudo timedatectl set-ntp true
 
+    echo "Disabling NetworkManager-wait-online.service..."
+    sudo systemctl disable NetworkManager-wait-online.service
+
     echo "Installing packages..."
     echo "{{ .install.arch.yay | join " "}}"
 

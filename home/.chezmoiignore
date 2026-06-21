@@ -1,0 +1,30 @@
+# Slicer machine-generated / vendor data — app-regenerated, not hand-edited.
+# User-authored profiles (filament/print/printer/physical_printer) stay tracked.
+
+# OrcaSlicer
+.config/OrcaSlicer/log
+.config/OrcaSlicer/cache
+.config/OrcaSlicer/hms
+.config/OrcaSlicer/ota
+.config/OrcaSlicer/plugins
+.config/OrcaSlicer/system
+.config/OrcaSlicer/printers
+
+# PrusaSlicer
+.config/PrusaSlicer/cache
+.config/PrusaSlicer/vendor
+.config/PrusaSlicer/snapshots
+.config/PrusaSlicer/old.PrusaSlicer
+
+# SuperSlicer
+.config/SuperSlicer/cache
+.config/SuperSlicer/vendor
+.config/SuperSlicer/temp
+.config/SuperSlicer/ui_layout/example
+
+# Font cache ids
+.local/share/fonts/.uuid
+.local/share/fonts/*/.uuid
+
+# Dropped: migrated off HyprPanel to wayle
+.config/hyprpanel

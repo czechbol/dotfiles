@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 NOMINATIM_API = "https://nominatim.openstreetmap.org/search"
 SUNRISE_SUNSET_API = "https://api.sunrise-sunset.org/json"
 HYPRSUNSET_COMMAND = "hyprctl hyprsunset temperature"
+USER_AGENT = "sunsetd/1.0 (https://github.com/hyprwm)"
 DAY_TEMP = 6000
 DEFAULT_NIGHT_TEMP = 2500
 TRANSITION_PERIOD_MINUTES = 60
@@ -36,6 +37,12 @@ TITLE = r"""                          _      _
 |___/\__,_|_| |_|___/\___|\__\__,_|"""
 # --- End Configuration ---
 
+
+
+
+def _floor_to_hundred(n):
+    """Return the input integer floored to the nearest hundred."""
+    return (n // 100) * 100
 
 def ensure_cache_dir():
     """Creates the cache directory if it doesn't exist."""
@@ -127,7 +134,8 @@ def get_location(city: str) -> Optional[Tuple[float, float]]:
     try:
         params = {"q": city, "format": "json", "limit": 1}
         url = f"{NOMINATIM_API}?{urllib.parse.urlencode(params)}"
-        with urllib.request.urlopen(url) as response:
+        request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+        with urllib.request.urlopen(request) as response:
             data = json.loads(response.read().decode())
             if data:
                 latitude = float(data[0]["lat"])
@@ -161,8 +169,8 @@ def get_cached_sun_data(
     result = cursor.fetchone()
     conn.close()
     if result:
-        sunrise = datetime.datetime.fromisoformat(result[0])
-        sunset = datetime.datetime.fromisoformat(result[1])
+        sunrise = datetime.datetime.fromisoformat(result[0]).astimezone(datetime.timezone.utc)
+        sunset = datetime.datetime.fromisoformat(result[1]).astimezone(datetime.timezone.utc)
         return sunrise, sunset
     return None
 
@@ -218,13 +226,14 @@ def get_sun_data(
             "formatted": 0,  # Get times in ISO 8601 format
         }
         url = f"{SUNRISE_SUNSET_API}?{urllib.parse.urlencode(params)}"
-        with urllib.request.urlopen(url) as response:
+        request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+        with urllib.request.urlopen(request) as response:
             data = json.loads(response.read().decode())
             if data["status"] == "OK":
                 sunrise_str = data["results"]["sunrise"]
                 sunset_str = data["results"]["sunset"]
-                sunrise = datetime.datetime.fromisoformat(sunrise_str)
-                sunset = datetime.datetime.fromisoformat(sunset_str)
+                sunrise = datetime.datetime.fromisoformat(sunrise_str).astimezone(datetime.timezone.utc)
+                sunset = datetime.datetime.fromisoformat(sunset_str).astimezone(datetime.timezone.utc)
                 cache_sun_data(date, sunrise, sunset)
                 return sunrise, sunset
             return None
@@ -274,7 +283,7 @@ def calculate_temp(
         return int(max(night_temp, min(DAY_TEMP, temp)))
 
     if 0 <= minutes_after_sunrise <= TRANSITION_PERIOD_MINUTES:
-        step = (TRANSITION_PERIOD_MINUTES - minutes_after_sunrise) // (
+        step = minutes_after_sunrise // (
             TRANSITION_PERIOD_MINUTES // TRANSITION_STEPS
         )
         temp_diff = DAY_TEMP - night_temp
@@ -296,18 +305,6 @@ def set_temperature(temp: int) -> None:
         subprocess.run(command, check=True)
     except subprocess.CalledProcessError as e:
         logger.error(f"Error setting temperature: {e}")
-
-
-def adjust_shader(
-    sunrise: datetime.datetime, sunset: datetime.datetime, night_temp: int
-) -> None:
-    current_time = get_current_time()
-    logger.info("Adjusting shader")
-
-    temp = calculate_temp(current_time, sunrise, sunset, night_temp)
-    logger.debug(f"Calculated temperature: {temp}")
-
-    set_temperature(temp)
 
 
 def setup_logging(debug: bool) -> None:
@@ -336,17 +333,6 @@ def setup_logging(debug: bool) -> None:
         ],
         datefmt="%Y-%m-%d %H:%M:%S",
     )
-
-
-def wait_until(end_datetime: datetime.datetime):
-    while True:
-        logger.debug(f"Waiting until: {end_datetime.astimezone().isoformat()}")
-        diff = (end_datetime - get_current_time()).total_seconds()
-        if diff < 0:
-            return
-        time.sleep(diff / 2)
-        if diff <= 0.1:
-            return
 
 
 def main() -> None:
@@ -386,43 +372,32 @@ def main() -> None:
         return
     latitude, longitude = location
 
-    sunrise_sunset = get_sun_data(latitude, longitude)
-    if sunrise_sunset is None:
-        logger.error("Could not determine sunrise/sunset times. Exiting.")
-        return
-    sunrise, sunset = sunrise_sunset
-
-    adjust_shader(sunrise, sunset, args.night_temp)
-
+    # Poll loop: recompute and re-assert the correct temperature every
+    # interval. calculate_temp() returns the correct value for any instant
+    # (night, dawn transition, day, dusk transition), so re-applying it on a
+    # fixed cadence keeps the display correct even if hyprsunset is reset or a
+    # transition step boundary is crossed. get_sun_data caches per-date, so
+    # refetching "today" each tick is cheap and auto-refreshes at midnight.
+    last_temp = None
     while True:
-        current_time = get_current_time()
-
-        if current_time < sunrise:
-            wait_until(sunrise)
-            adjust_shader(sunrise, sunset, args.night_temp)
+        today = datetime.datetime.now().date()
+        sunrise_sunset = get_sun_data(latitude, longitude, today)
+        if sunrise_sunset is None:
+            logger.error("Could not determine sunrise/sunset times. Retrying.")
+            time.sleep(CHECK_INTERVAL_SECONDS)
             continue
-        elif current_time > sunset:
-            sunrise_sunset = get_sun_data(
-                latitude, longitude, current_time.date() + datetime.timedelta(days=1)
-            )
-            if sunrise_sunset is None:
-                logger.error("Could not determine sunrise/sunset times. Exiting.")
-                return
-            sunrise, sunset = sunrise_sunset
+        sunrise, sunset = sunrise_sunset
 
-            wait_until(sunrise)
-            adjust_shader(sunrise, sunset, args.night_temp)
-            continue
-        elif (
-            current_time
-            >= sunrise + datetime.timedelta(minutes=TRANSITION_PERIOD_MINUTES)
-            and current_time <= sunset
-        ):
-            wait_until(sunset - datetime.timedelta(minutes=TRANSITION_PERIOD_MINUTES))
-            adjust_shader(sunrise, sunset, args.night_temp)
-            continue
+        temp = _floor_to_hundred(
+            calculate_temp(get_current_time(), sunrise, sunset, args.night_temp)
+        )
+        if temp != last_temp:
+            logger.info(f"Setting temperature to {temp}")
+            set_temperature(temp)
+            last_temp = temp
+        else:
+            logger.debug(f"Temperature unchanged ({temp})")
 
-        adjust_shader(sunrise, sunset, args.night_temp)
         time.sleep(CHECK_INTERVAL_SECONDS)
 
 

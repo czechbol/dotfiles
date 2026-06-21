@@ -75,8 +75,8 @@ setopt hist_find_no_dups
 
 
 # Completion styling
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # ignore case
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS} = # colorz !
 zstyle ':completion:*' menu no
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
@@ -90,6 +90,7 @@ select-word-style bash
 # Shell integrations
 if command -v fzf >/dev/null; then
     eval "$(fzf --zsh)"
+    bindkey "^I" fzf-tab-complete
 fi
 if command -v oh-my-posh >/dev/null; then
     eval "$(oh-my-posh init zsh -c ${HOME}/.config/oh-my-posh/config.yaml)"
@@ -131,12 +132,19 @@ alias c='clear'
 alias dotupdate='yadm add -u && yadm commit -m "update" && yadm push'
 alias dotgit="GIT_WORK_TREE=~ GIT_DIR=~/.local/share/yadm/repo.git"
 
+function coi() {
+    TERM=xterm-256color command coi --profile claude-user "$@"
+}
+
 alias gmt='go mod tidy'
 alias gcl='golangci-lint run'
 alias dk='docker kill $(docker ps -q)'
 alias dcu="docker compose up -d"
 alias dcd="docker compose down"
 alias k="kubectl"
+if [[ "$TERM" == "xterm-kitty" && -n "$KITTY_PID" && -o interactive ]]; then
+    alias ssh="kitten ssh"
+fi
 
 export KUBE_EDITOR="code -w"
 export EDITOR="code -w"
@@ -160,3 +168,17 @@ export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/home/aludes/.lmstudio/bin"
+
+## [Completion]
+## Completion scripts setup. Remove the following line to uninstall
+[[ -f /home/aludes/.dart-cli-completion/zsh-config.zsh ]] && . /home/aludes/.dart-cli-completion/zsh-config.zsh || true
+## [/Completion]
+
+
+# peon-ping quick controls
+alias peon="bash /home/aludes/.claude/hooks/peon-ping/peon.sh"
+[ -f /home/aludes/.claude/hooks/peon-ping/completions.bash ] && source /home/aludes/.claude/hooks/peon-ping/completions.bash
+export PATH="$HOME/.npm-global/bin:$PATH"

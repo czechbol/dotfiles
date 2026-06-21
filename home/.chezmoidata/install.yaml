@@ -35,6 +35,10 @@ install:
       - pamixer
       - pasystray
       - pavucontrol
+      - playerctl
+      - network-manager-applet
+      - udiskie
+      - gnome-keyring
       - pika-backup
       - pipewire
       - pipewire-alsa
@@ -125,7 +129,7 @@ install:
       - hyprpolkitagent
       - hyprsunset
       - hyprpaper
-      - ags-hyprpanel-git
+      - wayle-bin
       - grimblast
       - rofi-wayland
       - brightnessctl
@@ -155,6 +159,7 @@ install:
       - kubectl
       - vscode
       - oh-my-posh
+      - wayle # no fedora repo; cargo install or grab release binary
 
     flathub:
       - org.gnome.World.PikaBackup
@@ -228,6 +233,10 @@ install:
       - pamixer
       - pasystray
       - pavucontrol
+      - playerctl
+      - network-manager-applet
+      - udiskie
+      - gnome-keyring
       - pika-backup
       - pipewire
       - pipewire-alsa
@@ -297,7 +306,6 @@ install:
       - hyprpolkitagent
       - hyprsunset
       - hyprpaper
-      - ags-hyprpanel-git
       - grimblast
       - rofi-wayland
       - brightnessctl
