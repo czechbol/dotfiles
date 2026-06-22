@@ -108,6 +108,52 @@ for tool in kubectl nc clickhouse-client jq; do
   fi
 done
 
+handle_kubectl_error() {
+  local error_output="$1"
+  local current_context=$(kubectl config current-context 2>/dev/null || echo "unknown")
+
+  if echo "$error_output" | grep -qiE "(timed out|i/o timeout|context deadline exceeded)"; then
+    error "Connection timeout - cluster unreachable.
+
+Possible causes:
+  • VPN not connected
+  • Cluster network unreachable
+  • Firewall blocking connection
+
+Current context: $current_context"
+  elif echo "$error_output" | grep -qiE "(unable to connect|connection refused|could not resolve|no such host)"; then
+    error "Unable to connect to cluster.
+
+Possible causes:
+  • VPN not connected
+  • Cluster endpoint unreachable
+  • DNS resolution failure
+
+Current context: $current_context"
+  elif echo "$error_output" | grep -qiE "(token.*expired|not logged in|unauthorized|authentication|gke-gcloud-auth-plugin|failed to retrieve access token|no active account|gcloud.*config.*helper)"; then
+    if [[ "$current_context" == gke_* ]] || echo "$error_output" | grep -qiE "(gcloud|gke-gcloud-auth-plugin)"; then
+      error "GKE authentication expired.
+
+Please re-authenticate:
+  gcloud auth login
+  gcloud auth application-default login
+
+Or refresh cluster credentials:
+  gcloud container clusters get-credentials <cluster-name> --region <region>
+
+Current context: $current_context"
+    else
+      error "Kubernetes authentication failed.
+
+Please check your cluster credentials and re-authenticate.
+
+Current context: $current_context"
+    fi
+  else
+    error "Kubectl command failed: $error_output"
+  fi
+}
+
 get_current_context() {
   kubectl config current-context 2>/dev/null || echo ""
 }
@@ -158,7 +204,27 @@ list_clickhouse_services() {
     search_flag="--all-namespaces"
   fi
 
-  kubectl $ctx_flag get services $search_flag -o json 2>/dev/null | \
+  local output
+  # Wrap kubectl with timeout to prevent hanging
+  output=$(timeout 10 kubectl $ctx_flag get services $search_flag -o json 2>&1)
+  local exit_code=$?
+
+  if [[ $exit_code -eq 124 ]]; then
+    output="Error: kubectl command timed out after 10s"
+    exit_code=1
+  fi
+
+  if [[ $exit_code -ne 0 ]]; then
+    echo "KUBECTL_ERROR: $output" >&2
+    return 1
+  fi
+
+  if ! echo "$output" | jq -e . >/dev/null 2>&1; then
+    echo "KUBECTL_ERROR: Invalid JSON response from kubectl" >&2
+    return 1
+  fi
+
+  echo "$output" | \
     jq -r '.items[] |
     select(.spec.ports[]? | select(.port == 9000 or .targetPort == 9000)) |
     "\(.metadata.name):::\(.metadata.namespace):::\(.metadata.labels["clickhouse.altinity.com/chi"] // "")"'
@@ -169,6 +235,16 @@ discover_clickhouse_services() {
   local operator_services=()
   local legacy_services=()
   local seen=()
+  local list_output
+  local list_exit
+
+  list_output=$(list_clickhouse_services 2>&1)
+  list_exit=$?
+
+  if [[ $list_exit -ne 0 ]]; then
+    echo "$list_output" >&2
+    return 1
+  fi
 
   while IFS= read -r line; do
     [[ -z "$line" ]] && continue
@@ -200,7 +276,7 @@ discover_clickhouse_services() {
       fi
       seen+=("$entry")
     fi
-  done < <(list_clickhouse_services)
+  done <<< "$list_output"
 
   for op_svc in "${operator_services[@]}"; do
     all_services+=("$op_svc")
@@ -229,15 +305,27 @@ discover_clickhouse_services() {
   printf '%s\n' "${all_services[@]}"
 }
 
+discovery_error_file=$(mktemp)
 mapfile -t ch_entries < <(
   gum spin --spinner dot --title "Discovering ClickHouse services..." -- bash -c "
     context='$context'
     namespace_explicit='$namespace_explicit'
     namespace='$namespace'
     $(declare -f list_clickhouse_services discover_clickhouse_services)
-    discover_clickhouse_services
+    discover_clickhouse_services 2>'$discovery_error_file'
   "
 )
+
+if [[ -s "$discovery_error_file" ]]; then
+  discovery_error=$(cat "$discovery_error_file")
+  rm -f "$discovery_error_file"
+
+  if echo "$discovery_error" | grep -q "KUBECTL_ERROR:"; then
+    error_msg=$(echo "$discovery_error" | grep "KUBECTL_ERROR:" | head -1 | sed 's/KUBECTL_ERROR: //')
+    handle_kubectl_error "$error_msg"
+  fi
+fi
+rm -f "$discovery_error_file"
 
 if [[ ${#ch_entries[@]} -eq 0 ]]; then
   error "No ClickHouse services found"

@@ -14,7 +14,6 @@ if ! command -v gum &> /dev/null; then
   exit 1
 fi
 
-readonly DEFAULT_NAMESPACE="elastic-system"
 readonly DEFAULT_SERVICE="kibana-kb-http"
 readonly DEFAULT_SECRET="ha-es-elastic-user"
 readonly PORT_RANGE_START=15000
@@ -29,9 +28,9 @@ SHOW_PASSWORD=true
 OPEN_BROWSER=true
 
 context=""
-namespace="$DEFAULT_NAMESPACE"
+namespace=""
 service="$DEFAULT_SERVICE"
-secret="$DEFAULT_SECRET"
+secret=""
 port=""
 pf_pid=""
 pf_monitor_pid=""
@@ -74,8 +73,8 @@ usage() {
     "" \
     "OPTIONS:" \
     "  -x, --context CONTEXT    Kubernetes context" \
-    "  -n, --namespace NS       Namespace (default: $DEFAULT_NAMESPACE)" \
-    "  -s, --service SERVICE    Service name (default: $DEFAULT_SERVICE)" \
+    "  -n, --namespace NS       Namespace (default: auto-discover)" \
+    "  -s, --service SERVICE    Service name (default: auto-discover)" \
     "  --secret SECRET          Secret name (default: $DEFAULT_SECRET)" \
     "  -p, --port PORT          Local port (default: auto-assign)" \
     "  --no-password            Don't display password" \
@@ -100,11 +99,57 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-for tool in kubectl nc; do
+for tool in kubectl nc jq; do
   if ! command -v "$tool" &> /dev/null; then
     error "Required tool '$tool' not found"
   fi
 done
+
+handle_kubectl_error() {
+  local error_output="$1"
+  local current_context=$(kubectl config current-context 2>/dev/null || echo "unknown")
+
+  if echo "$error_output" | grep -qiE "(timed out|i/o timeout|context deadline exceeded)"; then
+    error "Connection timeout - cluster unreachable.
+
+Possible causes:
+  • VPN not connected
+  • Cluster network unreachable
+  • Firewall blocking connection
+
+Current context: $current_context"
+  elif echo "$error_output" | grep -qiE "(unable to connect|connection refused|could not resolve|no such host)"; then
+    error "Unable to connect to cluster.
+
+Possible causes:
+  • VPN not connected
+  • Cluster endpoint unreachable
+  • DNS resolution failure
+
+Current context: $current_context"
+  elif echo "$error_output" | grep -qiE "(token.*expired|not logged in|unauthorized|authentication|gke-gcloud-auth-plugin|failed to retrieve access token|no active account|gcloud.*config.*helper)"; then
+    if [[ "$current_context" == gke_* ]] || echo "$error_output" | grep -qiE "(gcloud|gke-gcloud-auth-plugin)"; then
+      error "GKE authentication expired.
+
+Please re-authenticate:
+  gcloud auth login
+  gcloud auth application-default login
+
+Or refresh cluster credentials:
+  gcloud container clusters get-credentials <cluster-name> --region <region>
+
+Current context: $current_context"
+    else
+      error "Kubernetes authentication failed.
+
+Please check your cluster credentials and re-authenticate.
+
+Current context: $current_context"
+    fi
+  else
+    error "Kubectl command failed: $error_output"
+  fi
+}
 
 get_current_context() {
   kubectl config current-context 2>/dev/null || echo ""
@@ -133,6 +178,129 @@ if [[ -z "$context" ]]; then
     gum filter --placeholder "Type to search..." --header "Current: $current_ctx" --height 15)
 fi
 
+ctx_flag=""
+[[ -n "$context" ]] && ctx_flag="--context=$context"
+
+discover_kibana_services() {
+  local output
+  output=$(timeout 10 kubectl $ctx_flag get services --all-namespaces -o json 2>&1)
+  local exit_code=$?
+
+  if [[ $exit_code -eq 124 ]]; then
+    echo "KUBECTL_ERROR: kubectl command timed out after 10s" >&2
+    return 1
+  fi
+
+  if [[ $exit_code -ne 0 ]]; then
+    echo "KUBECTL_ERROR: $output" >&2
+    return 1
+  fi
+
+  echo "$output" | jq -r '.items[] | select(.metadata.name | test("kibana")) | "\(.metadata.namespace)/\(.metadata.name)"' 2>/dev/null
+}
+
+if [[ -z "$namespace" ]]; then
+  discover_error_file=$(mktemp)
+  kibana_services=$(gum spin --spinner dot --title "Discovering Kibana services..." -- bash -c "
+    $(declare -f discover_kibana_services)
+    ctx_flag='$ctx_flag'
+    discover_kibana_services 2>'$discover_error_file'
+  ")
+
+  if [[ -s "$discover_error_file" ]]; then
+    discover_error=$(cat "$discover_error_file")
+    rm -f "$discover_error_file"
+
+    if echo "$discover_error" | grep -q "KUBECTL_ERROR:"; then
+      error_msg=$(echo "$discover_error" | grep "KUBECTL_ERROR:" | head -1 | sed 's/KUBECTL_ERROR: //')
+      handle_kubectl_error "$error_msg"
+    fi
+  fi
+  rm -f "$discover_error_file"
+
+  if [[ -z "$kibana_services" ]]; then
+    error "No Kibana services found in the cluster"
+  fi
+
+  mapfile -t services_array <<< "$kibana_services"
+
+  if [[ ${#services_array[@]} -eq 1 ]]; then
+    selected_service="${services_array[0]}"
+    info "Found single Kibana service: $selected_service"
+  else
+    info "Select Kibana service:"
+    selected_service=$(printf '%s\n' "${services_array[@]}" | \
+      gum filter --placeholder "Type to search..." --header "Available Kibana Services" --height 15) || error "No service selected"
+  fi
+
+  if [[ -z "$selected_service" ]]; then
+    error "No service selected"
+  fi
+
+  namespace=$(echo "$selected_service" | cut -d'/' -f1)
+  service=$(echo "$selected_service" | cut -d'/' -f2)
+fi
+
+list_elastic_secrets() {
+  local output
+  output=$(timeout 10 kubectl $ctx_flag -n "$namespace" get secrets -o json 2>&1)
+  local exit_code=$?
+
+  if [[ $exit_code -eq 124 ]]; then
+    echo "KUBECTL_ERROR: kubectl command timed out after 10s" >&2
+    return 1
+  fi
+
+  if [[ $exit_code -ne 0 ]]; then
+    echo "KUBECTL_ERROR: $output" >&2
+    return 1
+  fi
+
+  echo "$output" | jq -r '.items[] | select(.metadata.name | test("elastic|es-elastic-user")) | .metadata.name' 2>/dev/null
+}
+
+if [[ -z "$secret" ]]; then
+  secret_list_error_file=$(mktemp)
+  elastic_secrets=$(gum spin --spinner dot --title "Finding elastic secrets..." -- bash -c "
+    $(declare -f list_elastic_secrets)
+    ctx_flag='$ctx_flag'
+    namespace='$namespace'
+    list_elastic_secrets 2>'$secret_list_error_file'
+  ")
+
+  if [[ -s "$secret_list_error_file" ]]; then
+    secret_list_error=$(cat "$secret_list_error_file")
+    rm -f "$secret_list_error_file"
+
+    if echo "$secret_list_error" | grep -q "KUBECTL_ERROR:"; then
+      error_msg=$(echo "$secret_list_error" | grep "KUBECTL_ERROR:" | head -1 | sed 's/KUBECTL_ERROR: //')
+      handle_kubectl_error "$error_msg"
+    fi
+  fi
+  rm -f "$secret_list_error_file"
+
+  if [[ -n "$elastic_secrets" ]]; then
+    mapfile -t secrets_array <<< "$elastic_secrets"
+
+    if [[ ${#secrets_array[@]} -eq 1 ]]; then
+      secret="${secrets_array[0]}"
+      info "Found secret: $secret"
+    else
+      info "Select elastic secret:"
+      secret=$(printf '%s\n' "${secrets_array[@]}" | \
+        gum filter --placeholder "Type to search..." --header "Available Elastic Secrets" --height 15) || error "No secret selected"
+
+      if [[ -z "$secret" ]]; then
+        error "No secret selected"
+      fi
+    fi
+  else
+    warning "No elastic secrets found in namespace '$namespace'"
+    warning "Specify the secret with --secret <name>"
+    exit 1
+  fi
+fi
+
 [[ "$QUIET" == "false" ]] && show_header
 
 find_available_port() {
@@ -151,13 +319,45 @@ if [[ -z "$port" ]]; then
   port=$(find_available_port)
 fi
 
-ctx_flag=""
-[[ -n "$context" ]] && ctx_flag="--context=$context"
+get_password() {
+  local output
+  output=$(timeout 10 kubectl $ctx_flag -n "$namespace" get secret "$secret" -o go-template='{{.data.elastic | base64decode}}' 2>&1)
+  local exit_code=$?
 
-password=$(gum spin --spinner dot --title "Retrieving credentials..." -- \
-  kubectl $ctx_flag -n "$namespace" get secret "$secret" -o go-template='{{.data.elastic | base64decode}}' 2>/dev/null)
+  if [[ $exit_code -eq 124 ]]; then
+    echo "KUBECTL_ERROR: kubectl command timed out after 10s" >&2
+    return 1
+  fi
 
-if [[ $? -ne 0 || -z "$password" ]]; then
+  if [[ $exit_code -ne 0 ]]; then
+    echo "KUBECTL_ERROR: $output" >&2
+    return 1
+  fi
+
+  echo "$output"
+}
+
+password_error_file=$(mktemp)
+password=$(gum spin --spinner dot --title "Retrieving credentials..." -- bash -c "
+  $(declare -f get_password)
+  ctx_flag='$ctx_flag'
+  namespace='$namespace'
+  secret='$secret'
+  get_password 2>'$password_error_file'
+")
+
+if [[ -s "$password_error_file" ]]; then
+  password_error=$(cat "$password_error_file")
+  rm -f "$password_error_file"
+
+  if echo "$password_error" | grep -q "KUBECTL_ERROR:"; then
+    error_msg=$(echo "$password_error" | grep "KUBECTL_ERROR:" | head -1 | sed 's/KUBECTL_ERROR: //')
+    handle_kubectl_error "$error_msg"
+  fi
+fi
+rm -f "$password_error_file"
+
+if [[ -z "$password" ]]; then
   error "Failed to retrieve password from secret '$secret'"
 fi
 
@@ -192,9 +392,43 @@ gum style --border rounded --padding "1 2" --border-foreground 213 --bold \
   "$clipboard_status"
 echo ""
 
-gum spin --spinner dot --title "Verifying service..." -- \
-  kubectl $ctx_flag -n "$namespace" get service "$service" &>/dev/null || \
-  error "Service '$service' not found in namespace '$namespace'"
+verify_service() {
+  local output
+  output=$(timeout 10 kubectl $ctx_flag -n "$namespace" get service "$service" 2>&1)
+  local exit_code=$?
+
+  if [[ $exit_code -eq 124 ]]; then
+    echo "KUBECTL_ERROR: kubectl command timed out after 10s" >&2
+    return 1
+  fi
+
+  if [[ $exit_code -ne 0 ]]; then
+    echo "KUBECTL_ERROR: $output" >&2
+    return 1
+  fi
+}
+
+verify_error_file=$(mktemp)
+gum spin --spinner dot --title "Verifying service..." -- bash -c "
+  $(declare -f verify_service)
+  ctx_flag='$ctx_flag'
+  namespace='$namespace'
+  service='$service'
+  verify_service 2>'$verify_error_file'
+"
+
+if [[ -s "$verify_error_file" ]]; then
+  verify_error=$(cat "$verify_error_file")
+  rm -f "$verify_error_file"
+
+  if echo "$verify_error" | grep -q "KUBECTL_ERROR:"; then
+    error_msg=$(echo "$verify_error" | grep "KUBECTL_ERROR:" | head -1 | sed 's/KUBECTL_ERROR: //')
+    handle_kubectl_error "$error_msg"
+  else
+    error "Service '$service' not found in namespace '$namespace'"
+  fi
+fi
+rm -f "$verify_error_file"
 
 cleanup() {
   if [[ -n "$pf_pid" && -e /proc/$pf_pid ]]; then

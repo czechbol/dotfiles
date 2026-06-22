@@ -117,6 +117,52 @@ for tool in kubectl nc psql; do
   fi
 done
 
+handle_kubectl_error() {
+  local error_output="$1"
+  local current_context=$(kubectl config current-context 2>/dev/null || echo "unknown")
+
+  if echo "$error_output" | grep -qiE "(timed out|i/o timeout|context deadline exceeded)"; then
+    error "Connection timeout - cluster unreachable.
+
+Possible causes:
+  • VPN not connected
+  • Cluster network unreachable
+  • Firewall blocking connection
+
+Current context: $current_context"
+  elif echo "$error_output" | grep -qiE "(unable to connect|connection refused|could not resolve|no such host)"; then
+    error "Unable to connect to cluster.
+
+Possible causes:
+  • VPN not connected
+  • Cluster endpoint unreachable
+  • DNS resolution failure
+
+Current context: $current_context"
+  elif echo "$error_output" | grep -qiE "(token.*expired|not logged in|unauthorized|authentication|gke-gcloud-auth-plugin|failed to retrieve access token|no active account|gcloud.*config.*helper)"; then
+    if [[ "$current_context" == gke_* ]] || echo "$error_output" | grep -qiE "(gcloud|gke-gcloud-auth-plugin)"; then
+      error "GKE authentication expired.
+
+Please re-authenticate:
+  gcloud auth login
+  gcloud auth application-default login
+
+Or refresh cluster credentials:
+  gcloud container clusters get-credentials <cluster-name> --region <region>
+
+Current context: $current_context"
+    else
+      error "Kubernetes authentication failed.
+
+Please check your cluster credentials and re-authenticate.
+
+Current context: $current_context"
+    fi
+  else
+    error "Kubectl command failed: $error_output"
+  fi
+}
+
 get_current_context() {
   kubectl config current-context 2>/dev/null || echo ""
 }
@@ -167,8 +213,30 @@ list_databases() {
     search_flag="--all-namespaces"
   fi
 
-  kubectl $ctx_flag get services $search_flag -o json 2>/dev/null | \
-    jq -r '.items[] |
+  local output
+  local error_output
+  # Wrap kubectl with timeout to prevent hanging (don't use --request-timeout, it interferes)
+  output=$(timeout 10 kubectl $ctx_flag get services $search_flag -o json 2>&1)
+  local exit_code=$?
+
+  # Check if timeout killed the command
+  if [[ $exit_code -eq 124 ]]; then
+    output="Error: kubectl command timed out after 10s"
+    exit_code=1
+  fi
+
+  if [[ $exit_code -ne 0 ]]; then
+    echo "KUBECTL_ERROR: $output" >&2
+    return 1
+  fi
+
+  # Check if output is valid JSON
+  if ! echo "$output" | jq -e . >/dev/null 2>&1; then
+    echo "KUBECTL_ERROR: Invalid JSON response from kubectl" >&2
+    return 1
+  fi
+
+  echo "$output" | jq -r '.items[] |
     select(.spec.ports[]? | select(.port == 5432 or .targetPort == 5432)) |
     "\(.metadata.name):::\(.metadata.namespace)"'
 }
@@ -176,6 +244,16 @@ list_databases() {
 discover_databases() {
   local all_dbs=()
   local seen=()
+  local list_output
+  local list_exit
+
+  list_output=$(list_databases 2>&1)
+  list_exit=$?
+
+  if [[ $list_exit -ne 0 ]]; then
+    echo "$list_output" >&2
+    return 1
+  fi
 
   while IFS= read -r line; do
     [[ -z "$line" ]] && continue
@@ -205,22 +283,36 @@ discover_databases() {
         seen+=("$entry")
       fi
     fi
-  done < <(list_databases)
+  done <<< "$list_output"
 
   printf '%s\n' "${all_dbs[@]}"
 }
 
+# Capture stderr to check for errors while keeping spinner working
+discovery_error_file=$(mktemp)
 mapfile -t db_entries < <(
   gum spin --spinner dot --title "Discovering databases..." -- bash -c "
     context='$context'
     namespace_explicit='$namespace_explicit'
     namespace='$namespace'
     $(declare -f list_databases discover_databases)
-    discover_databases
+    discover_databases 2>'$discovery_error_file'
   "
 )
 
-if [[ ${#db_entries[@]} -eq 0 ]]; then
+# Check for kubectl errors in stderr
+if [[ -s "$discovery_error_file" ]]; then
+  discovery_error=$(cat "$discovery_error_file")
+  rm -f "$discovery_error_file"
+
+  if echo "$discovery_error" | grep -q "KUBECTL_ERROR:"; then
+    error_msg=$(echo "$discovery_error" | grep "KUBECTL_ERROR:" | head -1 | sed 's/KUBECTL_ERROR: //')
+    handle_kubectl_error "$error_msg"
+  fi
+fi
+rm -f "$discovery_error_file"
+
+if [[ ${#db_entries[@]} -eq 0 || -z "${db_entries[0]}" ]]; then
   error "No databases found"
 fi
 
@@ -278,6 +370,10 @@ if [[ -z "$cluster" ]]; then
       fi
     fi
   done
+
+  if [[ ${#display_items[@]} -eq 0 ]]; then
+    error "No valid databases found"
+  fi
 
   if [[ ${#sorted_entries[@]} -eq 1 ]]; then
     selected_display="${display_items[0]}"
@@ -362,18 +458,28 @@ get_credentials_cnpg() {
   fi
 
   for pattern in "${secret_patterns[@]}"; do
-    if kubectl $ctx_flag -n "$ns" get secret "$pattern" &>/dev/null; then
-      local pg_user=$(kubectl $ctx_flag -n "$ns" get secret "$pattern" -o go-template='{{index .data "username"}}' 2>/dev/null | base64 -d || echo "")
-      local pg_pass=$(kubectl $ctx_flag -n "$ns" get secret "$pattern" -o go-template='{{index .data "password"}}' 2>/dev/null | base64 -d || echo "")
-      local pg_db=$(kubectl $ctx_flag -n "$ns" get secret "$pattern" -o go-template='{{index .data "dbname"}}' 2>/dev/null | base64 -d || echo "")
+    local check_output
+    check_output=$(kubectl $ctx_flag -n "$ns" get secret "$pattern"  2>&1)
+    local check_exit=$?
 
-      [[ -z "$pg_db" ]] && pg_db="__AUTO_DISCOVER__"
-
-      echo "USERNAME=$pg_user"
-      echo "PASSWORD=$pg_pass"
-      echo "DATABASE=$pg_db"
-      return 0
+    if [[ $check_exit -ne 0 ]]; then
+      if echo "$check_output" | grep -qiE "(timed out|i/o timeout|unable to connect|connection refused|token.*expired|not logged in|unauthorized)"; then
+        echo "KUBECTL_ERROR: $check_output" >&2
+        return 1
+      fi
+      continue
     fi
+
+    local pg_user=$(kubectl $ctx_flag -n "$ns" get secret "$pattern" -o go-template='{{index .data "username"}}'  2>&1 | base64 -d 2>/dev/null || echo "")
+    local pg_pass=$(kubectl $ctx_flag -n "$ns" get secret "$pattern" -o go-template='{{index .data "password"}}'  2>&1 | base64 -d 2>/dev/null || echo "")
+    local pg_db=$(kubectl $ctx_flag -n "$ns" get secret "$pattern" -o go-template='{{index .data "dbname"}}'  2>&1 | base64 -d 2>/dev/null || echo "")
+
+    [[ -z "$pg_db" ]] && pg_db="__AUTO_DISCOVER__"
+
+    echo "USERNAME=$pg_user"
+    echo "PASSWORD=$pg_pass"
+    echo "DATABASE=$pg_db"
+    return 0
   done
 
   return 1
@@ -385,12 +491,35 @@ get_credentials_deployment() {
   local ctx_flag=""
   [[ -n "$context" ]] && ctx_flag="--context=$context"
 
-  local pod_name=$(kubectl $ctx_flag -n "$ns" get pods -o json 2>/dev/null | \
-    jq -r --arg svc "$svc_name" '.items[] | select(.metadata.name | startswith($svc)) | .metadata.name' | head -1)
+  local pods_output
+  pods_output=$(kubectl $ctx_flag -n "$ns" get pods -o json  2>&1)
+  local pods_exit=$?
+
+  if [[ $pods_exit -ne 0 ]]; then
+    if echo "$pods_output" | grep -qiE "(timed out|i/o timeout|unable to connect|connection refused|token.*expired|not logged in|unauthorized)"; then
+      echo "KUBECTL_ERROR: $pods_output" >&2
+      return 1
+    fi
+    return 1
+  fi
+
+  local pod_name=$(echo "$pods_output" | jq -r --arg svc "$svc_name" '.items[] | select(.metadata.name | startswith($svc)) | .metadata.name' | head -1)
 
   [[ -z "$pod_name" ]] && return 1
 
-  local env_json=$(kubectl $ctx_flag -n "$ns" get pod "$pod_name" -o json 2>/dev/null | jq '.spec.containers[0].env')
+  local pod_output
+  pod_output=$(kubectl $ctx_flag -n "$ns" get pod "$pod_name" -o json  2>&1)
+  local pod_exit=$?
+
+  if [[ $pod_exit -ne 0 ]]; then
+    if echo "$pod_output" | grep -qiE "(timed out|i/o timeout|unable to connect|connection refused|token.*expired|not logged in|unauthorized)"; then
+      echo "KUBECTL_ERROR: $pod_output" >&2
+      return 1
+    fi
+    return 1
+  fi
+
+  local env_json=$(echo "$pod_output" | jq '.spec.containers[0].env')
 
   local pg_user=$(echo "$env_json" | jq -r '.[] | select(.name == "POSTGRES_USER") | .value' 2>/dev/null || echo "")
   local pg_pass=$(echo "$env_json" | jq -r '.[] | select(.name == "POSTGRES_PASSWORD") | .value' 2>/dev/null || echo "")
@@ -400,7 +529,18 @@ get_credentials_deployment() {
     local secret_name=$(echo "$env_json" | jq -r '.[] | select(.name == "POSTGRES_PASSWORD") | .valueFrom.secretKeyRef.name' 2>/dev/null || echo "")
     local secret_key=$(echo "$env_json" | jq -r '.[] | select(.name == "POSTGRES_PASSWORD") | .valueFrom.secretKeyRef.key' 2>/dev/null || echo "")
     if [[ -n "$secret_name" && -n "$secret_key" ]]; then
-      pg_pass=$(kubectl $ctx_flag -n "$ns" get secret "$secret_name" -o jsonpath="{.data.${secret_key}}" 2>/dev/null | base64 -d)
+      local secret_output
+      secret_output=$(kubectl $ctx_flag -n "$ns" get secret "$secret_name" -o jsonpath="{.data.${secret_key}}"  2>&1)
+      local secret_exit=$?
+
+      if [[ $secret_exit -ne 0 ]]; then
+        if echo "$secret_output" | grep -qiE "(timed out|i/o timeout|unable to connect|connection refused|token.*expired|not logged in|unauthorized)"; then
+          echo "KUBECTL_ERROR: $secret_output" >&2
+          return 1
+        fi
+      else
+        pg_pass=$(echo "$secret_output" | base64 -d 2>/dev/null)
+      fi
     fi
   fi
 
@@ -416,17 +556,28 @@ if [[ "$db_type" == "deployment" ]]; then
   creds_output=$(gum spin --spinner dot --title "Retrieving credentials..." -- bash -c "
     context='$context'
     $(declare -f get_credentials_deployment)
-    get_credentials_deployment '$namespace' '$cluster'
+    get_credentials_deployment '$namespace' '$cluster' 2>&1
+    exit \$?
   ")
+  creds_exit=$?
 else
   creds_output=$(gum spin --spinner dot --title "Retrieving credentials..." -- bash -c "
     context='$context'
     $(declare -f get_credentials_cnpg)
-    get_credentials_cnpg '$namespace' '$cluster'
+    get_credentials_cnpg '$namespace' '$cluster' 2>&1
+    exit \$?
   ")
+  creds_exit=$?
 fi
 
-if [[ $? -ne 0 || -z "$creds_output" ]]; then
+if [[ $creds_exit -ne 0 ]]; then
+  if echo "$creds_output" | grep -q "KUBECTL_ERROR:"; then
+    error_msg=$(echo "$creds_output" | grep "KUBECTL_ERROR:" | sed 's/KUBECTL_ERROR: //')
+    handle_kubectl_error "$error_msg"
+  else
+    error "Failed to retrieve credentials"
+  fi
+elif [[ -z "$creds_output" ]]; then
   error "Failed to retrieve credentials"
 fi
 

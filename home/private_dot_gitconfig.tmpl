@@ -4,7 +4,7 @@
 	email = {{ .user.email }}
 	name = {{ .user.name }}
 	username = {{ .user.git_user }}
-	signingkey = ~/.ssh/git-{{ .user.git_user }}
+	signingkey = ~/.ssh/{{ .user.git_user }}/github.pub
 [gpg]
 	format = ssh
 [core]
@@ -12,7 +12,7 @@
 	editor = code -w
 	whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
 	pager = delta
-	sshCommand = "ssh -i ~/.ssh/git-{{ .user.git_user }} -F /dev/null"
+	sshCommand = "ssh -i ~/.ssh/{{ .user.git_user }}/github -F /dev/null"
 
 {{ if eq .machine.type "whalebone" -}}
 [includeIf "gitdir:~/Projects/Whalebone/"]

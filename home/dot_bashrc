@@ -23,3 +23,8 @@ if [ -d ~/.bashrc.d ]; then
     done
 fi
 unset rc
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/home/aludes/.lmstudio/bin"
+# End of LM Studio CLI section
+

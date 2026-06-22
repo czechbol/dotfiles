@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
-import datetime
+from datetime import datetime, date, timedelta, timezone
 import json
 import logging
 import os
@@ -142,8 +142,8 @@ def get_location(city: str) -> Optional[Tuple[float, float]]:
 
 
 def get_cached_sun_data(
-    today: datetime.date,
-) -> Optional[Tuple[datetime.datetime, datetime.datetime]]:
+    today: date,
+) -> Optional[Tuple[datetime, datetime]]:
     """Gets the sunrise and sunset times from the cache.
 
     Args:
@@ -161,14 +161,14 @@ def get_cached_sun_data(
     result = cursor.fetchone()
     conn.close()
     if result:
-        sunrise = datetime.datetime.fromisoformat(result[0])
-        sunset = datetime.datetime.fromisoformat(result[1])
+        sunrise = datetime.fromisoformat(result[0])
+        sunset = datetime.fromisoformat(result[1])
         return sunrise, sunset
     return None
 
 
 def cache_sun_data(
-    today: datetime.date, sunrise: datetime.datetime, sunset: datetime.datetime
+    today: date, sunrise: datetime, sunset: datetime
 ) -> None:
     """Caches the sunrise and sunset times in the database.
 
@@ -177,10 +177,11 @@ def cache_sun_data(
         sunrise: The sunrise time.
         sunset: The sunset time.
     """
+    year_ago = today - timedelta(days=365)
     logger.debug(f"Caching sun data for: {today}")
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM sun_data WHERE date < ?", (today.isoformat(),))
+    cursor.execute("DELETE FROM sun_data WHERE date < ?", (year_ago.isoformat(),))
     cursor.execute(
         "INSERT OR REPLACE INTO sun_data (date, sunrise, sunset) VALUES (?, ?, ?)",
         (today.isoformat(), sunrise.isoformat(), sunset.isoformat()),
@@ -190,8 +191,8 @@ def cache_sun_data(
 
 
 def get_sun_data(
-    latitude: float, longitude: float, date: datetime.date = None
-) -> Optional[Tuple[datetime.datetime, datetime.datetime]]:
+    latitude: float, longitude: float, date: date = None
+) -> Optional[Tuple[datetime, datetime]]:
     """Gets the sunrise and sunset times for a location, using the cache if available.
 
     Args:
@@ -205,7 +206,7 @@ def get_sun_data(
         f"Fetching sun data for: lat={latitude}, lon={longitude}, date={date if date is not None else 'today'}"
     )
     if date is None:
-        date = datetime.datetime.now().date()
+        date = datetime.now(timezone.utc).date()
     cached_sun_data = get_cached_sun_data(date)
     if cached_sun_data:
         return cached_sun_data
@@ -223,8 +224,8 @@ def get_sun_data(
             if data["status"] == "OK":
                 sunrise_str = data["results"]["sunrise"]
                 sunset_str = data["results"]["sunset"]
-                sunrise = datetime.datetime.fromisoformat(sunrise_str)
-                sunset = datetime.datetime.fromisoformat(sunset_str)
+                sunrise = datetime.fromisoformat(sunrise_str)
+                sunset = datetime.fromisoformat(sunset_str)
                 cache_sun_data(date, sunrise, sunset)
                 return sunrise, sunset
             return None
@@ -233,15 +234,15 @@ def get_sun_data(
         return None
 
 
-def get_current_time() -> datetime.datetime:
+def get_current_time() -> datetime:
     """Gets the current time in UTC."""
-    return datetime.datetime.now(datetime.timezone.utc)
+    return datetime.now(timezone.utc)
 
 
 def calculate_temp(
-    current_time: datetime.datetime,
-    sunrise: datetime.datetime,
-    sunset: datetime.datetime,
+    current_time: datetime,
+    sunrise: datetime,
+    sunset: datetime,
     night_temp: int,
 ) -> int:
     """Calculates the display temperature based on the current time and sunrise/sunset times.
@@ -255,9 +256,6 @@ def calculate_temp(
     Returns:
         The calculated temperature.
     """
-    current_time = current_time.replace(tzinfo=datetime.timezone.utc)
-    sunrise = sunrise.replace(tzinfo=datetime.timezone.utc)
-    sunset = sunset.replace(tzinfo=datetime.timezone.utc)
 
     minutes_before_sunset = (sunset - current_time).total_seconds() / 60
     minutes_after_sunrise = (current_time - sunrise).total_seconds() / 60
@@ -299,7 +297,7 @@ def set_temperature(temp: int) -> None:
 
 
 def adjust_shader(
-    sunrise: datetime.datetime, sunset: datetime.datetime, night_temp: int
+    sunrise: datetime, sunset: datetime, night_temp: int
 ) -> None:
     current_time = get_current_time()
     logger.info("Adjusting shader")
@@ -338,7 +336,7 @@ def setup_logging(debug: bool) -> None:
     )
 
 
-def wait_until(end_datetime: datetime.datetime):
+def wait_until(end_datetime: datetime):
     while True:
         logger.debug(f"Waiting until: {end_datetime.astimezone().isoformat()}")
         diff = (end_datetime - get_current_time()).total_seconds()
@@ -380,7 +378,7 @@ def main() -> None:
 
     init_database()
 
-    location = get_location(args.city)
+    location = get_location(args.city.lower())
     if location is None:
         logger.error("Could not determine location. Exiting.")
         return
@@ -403,7 +401,7 @@ def main() -> None:
             continue
         elif current_time > sunset:
             sunrise_sunset = get_sun_data(
-                latitude, longitude, current_time.date() + datetime.timedelta(days=1)
+                latitude, longitude, current_time.date() + timedelta(days=1)
             )
             if sunrise_sunset is None:
                 logger.error("Could not determine sunrise/sunset times. Exiting.")
@@ -415,10 +413,10 @@ def main() -> None:
             continue
         elif (
             current_time
-            >= sunrise + datetime.timedelta(minutes=TRANSITION_PERIOD_MINUTES)
+            >= sunrise + timedelta(minutes=TRANSITION_PERIOD_MINUTES)
             and current_time <= sunset
         ):
-            wait_until(sunset - datetime.timedelta(minutes=TRANSITION_PERIOD_MINUTES))
+            wait_until(sunset - timedelta(minutes=TRANSITION_PERIOD_MINUTES))
             adjust_shader(sunrise, sunset, args.night_temp)
             continue
 
