@@ -127,7 +127,8 @@ def get_location(city: str) -> Optional[Tuple[float, float]]:
     try:
         params = {"q": city, "format": "json", "limit": 1}
         url = f"{NOMINATIM_API}?{urllib.parse.urlencode(params)}"
-        with urllib.request.urlopen(url) as response:
+        req = urllib.request.Request(url, headers={"User-Agent": "sunsetd/1.0"})
+        with urllib.request.urlopen(req) as response:
             data = json.loads(response.read().decode())
             if data:
                 latitude = float(data[0]["lat"])
@@ -219,7 +220,8 @@ def get_sun_data(
             "formatted": 0,  # Get times in ISO 8601 format
         }
         url = f"{SUNRISE_SUNSET_API}?{urllib.parse.urlencode(params)}"
-        with urllib.request.urlopen(url) as response:
+        req = urllib.request.Request(url, headers={"User-Agent": "sunsetd/1.0"})
+        with urllib.request.urlopen(req) as response:
             data = json.loads(response.read().decode())
             if data["status"] == "OK":
                 sunrise_str = data["results"]["sunrise"]
@@ -272,9 +274,7 @@ def calculate_temp(
         return int(max(night_temp, min(DAY_TEMP, temp)))
 
     if 0 <= minutes_after_sunrise <= TRANSITION_PERIOD_MINUTES:
-        step = (TRANSITION_PERIOD_MINUTES - minutes_after_sunrise) // (
-            TRANSITION_PERIOD_MINUTES // TRANSITION_STEPS
-        )
+        step = minutes_after_sunrise // (TRANSITION_PERIOD_MINUTES // TRANSITION_STEPS)
         temp_diff = DAY_TEMP - night_temp
         temp = night_temp + (temp_diff / TRANSITION_STEPS) * step
         return int(max(night_temp, min(DAY_TEMP, temp)))
@@ -430,4 +430,8 @@ if __name__ == "__main__":
     # startup delay
     time.sleep(10)
 
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        logger.info("Received interrupt, exiting.")
+        sys.exit(0)

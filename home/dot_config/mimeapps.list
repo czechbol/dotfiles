@@ -3,7 +3,7 @@ text/plain=userapp-code-9KL332.desktop;
 text/csv=userapp-code-9KL332.desktop;
 image/svg+xml=org.gnome.Loupe.desktop;
 image/jpeg=viewnior.desktop;
-application/pdf=userapp-zathura-WYW7F3.desktop;
+application/pdf=userapp-zathura-WYW7F3.desktop;org.gnome.Evince.desktop;
 
 [Default Applications]
 text/html=vivaldi-stable.desktop
@@ -14,3 +14,7 @@ x-scheme-handler/unknown=vivaldi-stable.desktop
 text/csv=userapp-code-9KL332.desktop
 image/svg+xml=org.gnome.Loupe.desktop
 image/jpeg=viewnior.desktop
+application/pdf=org.gnome.Evince.desktop
+x-scheme-handler/claude-cli=claude-code-url-handler.desktop
+x-scheme-handler/slack=slack.desktop
+x-scheme-handler/claude=claude.desktop

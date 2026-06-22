@@ -18,3 +18,7 @@
 
 # Go telemetry data
 .config/go/telemetry/**
+
+# Runtime state that churns constantly
+.config/clipse/clipboard_history.json
+.config/pika-backup/history.json

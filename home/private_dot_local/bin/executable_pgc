@@ -51,25 +51,25 @@ show_header() {
     "PostgreSQL Connection Tool" \
     "" \
     "Context:   ${context:-<none>}" \
-    "Namespace: ${namespace:-<none>}"
+    "Namespace: ${namespace:-<none>}" >&2
 }
 
 error() {
-  gum style --foreground 196 --bold "✗ Error: $*"
+  gum style --foreground 196 --bold "✗ Error: $*" >&2
   exit 1
 }
 
 warning() {
-  gum style --foreground 214 --bold "⚠ WARNING: $*"
+  gum style --foreground 214 --bold "⚠ WARNING: $*" >&2
 }
 
 success() {
-  gum style --foreground 2 --bold "✓ $*"
+  gum style --foreground 2 --bold "✓ $*" >&2
 }
 
 info() {
   if [[ "$QUIET" == "false" ]]; then
-    gum style --foreground 33 "$*"
+    gum style --foreground 33 "$*" >&2
   fi
 }
 
@@ -420,12 +420,12 @@ fi
 
 if [[ "$db_type" == "deployment" ]]; then
   warning "Connecting to non-CNPG database with read-write capability"
-  gum style --foreground 240 "  (No separate read-only endpoint available)"
-  echo ""
+  gum style --foreground 240 "  (No separate read-only endpoint available)" >&2
+  echo "" >&2
 elif [[ "$READ_WRITE" == "true" ]]; then
   warning "Connecting with READ-WRITE access"
-  gum style --foreground 240 "  Use caution - changes will be written to the database"
-  echo ""
+  gum style --foreground 240 "  Use caution - changes will be written to the database" >&2
+  echo "" >&2
 fi
 
 connection_type="read-only"
@@ -437,9 +437,9 @@ elif [[ "$READ_WRITE" == "true" ]]; then
   connection_type="read-write"
 fi
 
-echo ""
-gum style --foreground 33 "Connecting to ${namespace}.${cluster} [$connection_type]"
-echo ""
+echo "" >&2
+gum style --foreground 33 "Connecting to ${namespace}.${cluster} [$connection_type]" >&2
+echo "" >&2
 
 get_credentials_cnpg() {
   local ns="$1"
@@ -600,7 +600,16 @@ elif [[ "$USE_POOLER" == "true" ]]; then
 elif [[ "$READ_WRITE" == "true" ]]; then
   service="${cluster}-rw"
 else
+  # Prefer -ro for read-only when replicas exist, otherwise fall back to -r
   service="${cluster}-ro"
+
+  # Check if -ro service has endpoints (replicas available)
+  ctx_flag_check=""
+  [[ -n "$context" ]] && ctx_flag_check="--context=$context"
+
+  if ! kubectl $ctx_flag_check -n "$namespace" get endpoints "$service" -o jsonpath='{.subsets[*].addresses[*].ip}' 2>/dev/null | grep -q .; then
+    service="${cluster}-r"
+  fi
 fi
 
 find_available_port() {
@@ -614,14 +623,6 @@ find_available_port() {
   done
   echo "15432"
 }
-
-if [[ -z "$port" ]]; then
-  port=$(find_available_port)
-fi
-
-pgpass_file=$(mktemp)
-chmod "$PGPASS_FILE_MODE" "$pgpass_file"
-echo "localhost:$port:*:$USERNAME:$PASSWORD" > "$pgpass_file"
 
 cleanup() {
   if [[ -n "$pf_monitor_pid" && -e /proc/$pf_monitor_pid ]]; then
@@ -651,23 +652,40 @@ start_port_forward() {
       wait "$pf_pid" 2>/dev/null || true
     fi
 
-    kubectl $ctx_flag -n "$namespace" port-forward service/"$service" "$port":5432 >/dev/null 2>&1 &
+    local pf_error_file=$(mktemp)
+    kubectl $ctx_flag -n "$namespace" port-forward service/"$service" "$port":5432 >"$pf_error_file" 2>&1 &
     pf_pid=$!
 
     local ready_check=0
-    while [[ $ready_check -lt 10 ]]; do
-      if nc -z localhost "$port" 2>/dev/null; then
-        sleep 1
-        return 0
+    while [[ $ready_check -lt 15 ]]; do
+      # Check if kubectl process is still running
+      if [[ ! -e /proc/$pf_pid ]]; then
+        rm -f "$pf_error_file"
+        break
       fi
+
+      if nc -z localhost "$port" 2>/dev/null; then
+        # Port is listening, give it a bit more time to fully establish
+        sleep 2
+        # Double-check it's still listening
+        if nc -z localhost "$port" 2>/dev/null; then
+          rm -f "$pf_error_file"
+          echo "$pf_pid"
+          return 0
+        fi
+      fi
+
       sleep 1
       ready_check=$((ready_check + 1))
       attempt=$((attempt + 1))
 
       if [[ $attempt -ge $timeout ]]; then
+        rm -f "$pf_error_file"
         return 1
       fi
     done
+
+    rm -f "$pf_error_file"
   done
 
   return 1
@@ -707,7 +725,15 @@ monitor_port_forward() {
 ctx_flag=""
 [[ -n "$context" ]] && ctx_flag="--context=$context"
 
-gum spin --spinner dot --title "Establishing connection..." -- bash -c "
+if [[ -z "$port" ]]; then
+  port=$(find_available_port)
+fi
+
+pgpass_file=$(mktemp)
+chmod "$PGPASS_FILE_MODE" "$pgpass_file"
+echo "localhost:$port:*:$USERNAME:$PASSWORD" > "$pgpass_file"
+
+pf_pid=$(gum spin --spinner dot --title "Establishing connection..." -- bash -c "
   $(declare -f start_port_forward)
   context='$context'
   namespace='$namespace'
@@ -715,16 +741,13 @@ gum spin --spinner dot --title "Establishing connection..." -- bash -c "
   port='$port'
   ctx_flag='$ctx_flag'
   PORT_FORWARD_TIMEOUT='$PORT_FORWARD_TIMEOUT'
+  pf_pid=''
   start_port_forward
-  echo \$! > /tmp/pgc-pf-pid.$$
-"
+")
 
-if [[ $? -ne 0 ]]; then
+if [[ $? -ne 0 || -z "$pf_pid" ]]; then
   error "Port-forward failed to start"
 fi
-
-pf_pid=$(cat /tmp/pgc-pf-pid.$$ 2>/dev/null)
-rm -f /tmp/pgc-pf-pid.$$
 
 monitor_port_forward &
 pf_monitor_pid=$!
@@ -750,13 +773,13 @@ else
   gum style --border rounded --padding "1" --border-foreground 33 \
     "Connected to: ${namespace}.${cluster}" \
     "Database: $DATABASE" \
-    "Type 'exit' or press Ctrl+D to disconnect"
-  echo ""
+    "Type 'exit' or press Ctrl+D to disconnect" >&2
+  echo "" >&2
 
-  PGCONNECT_TIMEOUT="$PG_CONNECT_TIMEOUT" PGPASSFILE="$pgpass_file" PAGER=off \
+  PGCONNECT_TIMEOUT="$PG_CONNECT_TIMEOUT" PGPASSFILE="$pgpass_file" \
     psql -h localhost -p "$port" -U "$USERNAME" -d "$DATABASE" \
     -v PROMPT1="$custom_prompt" -v PROMPT2="$custom_prompt"
 fi
 
-echo ""
-gum style --foreground 2 "✓ Disconnected. Goodbye!"
+echo "" >&2
+gum style --foreground 2 "✓ Disconnected. Goodbye!" >&2

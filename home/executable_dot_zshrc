@@ -35,6 +35,7 @@ zinit light mattmc3/zman
 zinit snippet OMZP::ansible
 zinit snippet OMZP::archlinux
 zinit snippet OMZP::command-not-found
+zinit snippet OMZP::extract
 zinit snippet OMZP::dnf
 zinit snippet OMZP::git
 zinit snippet OMZP::kubectl
@@ -127,11 +128,25 @@ fi
 
 alias vim='nvim'
 alias c='clear'
+
+if command -v bat >/dev/null; then
+    alias cat='bat'
+fi
+
+if command -v lazygit >/dev/null; then
+    alias lg='lazygit'
+fi
+
+if command -v tldr >/dev/null; then
+    alias help='tldr'
+fi
 # update dotfiles with yadm and autosquash commits that were made today
 alias dotupdate='yadm add -u && yadm commit -m "update" && yadm push'
 alias dotgit="GIT_WORK_TREE=~ GIT_DIR=~/.local/share/yadm/repo.git"
 
-alias ssh="kitty +kitten ssh"
+if [[ "$TERM" == "xterm-kitty" ]]; then
+    alias ssh="kitty +kitten ssh"
+fi
 
 alias gmt='go mod tidy'
 alias gcl='golangci-lint run'
@@ -140,9 +155,26 @@ alias dcu="docker compose up -d"
 alias dcd="docker compose down"
 alias k="kubectl"
 
+# Interactive Grep (rg + fzf + bat)
+function fif() {
+    if [ ! "$#" -gt 0 ]; then echo "Need a string to search for!"; return 1; fi
+    rg --color=always --line-number --no-heading --smart-case "${*:-}" 2> /dev/null |
+      fzf --ansi \
+          --delimiter : \
+          --preview 'bat --style=numbers --color=always --highlight-line {2} {1}' \
+          --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
+          --bind 'enter:become(file=$(printf "%s" {1}); line=$(printf "%s" {2}); file_abs=$(realpath "$file"); git_root=$(git -C $(dirname "$file_abs") rev-parse --show-toplevel 2>/dev/null); if [ -n "$git_root" ]; then code "$git_root"; code -g "$file_abs:$line"; else code -g "$file_abs:$line"; fi)'
+}
+
 export KUBE_EDITOR="code -w"
 export EDITOR="code -w"
 export BAT_PAGER="less -RF"
+
+if command -v fd >/dev/null; then
+    export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix --hidden --follow --exclude .git'
+elif command -v rg >/dev/null; then
+    export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
+fi
 
 export KUBECONFIG=~/.kube/config:~/.kube/config.exo-01
 export GOPATH=$HOME/go
@@ -175,3 +207,9 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 export PATH="$PATH:/home/aludes/.lmstudio/bin"
 # End of LM Studio CLI section
 
+
+
+
+# peon-ping quick controls
+alias peon="bash /home/aludes/.claude/hooks/peon-ping/peon.sh"
+[ -f /home/aludes/.claude/hooks/peon-ping/completions.bash ] && source /home/aludes/.claude/hooks/peon-ping/completions.bash

@@ -218,27 +218,24 @@ get_password() {
   echo "$output"
 }
 
-password_error_file=$(mktemp)
 password=$(gum spin --spinner dot --title "Retrieving credentials..." -- bash -c "
   $(declare -f get_password)
   ctx_flag='$ctx_flag'
   namespace='$namespace'
   secret='$secret'
-  get_password 2>'$password_error_file'
+  get_password 2>&1
+  exit \$?
 ")
+password_exit=$?
 
-if [[ -s "$password_error_file" ]]; then
-  password_error=$(cat "$password_error_file")
-  rm -f "$password_error_file"
-
-  if echo "$password_error" | grep -q "KUBECTL_ERROR:"; then
-    error_msg=$(echo "$password_error" | grep "KUBECTL_ERROR:" | head -1 | sed 's/KUBECTL_ERROR: //')
+if [[ $password_exit -ne 0 ]]; then
+  if echo "$password" | grep -q "KUBECTL_ERROR:"; then
+    error_msg=$(echo "$password" | grep "KUBECTL_ERROR:" | head -1 | sed 's/KUBECTL_ERROR: //')
     handle_kubectl_error "$error_msg"
+  else
+    error "Failed to retrieve password from secret '$secret'"
   fi
-fi
-rm -f "$password_error_file"
-
-if [[ -z "$password" ]]; then
+elif [[ -z "$password" ]]; then
   error "Failed to retrieve password from secret '$secret'"
 fi
 
@@ -290,27 +287,24 @@ verify_service() {
   fi
 }
 
-verify_error_file=$(mktemp)
-gum spin --spinner dot --title "Verifying service..." -- bash -c "
+verify_output=$(gum spin --spinner dot --title "Verifying service..." -- bash -c "
   $(declare -f verify_service)
   ctx_flag='$ctx_flag'
   namespace='$namespace'
   service='$service'
-  verify_service 2>'$verify_error_file'
-"
+  verify_service 2>&1
+  exit \$?
+")
+verify_exit=$?
 
-if [[ -s "$verify_error_file" ]]; then
-  verify_error=$(cat "$verify_error_file")
-  rm -f "$verify_error_file"
-
-  if echo "$verify_error" | grep -q "KUBECTL_ERROR:"; then
-    error_msg=$(echo "$verify_error" | grep "KUBECTL_ERROR:" | head -1 | sed 's/KUBECTL_ERROR: //')
+if [[ $verify_exit -ne 0 ]]; then
+  if echo "$verify_output" | grep -q "KUBECTL_ERROR:"; then
+    error_msg=$(echo "$verify_output" | grep "KUBECTL_ERROR:" | head -1 | sed 's/KUBECTL_ERROR: //')
     handle_kubectl_error "$error_msg"
   else
     error "Service '$service' not found in namespace '$namespace'"
   fi
 fi
-rm -f "$verify_error_file"
 
 cleanup() {
   if [[ -n "$pf_pid" && -e /proc/$pf_pid ]]; then
@@ -339,6 +333,7 @@ start_port_forward() {
     while [[ $ready_check -lt 10 ]]; do
       if nc -z localhost "$port" 2>/dev/null; then
         sleep 2
+        echo "$pf_pid"
         return 0
       fi
       sleep 1
@@ -380,7 +375,7 @@ monitor_port_forward() {
   done
 }
 
-gum spin --spinner dot --title "Establishing connection..." -- bash -c "
+pf_pid=$(gum spin --spinner dot --title "Establishing connection..." -- bash -c "
   $(declare -f start_port_forward)
   context='$context'
   namespace='$namespace'
@@ -388,16 +383,13 @@ gum spin --spinner dot --title "Establishing connection..." -- bash -c "
   port='$port'
   ctx_flag='$ctx_flag'
   PORT_FORWARD_TIMEOUT='$PORT_FORWARD_TIMEOUT'
+  pf_pid=''
   start_port_forward
-  echo \$! > /tmp/upc-pf-pid.$$
-"
+")
 
-if [[ $? -ne 0 ]]; then
+if [[ $? -ne 0 || -z "$pf_pid" ]]; then
   error "Port-forward failed to start"
 fi
-
-pf_pid=$(cat /tmp/upc-pf-pid.$$ 2>/dev/null)
-rm -f /tmp/upc-pf-pid.$$
 
 success "Port-forwarding active on port $port"
 
