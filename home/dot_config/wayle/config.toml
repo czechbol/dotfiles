@@ -48,6 +48,17 @@ right = [
 # HyprPanel: bar.clock.format + menus.clock.time.military = true (24h)
 format = "%a %b %d  %H:%M:%S"
 
+# Network signal icons: wayle's bundled cm-wireless-signal-* glyphs are identical
+# per level, so signal looked static (bar + AP dropdown, the latter hardcoded to
+# cm-* names). Fixed by overriding those icons with graded versions via
+# `wayle icons import` — tracked at ~/.local/share/wayle/icons. No config needed.
+
+[modules.notifications]
+# Drop Satty's "Copied to clipboard" toasts (matched by app name, glob).
+# Claude Code's idle toast is filtered upstream in kitty.conf (filter_notification)
+# so it can be dropped by title without blocking all of kitty.
+blocklist = ["Satty", "satty"]
+
 [modules.hyprland-workspaces]
 # HyprPanel: bar.workspaces.monitorSpecific = false, showApplicationIcons = true
 monitor-specific = false
@@ -67,6 +78,11 @@ format = "{{ output }}"
 icon-name = "ld-refresh-cw-symbolic"
 hide-if-empty = true
 tooltip-format = "{{ output }} updates available"
+left-click = "kitty -e yay -Syu"
+
+# Hide blueman's tray icon — wayle's bluetooth module already covers it.
+[modules.systray]
+blacklist = ["blueman*"]
 
 [styling]
 theme-provider = "wayle"
