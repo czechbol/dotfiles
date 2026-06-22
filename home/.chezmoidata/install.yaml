@@ -35,6 +35,10 @@ install:
       - pamixer
       - pasystray
       - pavucontrol
+      - playerctl
+      - network-manager-applet
+      - udiskie
+      - gnome-keyring
       - pika-backup
       - pipewire
       - pipewire-alsa
@@ -134,7 +138,7 @@ install:
       - hyprpolkitagent
       - hyprsunset
       - hyprpaper
-      - ags-hyprpanel-git
+      - wayle-bin
       - grimblast
       - rofi-wayland
       - brightnessctl
@@ -243,6 +247,10 @@ install:
       - pamixer
       - pasystray
       - pavucontrol
+      - playerctl
+      - network-manager-applet
+      - udiskie
+      - gnome-keyring
       - pika-backup
       - pipewire
       - pipewire-alsa

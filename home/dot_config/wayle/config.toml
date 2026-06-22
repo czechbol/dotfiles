@@ -1,0 +1,85 @@
+# Wayle config — translated from ~/.config/hyprpanel/config.json for A/B testing.
+# This is a DELTA over wayle's built-in defaults (see config.toml.example);
+# only settings that differ from HyprPanel are specified here.
+
+imports = []
+
+[bar]
+# HyprPanel: theme.bar.scaling = 85, theme.bar.transparent = true, floating = false
+scale = 0.85
+background-opacity = 0
+
+# Match HyprPanel's flat look: tinted icon + colored label, no button pills/boxes.
+button-variant = "basic"
+button-bg-opacity = 0
+button-group-opacity = 0
+button-group-background = "transparent"
+button-border-location = "none"
+button-group-border-location = "none"
+# HyprPanel renders more compactly than wayle's defaults.
+button-label-size = 0.85
+button-icon-size = 0.85
+module-gap = 0.4
+
+# HyprPanel bar.layouts["*"]
+#   left:   dashboard, workspaces, windowtitle
+#   middle: media
+#   right:  volume, bluetooth, network, updates, hypridle, hyprsunset,
+#           battery, systray, clock, notifications
+[[bar.layout]]
+monitor = "*"
+show = true
+left = ["dashboard", "hyprland-workspaces", "window-title"]
+center = ["media"]
+right = [
+    "volume",
+    "bluetooth",
+    "network",
+    "custom-updates",
+    "idle-inhibit",
+    "hyprsunset",
+    "battery",
+    "systray",
+    "clock",
+    "notifications",
+]
+
+[modules.clock]
+# HyprPanel: bar.clock.format + menus.clock.time.military = true (24h)
+format = "%a %b %d  %H:%M:%S"
+
+[modules.hyprland-workspaces]
+# HyprPanel: bar.workspaces.monitorSpecific = false, showApplicationIcons = true
+monitor-specific = false
+app-icons-show = true
+container-bg-color = "transparent"
+icon-size = 0.85
+label-size = 0.85
+active-indicator = "underline"
+
+# HyprPanel "updates" module has no built-in wayle equivalent — reproduced as a
+# custom module. pollingInterval 1440000ms (24 min) preserved.
+[[modules.custom]]
+id = "updates"
+command = "checkupdates 2>/dev/null | wc -l"
+interval-ms = 1440000
+format = "{{ output }}"
+icon-name = "ld-refresh-cw-symbolic"
+hide-if-empty = true
+tooltip-format = "{{ output }} updates available"
+
+[styling]
+theme-provider = "wayle"
+
+# Catppuccin Mocha. bg uses crust (#11111b) to match HyprPanel's menu background.
+[styling.palette]
+bg = "#11111b"        # crust   (darkest / menu bg, matches HyprPanel)
+surface = "#1e1e2e"   # base
+elevated = "#313244"  # surface0
+fg = "#cdd6f4"        # text
+fg-muted = "#a6adc8"  # subtext0
+primary = "#fab387"   # peach   (accent — matches HyprPanel's orange highlights)
+red = "#f38ba8"
+yellow = "#f9e2af"
+green = "#a6e3a1"
+blue = "#89b4fa"

@@ -33,3 +33,4 @@ export PATH="$PATH:/home/aludes/.lmstudio/bin"
 # peon-ping quick controls
 alias peon="bash /home/aludes/.claude/hooks/peon-ping/peon.sh"
 [ -f /home/aludes/.claude/hooks/peon-ping/completions.bash ] && source /home/aludes/.claude/hooks/peon-ping/completions.bash
+export PATH="$HOME/.npm-global/bin:$PATH"

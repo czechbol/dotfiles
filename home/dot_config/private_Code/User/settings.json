@@ -1,0 +1,269 @@
+{
+  // Appearance
+  "workbench.colorTheme": "Catppuccin Mocha",
+  "workbench.iconTheme": "catppuccin-mocha",
+  "editor.fontFamily": "CaskaydiaCove Nerd Font Mono",
+  "editor.fontLigatures": true,
+  "editor.fontSize": 13,
+  "editor.rulers": [88, 100, 110, 120],
+  "editor.stickyScroll.enabled": true,
+  "editor.stickyScroll.defaultModel": "foldingProviderModel",
+
+  // Terminal
+  "terminal.integrated.fontFamily": "CaskaydiaCove Nerd Font Mono",
+  "terminal.integrated.fontSize": 13,
+  "terminal.integrated.bellDuration": 0,
+  "terminal.integrated.allowChords": false,
+  "terminal.integrated.enableMultiLinePasteWarning": "never",
+  "terminal.integrated.env.linux": {
+    "POETRY_VIRTUALENVS_IN_PROJECT": "true"
+  },
+  "terminal.integrated.env.osx": {
+    "POETRY_VIRTUALENVS_IN_PROJECT": "true"
+  },
+  "terminal.integrated.env.windows": {
+    "POETRY_VIRTUALENVS_IN_PROJECT": "true"
+  },
+  "terminal.external.linuxExec": "kitty",
+
+  // File & Explorer
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.js",
+    "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts",
+    "*.jsx": "${capture}.js",
+    "*.tsx": "${capture}.ts",
+    "tsconfig.json": "tsconfig.*.json",
+    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb, bun.lock",
+    "Cargo.toml": "Cargo.lock",
+    "*.sqlite": "${capture}.${extname}-*",
+    "*.db": "${capture}.${extname}-*",
+    "*.sqlite3": "${capture}.${extname}-*",
+    "*.db3": "${capture}.${extname}-*",
+    "*.sdb": "${capture}.${extname}-*",
+    "*.s3db": "${capture}.${extname}-*"
+  },
+
+  // Files
+  "files.associations": {
+    "atlas.hcl": "atlas-config",
+    ".yamlfmt": "yaml"
+  },
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "files.trimFinalNewlines": true,
+  "files.simpleDialog.enable": true,
+
+  // Git & GitHub
+  "git.confirmSync": false,
+  "git.autofetch": true,
+  "git.suggestSmartCommit": false,
+  "git.allowForcePush": true,
+  "git.allowNoVerifyCommit": true,
+  "git.alwaysSignOff": false,
+  "git.autoStash": true,
+  "git.fetchOnPull": true,
+  "git.enableCommitSigning": true,
+  "git.useCommitInputAsStashMessage": true,
+  "git.replaceTagsWhenPull": true,
+  "git.blame.statusBarItem.enabled": false,
+  "git.blame.editorDecoration.enabled": false,
+  "projectManager.git.baseFolders": [
+    "~/projects/whalebone"
+  ],
+
+  // GitHub & Copilot
+  "githubPullRequests.pullBranch": "never",
+  "githubPullRequests.fileListLayout": "tree",
+  "githubPullRequests.pushBranch": "always",
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": true,
+    "markdown": true,
+    "scminput": false,
+    "hosts.yaml": false,
+    "yaml": true
+  },
+  "github.copilot.nextEditSuggestions.enabled": true,
+
+  // Go
+  "gopls": {
+    "formatting.gofumpt": false
+  },
+  "go.testTimeout": "600s",
+  "go.lintTool": "golangci-lint-v2",
+  "go.lintFlags": [
+    "-v",
+    "--path-mode=abs"
+    //"--fast-only"
+  ],
+  "go.formatTool": "custom",
+  "go.alternateTools": {
+    "customFormatter": "golangci-lint-v2"
+  },
+  "go.formatFlags": [
+    "fmt",
+    "--stdin"
+  ],
+  "go.toolsManagement.autoUpdate": true,
+  "go.coverOnSingleTest": true,
+  "go.coverOnSingleTestFile": true,
+  "go.diagnostic.vulncheck": "Imports",
+  "go.inlayHints.assignVariableTypes": true,
+  "go.inlayHints.parameterNames": true,
+  "go.inlayHints.rangeVariableTypes": true,
+  "go.inlayHints.functionTypeParameters": true,
+  "go.survey.prompt": false,
+  "go.lintOnSave": "package",
+
+  // Python
+  "python.languageServer": "Pylance",
+  "python.terminal.activateEnvInCurrentTerminal": true,
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestArgs": [
+    "-v",
+    "-s"
+  ],
+  "python.analysis.autoImportCompletions": true,
+
+  // Ruff
+  "ruff.lineLength": 88,
+  "ruff.nativeServer": true,
+
+  // Editor
+  "editor.unicodeHighlight.invisibleCharacters": false,
+  "editor.unicodeHighlight.ambiguousCharacters": false,
+  "editor.formatOnSaveMode": "modificationsIfAvailable",
+
+  // Diff Editor
+  "diffEditor.ignoreTrimWhitespace": false,
+  "diffEditor.experimental.showMoves": true,
+
+  // Miscellaneous Extensions & Features
+  "matched-line-dimmer.enabled": true,
+  "matched-line-dimmer.patterns": [
+  // "\\s*log\\.(Debug|Info|Warn|Error|Fatal|Panic)\\s*\\(.*?\\)\\s*",
+  "\\s*slog\\.(Debug|Info|Warn|Error|Fatal)\\s*\\(.*?\\)\\s*"
+],
+  "matched-line-dimmer.rules": [],
+  "matched-line-dimmer.opacity": 65,
+  "sortLines.filterBlankLines": true,
+  "database-client.autoSync": true,
+
+  // Jupyter
+  "jupyter.askForKernelRestart": false,
+
+  // Workspace Trust
+  "security.workspace.trust.untrustedFiles": "open",
+
+  // YAML Schemas
+  "yaml.schemas": {
+    "/home/aludes/.vscode/extensions/continue.continue-1.0.7-linux-x64/config-yaml-schema.json": [
+      ".continue/**/*.yaml"
+    ],
+    "file:///home/aludes/.vscode/extensions/atlassian.atlascode-3.8.3/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
+  },
+
+  // Allowed Commands (Custom Extensions)
+  "roo-cline.allowedCommands": [
+    "git log",
+    "git diff",
+    "git show",
+    "poetry add",
+    "poetry run",
+    "go test",
+    "golangci-lint",
+    "poetry update",
+    "poetry install",
+    "go mod tidy",
+    "bun run",
+    "pytest",
+    "pytest --cov=. --cov-report=term-missing",
+    "mvn",
+    "uname"
+  ],
+
+  // Language Specific Formatters
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[vue]": {
+    "editor.defaultFormatter": "Vue.volar"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "yzhang.markdown-all-in-one"
+  },
+  "[sql]": {
+    "editor.defaultFormatter": "cweijan.vscode-postgresql-client2"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  "[go]": {
+    "editor.insertSpaces": false,
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+
+  // Window
+  "window.customTitleBarVisibility": "auto",
+  "python.analysis.typeCheckingMode": "standard",
+  "roo-cline.deniedCommands": [],
+  "chat.tools.terminal.autoApprove": {
+    "find /usr -name \"go\" -type f 2>/dev/null | head -5": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "go": true
+  },
+  "redhat.telemetry.enabled": false,
+  "[dockercompose]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.autoIndent": "advanced",
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": false,
+      "strings": true
+    },
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "remote.autoForwardPortsSource": "hybrid",
+  "githubIssues.ignoreMilestones": [],
+  "zig.zls.enabled": "off",
+  "chat.tools.urls.autoApprove": {
+    "https://goharbor.io": {
+      "approveRequest": true,
+      "approveResponse": false
+    }
+  },
+  "claudeCode.preferredLocation": "panel",
+  "protobuf.autoDetection.prompted": true,
+  "workbench.editor.enablePreview": false,
+  "githubPullRequests.createOnPublishBranch": "never",
+  "git.openRepositoryInParentFolders": "never"
+}

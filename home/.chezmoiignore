@@ -10,6 +10,7 @@
 **/cache/
 **/Cache/
 **/GPUCache/
+**/__pycache__/
 
 # Temporary files
 **/tmp/
