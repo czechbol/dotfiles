@@ -23,3 +23,7 @@
 # Runtime state that churns constantly
 .config/clipse/clipboard_history.json
 .config/pika-backup/history.json
+
+# OrcaSlicer: track settings + user presets only, not runtime
+.config/OrcaSlicer/log/**
+.config/OrcaSlicer/cache/**
