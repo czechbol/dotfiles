@@ -1,1 +1,3 @@
 home/.chezmoidata/machine.yaml
+__pycache__/
+*.pyc
