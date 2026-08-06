@@ -313,7 +313,7 @@ def fit_mode(src_w: int, src_h: int, target_w: int, target_h: int) -> tuple[int,
     """Largest WxH inside the source's native bounds matching the target ratio.
 
     Wider target than the source -> shrink height (16:9 TV -> 2560x1440).
-    Narrower target -> shrink width (4:3 projector -> 2132x1600).
+    Narrower target -> shrink width (4:3 projector -> 2134x1600).
     """
     ratio = target_w / target_h
     if ratio >= src_w / src_h:
