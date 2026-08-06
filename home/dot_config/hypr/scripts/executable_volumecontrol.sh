@@ -1,10 +1,5 @@
 #!/usr/bin/env sh
-
-scrDir=`dirname "$(realpath "$0")"`
-source $scrDir/globalcontrol.sh
-
-
-# define functions
+# Volume control for output/input devices and players, with notifications.
 
 print_error ()
 {
@@ -22,22 +17,29 @@ EOF
 exit 1
 }
 
+vol_icon ()
+{
+    if [ "${vol}" -eq 0 ]; then echo "audio-volume-muted"
+    elif [ "${vol}" -lt 34 ]; then echo "audio-volume-low"
+    elif [ "${vol}" -lt 67 ]; then echo "audio-volume-medium"
+    else echo "audio-volume-high"
+    fi
+}
+
 notify_vol ()
 {
-    angle="$(( (($vol+2)/5) * 5 ))"
-    ico="${icodir}/vol-${angle}.svg"
     bar=$(seq -s "." $(($vol / 15)) | sed 's/[0-9]//g')
-    notify-send  -a "t2" -r 91190 -t 800 -i "${ico}" "${vol}${bar}" "${nsink}"
+    notify-send -a "t2" -r 91190 -t 800 -i "$(vol_icon)" "${vol}${bar}" "${nsink}"
 }
 
 notify_mute ()
 {
     mute=$(pamixer "${srce}" --get-mute | cat)
-    [ "${srce}" == "--default-source" ] && dvce="mic" || dvce="speaker"
-    if [ "${mute}" == "true" ] ; then
-        notify-send -a "t2" -r 91190 -t 800 -i "${icodir}/muted-${dvce}.svg" "muted" "${nsink}"
+    [ "${srce}" = "--default-source" ] && dvce="microphone" || dvce="audio-volume"
+    if [ "${mute}" = "true" ] ; then
+        notify-send -a "t2" -r 91190 -t 800 -i "${dvce}-muted" "muted" "${nsink}"
     else
-        notify-send -a "t2" -r 91190 -t 800 -i "${icodir}/unmuted-${dvce}.svg" "unmuted" "${nsink}"
+        notify-send -a "t2" -r 91190 -t 800 -i "${dvce}-high" "unmuted" "${nsink}"
     fi
 }
 
@@ -49,13 +51,10 @@ action_pamixer ()
 
 action_playerctl ()
 {
-    [ "${1}" == "i" ] && pvl="+" || pvl="-"
+    [ "${1}" = "i" ] && pvl="+" || pvl="-"
     playerctl --player="${srce}" volume 0.0"${step}""${pvl}"
     vol=$(playerctl --player="${srce}" volume | awk '{ printf "%.0f\n", $0 * 100 }')
 }
-
-
-# eval device option
 
 while getopts iop: DeviceOpt
 do
@@ -76,15 +75,8 @@ do
     esac
 done
 
-
-# set default variables
-
-icodir="${confDir}/dunst/icons/vol"
 shift $((OPTIND -1))
 step="${2:-5}"
-
-
-# execute action
 
 case "${1}" in
     i) action_${ctrl} i ;;
