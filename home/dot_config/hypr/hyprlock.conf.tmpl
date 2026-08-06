@@ -1,7 +1,12 @@
 source = $HOME/.config/hypr/themes/mocha.conf
 
+{{ if eq .chezmoi.hostname "arnach" -}}
+$accent = $mauve
+$accentAlpha = $mauveAlpha
+{{- else -}}
 $accent = $blue
 $accentAlpha = $blueAlpha
+{{- end }}
 $font = JetBrainsMono Nerd Font
 
 # GENERAL
