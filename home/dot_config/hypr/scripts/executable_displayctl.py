@@ -7,7 +7,7 @@ mirror_aspect_fix.sh and lid_switch.sh.
 Subcommands:
     daemon            watch socket2, fix mirror aspect on hotplug, restore on remove
     apply             one-shot aspect fix for current mirrors
-    restore           put eDP-1 back to its native mode
+    restore           put the primary output back to its native mode
     toggle            switch external monitors between mirror and extend
     mirror [T [S]]    set T to mirror S (rofi picker when omitted)
     unmirror [T]      remove mirror from T (rofi picker when omitted)
@@ -15,11 +15,17 @@ Subcommands:
     menu              rofi menu with the operations above
     status            JSON dump of displayctl's view of the world
 
-Aspect fix (works around Hyprland #11708): when a monitor mirrors eDP-1 with a
-different aspect ratio, the letterbox shows flickering stale buffer data. We
-switch eDP-1 to the largest sub-rectangle of its native mode that matches the
-target's ratio; if the panel rejects that custom mode, fall back to
-`hyprctl reload`, which clears the bars.
+Nothing here is tied to a particular machine. The mirror source and layout
+anchor is whatever `primary()` resolves to: a laptop's built-in panel when
+there is one, otherwise the monitor at the origin. Modes are read from what
+the output advertises rather than hard-coded, so the same file works on a
+desktop, where the lid and touchscreen paths simply find nothing to do.
+
+Aspect fix (works around Hyprland #11708): when a monitor mirrors the source
+with a different aspect ratio, the letterbox shows flickering stale buffer
+data. We switch the source to the largest sub-rectangle of its native mode
+that matches the target's ratio; if the output rejects that custom mode, fall
+back to `hyprctl reload`, which clears the bars.
 """
 
 import argparse
@@ -35,18 +41,21 @@ import tempfile
 import time
 from pathlib import Path
 
-EDP = "eDP-1"
-EDP_NATIVE_W = 2560
-EDP_NATIVE_H = 1600
-EDP_REFRESH = 120
-EDP_SCALE = 1.25
-EDP_NATIVE = f"{EDP_NATIVE_W}x{EDP_NATIVE_H}@{EDP_REFRESH}, 0x0, {EDP_SCALE}"
+# DRM names a built-in laptop panel eDP/LVDS/DSI; a desktop has none of these.
+INTERNAL_RE = re.compile(r"^(eDP|LVDS|DSI)-", re.IGNORECASE)
+MODE_RE = re.compile(r"^(\d+)x(\d+)(?:@([\d.]+))?")
+PANEL_OVERRIDE = os.environ.get("DISPLAYCTL_PANEL")
 
-STATE_FILE = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "hypr_display_mode"
-LOG_DIR = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "displayctl"
+CACHE_DIR = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache"))
+STATE_FILE = CACHE_DIR / "hypr_display_mode"
+BASELINE_FILE = CACHE_DIR / "displayctl_baseline.json"
+LOG_DIR = CACHE_DIR / "displayctl"
 HYPRPAPER_CONF = Path.home() / ".config/hypr/hyprpaper.conf"
 ROFI_THEME = Path.home() / ".config/rofi/applets/type-2/style-2.rasi"
-TOUCHSCREEN_DEVICE = "elan901c:00-04f3:2f18"
+# Absent on machines without a touchscreen; set_device_enabled skips what it
+# cannot find, so the default is only a hint for the laptop that has one.
+TOUCHSCREEN_DEVICE = os.environ.get("DISPLAYCTL_TOUCHSCREEN", "elan901c:00-04f3:2f18")
+LID_STATE_DIR = Path("/proc/acpi/button/lid")
 DEBOUNCE_SECONDS = 0.5
 
 log = logging.getLogger("displayctl")
@@ -123,6 +132,11 @@ def keyword_monitor(spec: str) -> None:
 
 
 def set_device_enabled(device: str, enabled: bool) -> None:
+    # machines without this input (any desktop, laptops with no touchscreen)
+    # would otherwise get a hyprctl error per lid event
+    if not device or device not in hyprctl("devices"):
+        log.info("device %s not present, skipping", device)
+        return
     log.info("device %s enabled=%s", device, enabled)
     if config_is_lua():
         hyprctl("eval", f'hl.device({{ name = "{device}", enabled = {str(enabled).lower()} }})')
@@ -154,6 +168,106 @@ def mirrors_of(name: str, mons: list[dict] | None = None) -> list[dict]:
 
 def notify(title: str, body: str) -> None:
     subprocess.run(["notify-send", "-i", "video-display", title, body], check=False)
+
+
+# ── which output are we anchored on ──────────────────────────────────────────
+
+def internal_panel(mons: list[dict] | None = None) -> str | None:
+    """The built-in laptop panel, or None on a machine that has no such thing."""
+    mons = mons if mons is not None else monitors_all()
+    if PANEL_OVERRIDE:
+        return PANEL_OVERRIDE if monitor(PANEL_OVERRIDE, mons) else None
+    for m in mons:
+        if INTERNAL_RE.match(m["name"]):
+            return m["name"]
+    return None
+
+
+def primary(mons: list[dict] | None = None) -> str | None:
+    """Mirror source and layout anchor.
+
+    The built-in panel when there is one, so laptop behaviour is unchanged.
+    Otherwise the monitor at the origin, and failing that the top-left one --
+    a desktop layout need not place anything at 0x0 (mikka's two Philips sit
+    at -896x-1080 and 1024x-1080), and picking by geometry keeps the answer
+    stable across runs where enumeration order need not be.
+    """
+    mons = mons if mons is not None else monitors_all()
+    panel = internal_panel(mons)
+    if panel:
+        return panel
+    enabled = [m for m in mons if not m["disabled"]]
+    if not enabled:
+        return None
+    for m in enabled:
+        if (m["x"], m["y"]) == (0, 0):
+            return m["name"]
+    return min(enabled, key=lambda m: (m["x"], m["y"]))["name"]
+
+
+def mirror_source(mons: list[dict] | None = None) -> str | None:
+    """The output that others are currently mirroring, if any."""
+    mons = mons if mons is not None else monitors_all()
+    for m in mons:
+        if mirrors_of(m["name"], mons):
+            return m["name"]
+    return None
+
+
+def native_mode(name: str, mons: list[dict] | None = None) -> tuple[int, int, float] | None:
+    """Highest-resolution mode the output advertises, as (w, h, refresh)."""
+    m = monitor(name, mons)
+    if not m:
+        return None
+    best = None
+    for spec in m.get("availableModes") or []:
+        parsed = MODE_RE.match(spec)
+        if not parsed:
+            continue
+        cand = (int(parsed.group(1)), int(parsed.group(2)), float(parsed.group(3) or 0))
+        if best is None or (cand[0] * cand[1], cand[2]) > (best[0] * best[1], best[2]):
+            best = cand
+    return best
+
+
+def _load_baselines() -> dict:
+    try:
+        return json.loads(BASELINE_FILE.read_text())
+    except (OSError, ValueError):
+        return {}
+
+
+def baseline(name: str, mons: list[dict] | None = None) -> tuple[str, str, str] | None:
+    """(mode, position, scale) for `name` running natively.
+
+    Recorded to disk whenever we see the output in that state, because both
+    `restore` and the lid-open path need it at moments when the live values are
+    either a mode we set ourselves or nothing at all (a disabled output reports
+    no useful geometry).
+    """
+    mons = mons if mons is not None else monitors_all()
+    m = monitor(name, mons)
+    nat = native_mode(name, mons)
+    if m and not m["disabled"] and nat and (m["width"], m["height"]) == nat[:2]:
+        # the live refresh, not the fastest advertised one: monitors.conf pins
+        # modes without a rate, and restoring must not silently overclock the
+        # output past what it was actually running at
+        refresh = m["refreshRate"] or nat[2]
+        current = (f"{nat[0]}x{nat[1]}@{refresh:g}", f"{m['x']}x{m['y']}", f"{m['scale']:g}")
+        stored = _load_baselines()
+        if stored.get(name) != list(current):
+            stored[name] = list(current)
+            try:
+                BASELINE_FILE.write_text(json.dumps(stored, indent=2) + "\n")
+            except OSError as e:
+                log.warning("could not cache baseline for %s: %s", name, e)
+        return current
+    cached = _load_baselines().get(name)
+    if cached:
+        return tuple(cached)
+    if nat:
+        return (f"{nat[0]}x{nat[1]}@{nat[2]:g}", "0x0", "1")
+    return None
 
 
 # ── state file (imperative mode memory, shared format with the old scripts) ──
@@ -195,59 +309,77 @@ def even(n: float) -> int:
     return int(round(n / 2) * 2)
 
 
-def fit_mode(target_w: int, target_h: int) -> tuple[int, int]:
-    """Largest WxH inside eDP native bounds matching the target aspect ratio.
+def fit_mode(src_w: int, src_h: int, target_w: int, target_h: int) -> tuple[int, int]:
+    """Largest WxH inside the source's native bounds matching the target ratio.
 
-    Wider target than the panel -> shrink height (16:9 TV -> 2560x1440).
-    Narrower target -> shrink width (4:3 projector -> 2132x1600).
+    Wider target than the source -> shrink height (16:9 TV -> 2560x1440).
+    Narrower target -> shrink width (4:3 projector -> 2134x1600).
     """
     ratio = target_w / target_h
-    if ratio >= EDP_NATIVE_W / EDP_NATIVE_H:
-        return EDP_NATIVE_W, even(EDP_NATIVE_W / ratio)
-    return even(EDP_NATIVE_H * ratio), EDP_NATIVE_H
+    if ratio >= src_w / src_h:
+        return src_w, even(src_w / ratio)
+    return even(src_h * ratio), src_h
 
 
 def restore_native() -> None:
     mons = monitors_all()
-    edp = monitor(EDP, mons)
-    # never re-enable a panel that was turned off on purpose (lid closed)
-    if not edp or edp["disabled"]:
+    name = primary(mons)
+    if not name:
         return
-    if edp["width"] == EDP_NATIVE_W and edp["height"] == EDP_NATIVE_H:
+    src = monitor(name, mons)
+    # never re-enable an output that was turned off on purpose (lid closed)
+    if not src or src["disabled"]:
         return
-    keyword_monitor(f"{EDP}, {EDP_NATIVE}")
+    nat = native_mode(name, mons)
+    if not nat or (src["width"], src["height"]) == nat[:2]:
+        return
+    base = baseline(name, mons)
+    if not base:
+        return
+    mode, pos, scale = base
+    keyword_monitor(f"{name}, {mode}, {pos}, {scale}")
     refresh_wallpaper()
 
 
 def apply_aspect_fix() -> None:
     mons = monitors_all()
-    targets = mirrors_of(EDP, mons)
+    # prefer whatever is actually being mirrored; a desktop can mirror any pair
+    name = mirror_source(mons) or primary(mons)
+    if not name:
+        return
+    targets = mirrors_of(name, mons)
     if not targets:
         restore_native()
         return
 
-    edp = monitor(EDP, mons)
-    if not edp or edp["disabled"]:
+    src = monitor(name, mons)
+    if not src or src["disabled"]:
         return
+    nat = native_mode(name, mons)
+    base = baseline(name, mons)
+    if not nat or not base:
+        return
+    _, pos, scale = base
+    refresh = base[0].partition("@")[2] or f"{nat[2]:g}"
 
     t = targets[0]
-    want_w, want_h = fit_mode(t["width"], t["height"])
-    if (edp["width"], edp["height"]) == (want_w, want_h):
+    want_w, want_h = fit_mode(nat[0], nat[1], t["width"], t["height"])
+    if (src["width"], src["height"]) == (want_w, want_h):
         log.info("aspect already matches %s (%dx%d)", t["name"], want_w, want_h)
         return
 
-    keyword_monitor(f"{EDP}, {want_w}x{want_h}@{EDP_REFRESH}, 0x0, {EDP_SCALE}")
+    keyword_monitor(f"{name}, {want_w}x{want_h}@{refresh}, {pos}, {scale}")
     time.sleep(0.5)
-    edp = monitor(EDP)
-    if edp and (edp["width"], edp["height"]) == (want_w, want_h):
-        log.info("panel accepted custom mode %dx%d", want_w, want_h)
-        notify("Mirror", f"{EDP} switched to {want_w}x{want_h} to match {t['name']}")
+    src = monitor(name)
+    if src and (src["width"], src["height"]) == (want_w, want_h):
+        log.info("%s accepted custom mode %dx%d", name, want_w, want_h)
+        notify("Mirror", f"{name} switched to {want_w}x{want_h} to match {t['name']}")
         refresh_wallpaper()
         return
 
-    # panel rejected the custom mode; reload clears the letterbox (#11708)
+    # output rejected the custom mode; reload clears the letterbox (#11708)
     log.info("custom mode rejected, falling back to reload")
-    keyword_monitor(f"{EDP}, {EDP_NATIVE}")
+    keyword_monitor(f"{name}, {base[0]}, {pos}, {scale}")
     hyprctl("reload")
     notify("Mirror", "Reloaded Hyprland to clear letterbox artifacts")
     refresh_wallpaper()
@@ -255,20 +387,23 @@ def apply_aspect_fix() -> None:
 
 # ── toggle mirror/extend ─────────────────────────────────────────────────────
 
-def edp_logical_width(mons: list[dict]) -> int:
-    edp = monitor(EDP, mons)
-    if edp and not edp["disabled"]:
-        return int(edp["width"] / edp["scale"])
+def logical_width(name: str | None, mons: list[dict]) -> int:
+    src = monitor(name, mons) if name else None
+    if src and not src["disabled"]:
+        return int(src["width"] / src["scale"])
     return 0
 
 
 def switch_to_extend() -> None:
     mons = monitors_all()
-    mirrored = sorted(m["name"] for m in mirrors_of(EDP, mons))
+    anchor = primary(mons)
+    if not anchor:
+        return
+    mirrored = sorted(m["name"] for m in mirrors_of(anchor, mons))
     # daemon must see "extend" before the cycles below emit monitoradded events
     write_state("extend", mirrored)
 
-    start_x = edp_logical_width(mons)
+    start_x = logical_width(anchor, mons)
     keyword_monitor(f", preferred, {start_x}x0, 1")
 
     current_x = start_x
@@ -290,7 +425,11 @@ def switch_to_extend() -> None:
 
 def switch_to_mirror() -> None:
     saved = read_state_monitors()
-    keyword_monitor(f", preferred, 0x0, 1, mirror, {EDP}")
+    mons = monitors_all()
+    anchor = primary(mons)
+    if not anchor:
+        return
+    keyword_monitor(f", preferred, 0x0, 1, mirror, {anchor}")
 
     mons = monitors_all()
     for name in saved:
@@ -298,7 +437,7 @@ def switch_to_mirror() -> None:
         if not m:
             continue  # monitor may have been disconnected
         res = f"{m['width']}x{m['height']}@{int(m['refreshRate'])}"
-        keyword_monitor(f"{name}, {res}, 0x0, 1, mirror, {EDP}")
+        keyword_monitor(f"{name}, {res}, 0x0, 1, mirror, {anchor}")
 
     write_state("mirror", [])
     notify("Display Mode", "Mirrored")
@@ -322,8 +461,7 @@ def set_mirror(target: str, source: str) -> None:
     info = f"{m['width']}x{m['height']}@{int(m['refreshRate'])},{m['x']}x{m['y']},{m['scale']}"
     keyword_monitor(f"{target},{info},mirror,{source}")
     notify("Mirror Set", f"{target} now mirrors {source}")
-    if source == EDP:
-        apply_aspect_fix()
+    apply_aspect_fix()
 
 
 def remove_mirror(target: str) -> None:
@@ -337,19 +475,40 @@ def remove_mirror(target: str) -> None:
 
 # ── lid ──────────────────────────────────────────────────────────────────────
 
+def lid_state() -> str | None:
+    """Contents of the ACPI lid state file, or None on a machine without a lid.
+
+    The button is not always LID0 (LID, LID1 and C1AC all occur), so glob it.
+    """
+    try:
+        for path in sorted(LID_STATE_DIR.glob("*/state")):
+            return path.read_text()
+    except OSError as e:
+        log.warning("could not read lid state: %s", e)
+    return None
+
+
 def lid() -> None:
-    state = Path("/proc/acpi/button/lid/LID0/state").read_text()
+    mons = monitors_all()
+    panel = internal_panel(mons)
+    state = lid_state()
+    if not panel or state is None:
+        log.info("no lid to act on (panel=%s, acpi=%s)", panel, state is not None)
+        return
+
     if "open" in state:
-        keyword_monitor(f"{EDP}, {EDP_NATIVE}")
+        base = baseline(panel, mons)
+        if base:
+            keyword_monitor(f"{panel}, {base[0]}, {base[1]}, {base[2]}")
         set_device_enabled(TOUCHSCREEN_DEVICE, True)
     else:
-        active = [m for m in monitors_all() if not m["disabled"]]
+        active = [m for m in mons if not m["disabled"]]
         if len(active) > 1:
             # touchscreen off BEFORE its output dies: a touch event landing on a
-            # destroyed eDP-1 segfaults Hyprland (observed 2026-07-09, v0.55.4)
+            # destroyed panel segfaults Hyprland (observed 2026-07-09, v0.55.4)
             set_device_enabled(TOUCHSCREEN_DEVICE, False)
             time.sleep(0.2)
-            keyword_monitor(f"{EDP}, disable")
+            keyword_monitor(f"{panel}, disable")
 
 
 # ── rofi UI ──────────────────────────────────────────────────────────────────
@@ -467,7 +626,7 @@ def handle_events(events: list[str]) -> None:
         apply_aspect_fix()
     elif removed:
         time.sleep(0.5)
-        if not mirrors_of(EDP):
+        if not mirror_source():
             restore_native()
 
 
@@ -521,13 +680,19 @@ def daemon() -> None:
 # ── main ─────────────────────────────────────────────────────────────────────
 
 def status() -> None:
+    mons = monitors_all()
+    anchor = primary(mons)
     sys.stdout.write(json.dumps({
         "mode": read_mode(),
         "saved_monitors": read_state_monitors(),
-        "mirrors_of_edp": [m["name"] for m in mirrors_of(EDP)],
+        "internal_panel": internal_panel(mons),
+        "primary": anchor,
+        "baseline": baseline(anchor, mons) if anchor else None,
+        "mirror_source": mirror_source(mons),
+        "mirrors_of_primary": [m["name"] for m in mirrors_of(anchor, mons)] if anchor else [],
         "monitors": [
             {k: m[k] for k in ("name", "width", "height", "refreshRate", "scale", "mirrorOf", "disabled")}
-            for m in monitors_all()],
+            for m in mons],
     }, indent=2) + "\n")
 
 
@@ -539,7 +704,8 @@ def main() -> None:
         sub.add_parser(name)
     p_mirror = sub.add_parser("mirror")
     p_mirror.add_argument("target", nargs="?")
-    p_mirror.add_argument("source", nargs="?", default=EDP)
+    # resolved after parsing: the default depends on what is plugged in
+    p_mirror.add_argument("source", nargs="?", default=None)
     p_unmirror = sub.add_parser("unmirror")
     p_unmirror.add_argument("target", nargs="?")
     args = parser.parse_args()
@@ -560,7 +726,13 @@ def main() -> None:
         "status": status,
     }
     if args.cmd == "mirror":
-        set_mirror(args.target, args.source) if args.target else mirror_interactive()
+        if args.target:
+            source = args.source or primary()
+            if not source:
+                sys.exit("no monitors to mirror from")
+            set_mirror(args.target, source)
+        else:
+            mirror_interactive()
     elif args.cmd == "unmirror":
         remove_mirror(args.target) if args.target else unmirror_interactive()
     else:
