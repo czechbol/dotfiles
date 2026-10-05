@@ -18,14 +18,14 @@ hl.bind("ALT + F4", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/dontkillsteam
 hl.bind(mainMod .. " + Delete", hl.dsp.exit())                                                -- kill hyprland session
 hl.bind(mainMod .. " + W", hl.dsp.window.float({ action = "toggle" }))                        -- toggle the window between focus and float
 hl.bind(mainMod .. " + G", hl.dsp.group.toggle())                                             -- toggle the window between focus and group
-hl.bind("ALT + Return", hl.dsp.window.fullscreen())                                           -- toggle the window between focus and fullscreen
+hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen())                                       -- toggle the window between focus and fullscreen
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd(manuallock))                                       -- launch lock screen
 hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.exec_cmd(home .. "/.config/rofi/scripts/powermenu_t2")) -- launch logout menu
 hl.bind("CTRL + Escape", hl.dsp.exec_cmd("wayle panel toggle"))                               -- toggle bar
 
 -- Application shortcuts
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(term))    -- launch terminal emulator
-hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(file))         -- launch file manager
+hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(file))         -- launch file manager
 hl.bind(mainMod .. " + C", hl.dsp.exec_cmd(editor))       -- launch text editor
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))      -- launch web browser
 hl.bind("CTRL + SHIFT + Escape", hl.dsp.exec_cmd(term .. " -e gotop")) -- launch system monitor
@@ -69,8 +69,8 @@ hl.bind("ALT + Tab",           hl.dsp.focus({ direction = "d" }))
 -- Switch workspaces / move focused window to a workspace
 for i = 1, 10 do
     local key = i % 10 -- 10 maps to key 0
-    hl.bind("ALT + " .. key,           hl.dsp.focus({ workspace = tostring(i) }))
-    hl.bind("ALT + SHIFT + " .. key,   hl.dsp.window.move({ workspace = tostring(i) }))
+    hl.bind(mainMod .. " + " .. key,         hl.dsp.focus({ workspace = tostring(i) }))
+    hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = tostring(i) }))
     hl.bind(mainMod .. " + ALT + " .. key, hl.dsp.window.move({ workspace = tostring(i), follow = false })) -- silent
 end
 
