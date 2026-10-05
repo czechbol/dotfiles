@@ -14,6 +14,21 @@ if ! command -v gum &> /dev/null; then
   exit 1
 fi
 
+# gum 2.x (Bubble Tea v2) probes the terminal for private modes 2026/2027 on
+# startup via DECRQM. Kitty answers instantly, but gum exits without consuming
+# the DECRPM reply, so the printable tail (e.g. "2026;2$y2027;0$y") leaks onto
+# the screen or into psql's input. Drain /dev/tty after every gum call.
+drain_tty() {
+  while read -rs -t 0.05 -n 1000 _ 2>/dev/null < /dev/tty; do :; done
+}
+
+gum() {
+  command gum "$@"
+  local rc=$?
+  drain_tty
+  return $rc
+}
+
 readonly PORT_RANGE_START=15000
 readonly PORT_RANGE_END=25000
 readonly PORT_FIND_ATTEMPTS=10
@@ -116,6 +131,22 @@ for tool in kubectl nc psql; do
     error "Required tool '$tool' not found"
   fi
 done
+
+# During the gum-driven setup phase the terminal is in cooked mode between
+# frames, so it ECHOES the DECRPM replies gum probes for (modes 2026/2027),
+# smearing "2026;2$y..." across the spinners. Turn echo off for the whole
+# setup phase; gum's TUIs render their own input, so nothing is lost. Echo is
+# restored just before psql (where you type) and on any exit via the trap.
+_saved_stty=""
+restore_tty() {
+  [[ -n "$_saved_stty" ]] && stty "$_saved_stty" 2>/dev/null || true
+  _saved_stty=""
+}
+if [[ -t 0 ]]; then
+  _saved_stty=$(stty -g 2>/dev/null || echo "")
+  [[ -n "$_saved_stty" ]] && stty -echo 2>/dev/null || true
+  trap restore_tty EXIT INT TERM
+fi
 
 handle_kubectl_error() {
   local error_output="$1"
@@ -625,6 +656,7 @@ find_available_port() {
 }
 
 cleanup() {
+  restore_tty
   if [[ -n "$pf_monitor_pid" && -e /proc/$pf_monitor_pid ]]; then
     kill "$pf_monitor_pid" 2>/dev/null || true
     wait "$pf_monitor_pid" 2>/dev/null || true
@@ -759,6 +791,11 @@ fi
 [[ -n "$database" ]] && DATABASE="$database"
 
 custom_prompt="${context}.${cluster}.%/%R%# "
+
+# Setup done: flush any leaked probe replies still buffered, then hand the
+# terminal back to psql with echo restored so the user can type.
+drain_tty
+restore_tty
 
 if [[ -n "$sql_execute" ]]; then
   PGCONNECT_TIMEOUT="$PG_CONNECT_TIMEOUT" PGPASSFILE="$pgpass_file" \
