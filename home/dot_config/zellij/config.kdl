@@ -1,0 +1,112 @@
+// Keymap mirrors Hyprland: Alt here = Super there. Ctrl+Space for rare actions.
+// Base mode is locked so every other key reaches the shell or agent untouched.
+
+theme "catppuccin-mocha"
+default_mode "locked"
+copy_on_select true
+session_serialization true
+serialize_pane_viewport true
+show_startup_tips false
+nested_session_handling "ask"
+
+keybinds clear-defaults=true {
+    shared {
+        bind "Alt Left" { MoveFocus "Left"; }
+        bind "Alt Right" { MoveFocus "Right"; }
+        bind "Alt Up" { MoveFocus "Up"; }
+        bind "Alt Down" { MoveFocus "Down"; }
+
+        bind "Alt Shift Left" { Resize "Increase Left"; }
+        bind "Alt Shift Right" { Resize "Increase Right"; }
+        bind "Alt Shift Up" { Resize "Increase Up"; }
+        bind "Alt Shift Down" { Resize "Increase Down"; }
+
+        bind "Ctrl Alt Shift Left" { MovePane "Left"; }
+        bind "Ctrl Alt Shift Right" { MovePane "Right"; }
+        bind "Ctrl Alt Shift Up" { MovePane "Up"; }
+        bind "Ctrl Alt Shift Down" { MovePane "Down"; }
+
+        bind "Alt Enter" { NewPane; }
+        bind "Alt q" { CloseFocus; }
+        bind "Alt w" { TogglePaneEmbedOrFloating; }
+        bind "Alt s" { ToggleFloatingPanes; }
+        bind "Alt f" { ToggleFocusFullscreen; }
+        bind "Alt j" { NextSwapLayout; }
+
+        bind "Ctrl Alt Left" { GoToPreviousTab; }
+        bind "Ctrl Alt Right" { GoToNextTab; }
+
+        bind "Alt 1" { GoToTab 1; }
+        bind "Alt 2" { GoToTab 2; }
+        bind "Alt 3" { GoToTab 3; }
+        bind "Alt 4" { GoToTab 4; }
+        bind "Alt 5" { GoToTab 5; }
+        bind "Alt 6" { GoToTab 6; }
+        bind "Alt 7" { GoToTab 7; }
+        bind "Alt 8" { GoToTab 8; }
+        bind "Alt 9" { GoToTab 9; }
+    }
+
+    locked {
+        bind "Ctrl Space" { SwitchToMode "Tmux"; }
+    }
+
+    tmux {
+        bind "Ctrl Space" "Esc" { SwitchToMode "Locked"; }
+        bind "t" { NewTab; SwitchToMode "Locked"; }
+        bind "|" { NewPane "Right"; SwitchToMode "Locked"; }
+        bind "-" { NewPane "Down"; SwitchToMode "Locked"; }
+        bind "x" { CloseFocus; SwitchToMode "Locked"; }
+        bind "d" { Detach; }
+        bind "," { SwitchToMode "RenameTab"; TabNameInput 0; }
+        bind "[" { SwitchToMode "Scroll"; }
+        bind "/" { SwitchToMode "EnterSearch"; SearchInput 0; }
+        bind "s" {
+            LaunchOrFocusPlugin "session-manager" {
+                floating true
+                move_to_focused_tab true
+            }
+            SwitchToMode "Locked"
+        }
+        bind "1" { GoToTab 1; SwitchToMode "Locked"; }
+        bind "2" { GoToTab 2; SwitchToMode "Locked"; }
+        bind "3" { GoToTab 3; SwitchToMode "Locked"; }
+        bind "4" { GoToTab 4; SwitchToMode "Locked"; }
+        bind "5" { GoToTab 5; SwitchToMode "Locked"; }
+        bind "6" { GoToTab 6; SwitchToMode "Locked"; }
+        bind "7" { GoToTab 7; SwitchToMode "Locked"; }
+        bind "8" { GoToTab 8; SwitchToMode "Locked"; }
+        bind "9" { GoToTab 9; SwitchToMode "Locked"; }
+    }
+
+    scroll {
+        bind "Esc" "q" { ScrollToBottom; SwitchToMode "Locked"; }
+        bind "Up" { ScrollUp; }
+        bind "Down" { ScrollDown; }
+        bind "PageUp" { PageScrollUp; }
+        bind "PageDown" { PageScrollDown; }
+        bind "Home" { ScrollToTop; }
+        bind "End" { ScrollToBottom; }
+        bind "e" { EditScrollback; SwitchToMode "Locked"; }
+        bind "/" { SwitchToMode "EnterSearch"; SearchInput 0; }
+    }
+
+    entersearch {
+        bind "Esc" { SwitchToMode "Scroll"; }
+        bind "Enter" { SwitchToMode "Search"; }
+    }
+
+    search {
+        bind "Esc" "q" { ScrollToBottom; SwitchToMode "Locked"; }
+        bind "n" { Search "down"; }
+        bind "p" { Search "up"; }
+        bind "c" { SearchToggleOption "CaseSensitivity"; }
+        bind "Up" { ScrollUp; }
+        bind "Down" { ScrollDown; }
+    }
+
+    renametab {
+        bind "Enter" { SwitchToMode "Locked"; }
+        bind "Esc" { UndoRenameTab; SwitchToMode "Locked"; }
+    }
+}
