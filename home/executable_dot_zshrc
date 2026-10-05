@@ -213,3 +213,6 @@ export PATH="$PATH:/home/aludes/.lmstudio/bin"
 # peon-ping quick controls
 alias peon="bash /home/aludes/.claude/hooks/peon-ping/peon.sh"
 [ -f /home/aludes/.claude/hooks/peon-ping/completions.bash ] && source /home/aludes/.claude/hooks/peon-ping/completions.bash
+
+# hide the trailing % on output without a newline
+PROMPT_EOL_MARK=""
