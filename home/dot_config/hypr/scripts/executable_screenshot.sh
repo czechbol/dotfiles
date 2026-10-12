@@ -38,17 +38,28 @@ setup_editor() {
     fi
 }
 
+# Launch the editor only on a valid, non-empty capture; otherwise notify.
+# grimblast can produce an empty/invalid PNG (e.g. --freeze race), which
+# makes satty/swappy fail to load the image and exit without a window.
+open_editor() {
+    if [ -s "$temp_screenshot" ]; then
+        "$editor" -f "$temp_screenshot"
+    else
+        notify-send "Screenshot" "Capture failed (empty grab)"
+    fi
+}
+
 # Function to handle different actions
 handle_action() {
     case $1 in
         p) # print all outputs
-            grimblast save screen "$temp_screenshot" && "$editor" -f "$temp_screenshot" ;;
+            grimblast save screen "$temp_screenshot" && open_editor ;;
         s) # drag to manually snip an area / click on a window to print it
-            grimblast save area "$temp_screenshot" && "$editor" -f "$temp_screenshot" ;;
+            grimblast save area "$temp_screenshot" && open_editor ;;
         sf) # frozen screen, drag to manually snip an area / click on a window to print it
-            grimblast --freeze save area "$temp_screenshot" && "$editor" -f "$temp_screenshot" ;;
+            grimblast --freeze save area "$temp_screenshot" && open_editor ;;
         m) # print focused monitor
-            grimblast save output "$temp_screenshot" && "$editor" -f "$temp_screenshot" ;;
+            grimblast save output "$temp_screenshot" && open_editor ;;
         *) # invalid option
             print_error ;;
     esac
@@ -70,6 +81,12 @@ notify_user() {
 }
 
 # Main script execution
+# Clear leftovers from a previously killed grab so this run isn't wedged:
+# grimblast's lock is only removed by its EXIT trap, which SIGKILL skips.
+if ! pgrep -x grimblast >/dev/null 2>&1; then
+    rm -f "${XDG_RUNTIME_DIR:-$HOME/.cache}/grimblast.lock"
+    pkill -x hyprpicker 2>/dev/null # orphaned freeze layer
+fi
 setup_directories "$0" # Set up directories and filenames
 setup_editor
 handle_action "$1" # Handle the action based on the input argument
